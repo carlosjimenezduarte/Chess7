@@ -1,0 +1,93 @@
+# Unity auto-generated folders
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+*.log
+.utmp
+
+# Visual Studio / JetBrains files
+.vs/
+.gradle/
+ExportedObj/
+.consulo/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Meta basura
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Crashes y otros archivos innecesarios
+sysinfo.txt
+crashlytics-build.properties
+
+# Builds y paquetes pesados
+*.apk
+*.aab
+*.unitypackage
+*.unitypackage.meta
+*.app
+
+# Firebase (evitar binarios gigantes)
+Assets/Firebase/Plugins/**/*.so
+Assets/Firebase/Plugins/**/*.bundle
+Assets/Firebase/Plugins/**/*.dll
+Assets/Firebase/Plugins/**/*.a
+Assets/Firebase/Plugins/**/*.lib
+
+# Android AAR y otros binarios pesados
+Assets/Plugins/Android/*.aar
+Assets/Plugins/Android/*.aar.meta
+
+# Memory captures y grabaciones
+[Mm]emoryCaptures/
+[Rr]ecordings/
+
+# Visual Scripting basura auto-generada
+Assets/Unity.VisualScripting.Generated/VisualScripting.Flow/UnitOptions.db
+Assets/Unity.VisualScripting.Generated/VisualScripting.Flow/UnitOptions.db.meta
+Assets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers
+Assets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers.meta
+
+# Addressables empaquetados
+Assets/AddressableAssetsData/*/*.bin*
+Assets/StreamingAssets/aa.meta
+Assets/StreamingAssets/aa/*
+
+# JetBrains Rider plugin
+Assets/Plugins/Editor/JetBrains*
+
+# Blender artefactos
+*.blend1
+*.blend1.meta
+
+# Configuración opcional del editor
+ProjectSettings/EditorBuildSettings.asset
+ProjectSettings/EditorSettings.asset
+
+# Packages lock file (opcional, útil si hay conflictos en dependencias)
+Packages/packages-lock.json
+
+# Backups y archivos temporales
+*.backup
+*.bak
+
+# Archivos sensibles de Firebase (opcional si lo manejas fuera del repositorio)
+# Assets/StreamingAssets/google-services.json
