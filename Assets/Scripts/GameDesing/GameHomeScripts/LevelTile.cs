@@ -27,25 +27,34 @@ public class LevelTile : MonoBehaviour
     }
 
     private void UpdateVisual()
-{
-    Color originalColor = backgroundImage.color;
-
-    switch (state)
     {
-        case TileState.Locked:
-            backgroundImage.color = new Color(0.5f, 0.5f, 0.5f, 1f);
-            keyIcon.SetActive(false);
-            break;
+        switch (state)
+        {
+            case TileState.Locked:
+                backgroundImage.color = new Color(0.5f, 0.5f, 0.5f, 1f);
+                keyIcon.SetActive(false);
+                break;
 
-        case TileState.Unlocked:
-            backgroundImage.color = new Color(1f, 1f, 1f, 1f);
-            keyIcon.SetActive(false);
-            break;
+            case TileState.Unlocked:
+                backgroundImage.color = Color.white;
+                keyIcon.SetActive(false);
+                break;
 
-        case TileState.Completed:
-            backgroundImage.color = new Color(1f, 1f, 1f, 1f);
-            keyIcon.SetActive(true);
-            break;
+            case TileState.Completed:
+                backgroundImage.color = Color.white;
+                keyIcon.SetActive(true);
+                break;
+        }
     }
-}
+
+    // Método de test: lo puedes llamar desde un botón o evento
+    public void ToggleState()
+    {
+        if (state == TileState.Locked)
+            SetState(TileState.Unlocked);
+        else if (state == TileState.Unlocked)
+            SetState(TileState.Completed);
+        else
+            SetState(TileState.Locked);
+    }
 }

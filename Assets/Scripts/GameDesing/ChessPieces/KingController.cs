@@ -28,7 +28,7 @@ public class KingController : MonoBehaviour
             Debug.Log($"Moviendo al Rey de {posicionActual} a {nuevaPos}, consumiendo {distancia} PM.");
             
             // Ajustado a localPosition para UI Panel
-            transform.localPosition = BoardManager.Instance.GetTileWorldPosition(nuevaPos);
+            transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(nuevaPos);
 
             puntosMovimientoActual -= distancia;
             posicionActual = nuevaPos;
