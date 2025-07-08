@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Potion5PM : MonoBehaviour, ITileEffect
+public class CollectibleUP : MonoBehaviour, ITileEffect
 {
     public Vector2Int tileCoords;
     public int turnoAparece = 1;
@@ -25,7 +25,7 @@ public class Potion5PM : MonoBehaviour, ITileEffect
         {
             activadoEnJuego = true;
             image.enabled = true;
-            Debug.Log($"🌟 Pocion 5PM en {tileCoords} aparece desde el inicio (turnoAparece={turnoAparece})");
+            Debug.Log($"❤️ Corazón en {tileCoords} aparece desde el inicio (turnoAparece={turnoAparece})");
         }
         else
         {
@@ -37,27 +37,27 @@ public class Potion5PM : MonoBehaviour, ITileEffect
     {
         if (posicionRey == tileCoords && activadoEnJuego)
         {
-            Debug.Log($"🧪 El Rey recogió una poción en {tileCoords} y ganó +5 PM.");
-            rey.GanarPuntoMovimiento(5);
+            Debug.Log($"❤️ El Rey recogió un corazón en {tileCoords} y ganó +1 vida.");
+            rey.GanarVida(1);
             Destroy(gameObject);
         }
     }
 
     public void VerificarTurnoActual(int turnoActual)
     {
-        Debug.Log($"🔍 Pocion 5PM en {tileCoords}: turnoActual={turnoActual}, turnoAparece={turnoAparece}, ActivadoJuego={activadoEnJuego}");
+        Debug.Log($"🔍 Corazón en {tileCoords}: turnoActual={turnoActual}, turnoAparece={turnoAparece}, ActivadoJuego={activadoEnJuego}");
 
         if (!activadoEnJuego && turnoActual >= turnoAparece)
         {
             activadoEnJuego = true;
             image.enabled = true;
-            Debug.Log($"✅ Pocion 5PM en {tileCoords} SE ACTIVÓ en el turno {turnoActual}");
+            Debug.Log($"✅ Corazón en {tileCoords} SE ACTIVÓ en el turno {turnoActual}");
 
             KingController rey = FindFirstObjectByType<KingController>();
             if (rey != null && rey.GetPosicionActual() == tileCoords)
             {
-                Debug.Log($"🧪 El Rey ya estaba sobre la poción 5PM en {tileCoords}. Mostrando 1 seg antes de desaparecer.");
-                rey.GanarPuntoMovimiento(5);
+                Debug.Log($"❤️ El Rey ya estaba sobre el corazón en {tileCoords}. Mostrando 1 seg antes de desaparecer y sumar vida.");
+                rey.GanarVida(1);
                 StartCoroutine(DesaparecerDespuesDe(1f));
             }
         }

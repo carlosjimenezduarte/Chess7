@@ -1,0 +1,116 @@
+using UnityEngine;
+using TMPro;
+
+public class LevelResultUI : MonoBehaviour
+{
+    public static LevelResultUI Instance { get; private set; }
+
+    [Header("Referencias UI")]
+    public GameObject resultPanel;
+
+    [Header("Llaves")]
+    public TMP_Text keysText;
+    public GameObject key1;
+    public GameObject key2;
+    public GameObject key3;
+    public GameObject key1Enabled;
+    public GameObject key2Enabled;
+    public GameObject key3Enabled;
+
+    [Header("Diamante")]
+    public TMP_Text diamondText;
+    public GameObject diamond;
+    public GameObject diamondEnabled;
+
+    [Header("Vidas")]
+    public TMP_Text livesText;
+    public GameObject up;
+    public GameObject upEnabled;
+
+    [Header("Score")]
+    public TMP_Text scoreText;
+
+    [Header("Ganó o perdió")]
+    public TMP_Text winLoseText;
+
+    [Header("Botones")]
+    public GameObject nextLevelButton;
+    public GameObject tryAgainButton;
+    public GameObject backToHomeButton;
+
+    private void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+
+        resultPanel.SetActive(false);
+    }
+
+    public void ShowResults(int keysCollected, bool hasDiamond, int livesRemaining, int totalScore)
+    {
+    
+
+        // Textos principales
+        keysText.text = $"{keysCollected} / 3 keys";
+        diamondText.text = hasDiamond ? "Diamond: Yes" : "Diamond: No";
+        livesText.text = $"{livesRemaining} lives left";
+        scoreText.text = $"Score: {totalScore}";
+
+        // Llaves visuales + Enabled
+        key1Enabled.SetActive(true);
+        key2Enabled.SetActive(true);
+        key3Enabled.SetActive(true);
+
+        key1.SetActive(keysCollected >= 1);
+        key2.SetActive(keysCollected >= 2);
+        key3.SetActive(keysCollected >= 3);
+
+        // Diamante visual + Enabled
+        diamondEnabled.SetActive(true);
+        diamond.SetActive(hasDiamond);
+
+        // UP visual + Enabled
+        upEnabled.SetActive(true);
+        up.SetActive(livesRemaining > 0);
+
+        // Ganó o perdió
+        bool gano = livesRemaining > 0;
+        winLoseText.text = gano ? "¡You win!" : "Game Over";
+
+        // Botones con reordenamiento
+        if (gano)
+        {
+            MostrarBoton(nextLevelButton, true);
+            MostrarBoton(tryAgainButton, true);
+            MostrarBoton(backToHomeButton, true);
+
+            nextLevelButton.transform.SetSiblingIndex(0);
+            tryAgainButton.transform.SetSiblingIndex(1);
+            backToHomeButton.transform.SetSiblingIndex(2);
+        }
+        else
+        {
+            MostrarBoton(nextLevelButton, false);
+            MostrarBoton(tryAgainButton, true);
+            MostrarBoton(backToHomeButton, true);
+
+            tryAgainButton.transform.SetAsFirstSibling();
+            backToHomeButton.transform.SetSiblingIndex(1);
+            nextLevelButton.transform.SetSiblingIndex(2);
+        }
+
+        resultPanel.SetActive(true);
+
+        Debug.Log($"🎉 Resultados mostrados -> Llaves: {keysCollected}, Diamante: {hasDiamond}, Vidas: {livesRemaining}, Score: {totalScore}");
+    }
+
+    private void MostrarBoton(GameObject boton, bool visible)
+    {
+        if (boton.TryGetComponent(out CanvasGroup cg))
+        {
+            cg.alpha = visible ? 1f : 0f;
+            cg.interactable = visible;
+            cg.blocksRaycasts = visible;
+        }
+    }
+}
