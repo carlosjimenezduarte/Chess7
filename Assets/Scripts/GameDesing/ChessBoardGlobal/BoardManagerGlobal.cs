@@ -33,4 +33,37 @@ public class BoardManagerGlobal : MonoBehaviour
         Debug.LogWarning($"No se encontró tile en coordenadas {tileCoords}");
         return Vector3.zero;
     }
+
+    public Tile GetTileAt(Vector2Int coords)
+    {
+        foreach (Tile tile in tiles)
+        {
+            if (tile.tileCoords == coords)
+                return tile;
+        }
+        Debug.LogWarning($"No se encontró Tile en posición {coords}");
+        return null;
+    }
+    
+    public Vector2Int GetClosestTileCoords(Vector3 worldPos)
+    {
+    Tile closest = null;
+    float minDist = Mathf.Infinity;
+
+    foreach (Tile tile in tiles)
+    {
+        float dist = Vector3.Distance(tile.transform.localPosition, worldPos);
+        if (dist < minDist)
+        {
+            minDist = dist;
+            closest = tile;
+        }
+    }
+
+    if (closest != null)
+        return closest.tileCoords;
+
+    Debug.LogWarning($"No se encontró tile cercano a posición {worldPos}");
+    return Vector2Int.zero;
+    }
 }

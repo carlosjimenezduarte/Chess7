@@ -16,9 +16,10 @@ public class ChessGameManager : MonoBehaviour
 
     private float turnoDuration = 30f;
     private float tiempoRestante;
-    private bool turnoActivo = false;
+    private float tiempoNivelAcumulado = 0f; // 🔥 nuevo acumulador del tiempo jugado
 
-    private int turnoActual = 0; // 🔥 ahora llevamos un contador global de turnos
+    private bool turnoActivo = false;
+    private int turnoActual = 0;
 
     private void Start()
     {
@@ -39,6 +40,7 @@ public class ChessGameManager : MonoBehaviour
         if (turnoActivo)
         {
             tiempoRestante -= Time.deltaTime;
+            tiempoNivelAcumulado += Time.deltaTime; // 🔥 suma el tiempo efectivo jugado
             timerText.text = Mathf.CeilToInt(tiempoRestante).ToString();
 
             if (tiempoRestante <= 0f)
@@ -56,14 +58,15 @@ public class ChessGameManager : MonoBehaviour
 
         turnoActivo = true;
         tiempoRestante = turnoDuration;
+        tiempoNivelAcumulado = 0f; // 🔥 reinicia acumulador al iniciar el juego
 
-        turnoActual = 1; // 🔥 arranca el juego en turno 1
+        turnoActual = 1;
 
         rey.ReiniciarTurno();
         rey.ActivarJuego();
         ActualizarHUD();
 
-        NotificarEfectosTurno(); // 🔥 revisa qué objetos deben activarse en el turno 1
+        NotificarEfectosTurno();
     }
 
     private void PasarTurno()
@@ -71,12 +74,12 @@ public class ChessGameManager : MonoBehaviour
         Debug.Log("¡Pasando turno!");
 
         tiempoRestante = turnoDuration;
-        turnoActual++; // 🔥 incrementa el turno global
+        turnoActual++;
 
         rey.ReiniciarTurno();
         rey.RestarTurno();
 
-        NotificarEfectosTurno(); // 🔥 revisa qué objetos deben activarse en este nuevo turno
+        NotificarEfectosTurno();
 
         ActualizarHUD();
 
@@ -108,10 +111,31 @@ public class ChessGameManager : MonoBehaviour
         turnosText.text = rey.turnosRestantes.ToString();
         paText.text = rey.puntosAccionActual.ToString();
     }
-    
+
     public void DetenerJuego()
     {
-    turnoActivo = false;
-    Debug.Log("⏸ Juego detenido, reloj pausado.");
+        turnoActivo = false;
+        Debug.Log("⏸ Juego detenido, reloj pausado.");
+    }
+
+    public void AgregarTiempoAlTurno(float segundos)
+    {
+        tiempoRestante += segundos;
+        tiempoRestante = Mathf.Max(tiempoRestante, 0f); // 🔥 nunca menos de 0
+        Debug.Log($"⏰ Tiempo ajustado: {segundos:+0.##;-0.##}s -> Tiempo restante: {tiempoRestante:F1}s");
+    }
+
+    public float GetTiempoRestante()
+    {
+        return tiempoRestante;
+    }
+
+    public float GetTiempoNivelAcumulado()
+    {
+        return tiempoNivelAcumulado;
+    }
+    public bool IsJuegoActivo()
+    {
+    return turnoActivo;
     }
 }

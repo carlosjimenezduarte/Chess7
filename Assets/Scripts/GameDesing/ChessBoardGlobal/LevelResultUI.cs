@@ -33,6 +33,10 @@ public class LevelResultUI : MonoBehaviour
     [Header("Ganó o perdió")]
     public TMP_Text winLoseText;
 
+    [Header("Tiempo")]
+    public TMP_Text timeLabelText; // 🔥 Nuevo: texto para el título ("Time")
+    public TMP_Text timeValueText; // 🔥 Nuevo: texto para el tiempo formateado ("02:43")
+
     [Header("Botones")]
     public GameObject nextLevelButton;
     public GameObject tryAgainButton;
@@ -48,13 +52,19 @@ public class LevelResultUI : MonoBehaviour
 
     public void ShowResults(int keysCollected, bool hasDiamond, int livesRemaining, int totalScore)
     {
-    
-
         // Textos principales
         keysText.text = $"{keysCollected} / 3 keys";
         diamondText.text = hasDiamond ? "Diamond: Yes" : "Diamond: No";
         livesText.text = $"{livesRemaining} lives left";
-        scoreText.text = $"Score: {totalScore}";
+        scoreText.text = $"Total Score: {totalScore}";
+
+        // 🔥 Mostrar tiempo del nivel jugado
+        float tiempoJugado = FindFirstObjectByType<ChessGameManager>().GetTiempoNivelAcumulado();
+        int minutos = Mathf.FloorToInt(tiempoJugado / 60f);
+        int segundos = Mathf.FloorToInt(tiempoJugado % 60f);
+
+        timeLabelText.text = "Time";
+        timeValueText.text = $"{minutos:D2}:{segundos:D2}";
 
         // Llaves visuales + Enabled
         key1Enabled.SetActive(true);
@@ -101,7 +111,7 @@ public class LevelResultUI : MonoBehaviour
 
         resultPanel.SetActive(true);
 
-        Debug.Log($"🎉 Resultados mostrados -> Llaves: {keysCollected}, Diamante: {hasDiamond}, Vidas: {livesRemaining}, Score: {totalScore}");
+        Debug.Log($"🎉 Resultados mostrados -> Llaves: {keysCollected}, Diamante: {hasDiamond}, Vidas: {livesRemaining}, Score: {totalScore}, Tiempo: {minutos:D2}:{segundos:D2}");
     }
 
     private void MostrarBoton(GameObject boton, bool visible)
