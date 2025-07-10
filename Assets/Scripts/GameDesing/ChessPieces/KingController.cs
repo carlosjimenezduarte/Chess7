@@ -103,6 +103,9 @@ public class KingController : MonoBehaviour, IPointerClickHandler
         MostrarMovimientoPosible();
         mostrandoMovimientos = true;
 
+        // 🔥 NUEVO: la Reina verifica si debe mostrar overlays
+        FindFirstObjectByType<QueenEnemyController>().VerificarSiReyEstaAmenazado(posicionActual);
+
         FindFirstObjectByType<ChessGameManager>().ActualizarHUD();
 
             // 🚀 CHEQUEO META

@@ -44,26 +44,38 @@ public class BoardManagerGlobal : MonoBehaviour
         Debug.LogWarning($"No se encontró Tile en posición {coords}");
         return null;
     }
-    
+
     public Vector2Int GetClosestTileCoords(Vector3 worldPos)
     {
-    Tile closest = null;
-    float minDist = Mathf.Infinity;
+        Tile closest = null;
+        float minDist = Mathf.Infinity;
 
-    foreach (Tile tile in tiles)
-    {
-        float dist = Vector3.Distance(tile.transform.localPosition, worldPos);
-        if (dist < minDist)
+        foreach (Tile tile in tiles)
         {
-            minDist = dist;
-            closest = tile;
+            float dist = Vector3.Distance(tile.transform.localPosition, worldPos);
+            if (dist < minDist)
+            {
+                minDist = dist;
+                closest = tile;
+            }
         }
+
+        if (closest != null)
+            return closest.tileCoords;
+
+        Debug.LogWarning($"No se encontró tile cercano a posición {worldPos}");
+        return Vector2Int.zero;
     }
 
-    if (closest != null)
-        return closest.tileCoords;
-
-    Debug.LogWarning($"No se encontró tile cercano a posición {worldPos}");
-    return Vector2Int.zero;
+    public Vector2 GetTileAnchoredPosition(Vector2Int tileCoords)
+    {
+    Tile tile = GetTileAt(tileCoords);
+    if (tile != null)
+    {
+        return tile.GetComponent<RectTransform>().anchoredPosition;
     }
-}
+    Debug.LogWarning($"No se encontró tile en {tileCoords}");
+    return Vector2.zero;
+    }
+}   
+

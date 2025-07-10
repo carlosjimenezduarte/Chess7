@@ -39,7 +39,15 @@ public class Tile : MonoBehaviour
     if (myImage == null) return;
     myImage.color = isActive ? new Color(1f, 0.2f, 0.9f, 1f) : Color.white; // fucsia fuerte
 }
-
+    public void HighlightSpecific(bool isActive)
+    {
+    if (myImage != null)
+    {
+        myImage.color = isActive 
+            ? new Color(1f, 0.2f, 0.9f, 1f) // fucsia sólido
+            : Color.white;
+    }
+    }
 
     
     public void ResetColor()

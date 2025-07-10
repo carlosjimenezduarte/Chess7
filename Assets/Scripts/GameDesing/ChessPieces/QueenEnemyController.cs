@@ -1,20 +1,25 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
+using System.Collections.Generic;
 
 public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEffect
 {
-    [Header("Alcances")]
+    [Header("Alcances tipo Reina")]
     public int rangoKillZone = 3;
     public int rangoRangeZone = 5;
 
-    [Header("Daños a distancia")]
-    public int quitarPM = 2;
-    public int quitarPA = 2;
-    public int quitarTurnos = 1;
+    [Header("Prefab para zonas peligrosas")]
+    public GameObject prefabRojo;
+
+    [Header("Padre para overlays")]
+    public Transform dangerOverlayParent;
 
     private Vector2Int posicionActual;
     private bool mostrandoRango = false;
+
+    private List<GameObject> overlaysInstanciados = new List<GameObject>();
+    private Vector2Int ultimaPosicionAmenaza = new Vector2Int(-99, -99);
 
     private void Start()
     {
@@ -22,21 +27,22 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         if (piecePositioner != null)
         {
             posicionActual = piecePositioner.tileCoords;
-            Debug.Log($"♛ La Reina inicializó su posición lógica en {posicionActual} según el PiecePositioner.");
+            Debug.Log($"♛ Reina inició en {posicionActual}");
         }
         else
         {
-            Debug.LogWarning("⚠️ No se encontró PiecePositioner en la Reina. Usando posición por defecto (0,0).");
+            Debug.LogWarning("⚠️ No hay PiecePositioner en la Reina. Usando (0,0).");
             posicionActual = new Vector2Int(0, 0);
         }
     }
 
+    // === Click manual para mostrar u ocultar el rango con Tiles ===
     public void OnPointerClick(PointerEventData eventData)
     {
         ChessGameManager manager = FindFirstObjectByType<ChessGameManager>();
         if (manager == null || !manager.IsJuegoActivo())
         {
-            Debug.Log("♛ No se puede mostrar rango: el juego no está activo.");
+            Debug.Log("♛ No se puede mostrar rango: juego no activo.");
             return;
         }
 
@@ -44,58 +50,76 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
         if (mostrandoRango)
         {
-            Debug.Log("♛ Mostrando rango de ataque de la Reina.");
+            Debug.Log("♛ Mostrando rango de ataque (Tiles)");
             MostrarRangoDeAtaque();
         }
         else
         {
-            Debug.Log("♛ Ocultando rango de ataque de la Reina.");
+            Debug.Log("♛ Ocultando rango de ataque (Tiles)");
             OcultarRangoDeAtaque();
         }
     }
 
-    public void MostrarRangoDeAtaque()
+    // === Visualización con Prefabs en línea directa al Rey ===
+    public void VerificarSiReyEstaAmenazado(Vector2Int posicionRey)
     {
-        OcultarRangoDeAtaque(); 
+        // Limpia cualquier overlay anterior
+        foreach (var obj in overlaysInstanciados)
+            Destroy(obj);
+        overlaysInstanciados.Clear();
 
-        Tile tileCentral = BoardManagerGlobal.Instance.GetTileAt(posicionActual);
-        if (tileCentral != null)
-            tileCentral.HighlightEnemyKillZone(true);
+        int dx = posicionRey.x - posicionActual.x;
+        int dy = posicionRey.y - posicionActual.y;
 
-        Vector2Int[] direcciones = new Vector2Int[]
+        bool esDireccionValida = (dx == 0 || dy == 0 || Mathf.Abs(dx) == Mathf.Abs(dy));
+        if (!esDireccionValida)
         {
-            new Vector2Int(1, 0),  new Vector2Int(-1, 0),
-            new Vector2Int(0, 1),  new Vector2Int(0, -1),
-            new Vector2Int(1, 1),  new Vector2Int(-1, 1),
-            new Vector2Int(1, -1), new Vector2Int(-1, -1)
-        };
+            ultimaPosicionAmenaza = new Vector2Int(-99, -99);
+            return;
+        }
 
-        foreach (var dir in direcciones)
+        Vector2Int direccionRey = new Vector2Int(
+            dx == 0 ? 0 : (dx > 0 ? 1 : -1),
+            dy == 0 ? 0 : (dy > 0 ? 1 : -1)
+        );
+
+        Vector2Int paso = posicionActual;
+        int pasosContados = 0;
+        List<Vector2Int> lineaDeAtaque = new List<Vector2Int>();
+
+        while (pasosContados <= rangoRangeZone && paso != posicionRey)
         {
-            for (int i = 1; i <= rangoRangeZone; i++)
+            if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
+                break;
+
+            lineaDeAtaque.Add(paso);
+            paso += direccionRey;
+            pasosContados++;
+        }
+
+        if (paso == posicionRey)
+        {
+            lineaDeAtaque.Add(posicionRey);
+
+            Debug.Log($"♛ Pintando línea de prefabs hacia Rey en {posicionRey}");
+
+            foreach (Vector2Int coord in lineaDeAtaque)
             {
-                Vector2Int coord = posicionActual + dir * i;
-                Tile tile = BoardManagerGlobal.Instance.GetTileAt(coord);
-
-                if (tile == null)
-                    break;
-
-                if (i <= rangoKillZone)
-                    tile.HighlightEnemyKillZone(true);
-                else
-                    tile.HighlightEnemyRangeZone(true);
+                GameObject overlay = Instantiate(prefabRojo, dangerOverlayParent);
+                overlay.GetComponent<RectTransform>().anchoredPosition = 
+                    BoardManagerGlobal.Instance.GetTileAnchoredPosition(coord);
+                overlaysInstanciados.Add(overlay);
             }
-        }
-    }
 
-    public void OcultarRangoDeAtaque()
-    {
-        foreach (Tile tile in BoardManagerGlobal.Instance.tiles)
+            ultimaPosicionAmenaza = posicionRey;
+        }
+        else
         {
-            tile.ResetColor();
+            ultimaPosicionAmenaza = new Vector2Int(-99, -99);
         }
     }
 
+    // === Método ITileEffect: lógica para atacar directamente al Rey ===
     public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey)
     {
         int dx = posicionRey.x - posicionActual.x;
@@ -115,35 +139,25 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
         while (pasosContados <= rangoRangeZone && paso != posicionRey)
         {
+            if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
+                break;
+
             paso += direccionRey;
             pasosContados++;
         }
 
         if (paso == posicionRey)
         {
+            Debug.Log($"💀 El Rey fue alcanzado en {posicionRey}");
             if (pasosContados <= rangoKillZone)
             {
-                Debug.Log("💀 El Rey entró en el alcance LETAL de la Reina.");
                 StartCoroutine(MatarReyDespuesDelay(rey, posicionRey));
             }
-            else if (pasosContados <= rangoRangeZone)
+            else
             {
-                Debug.Log("🏹 El Rey entró en el alcance de ATAQUE a distancia de la Reina.");
-
-                rey.GanarPuntoMovimiento(-quitarPM);
-                rey.puntosAccionActual -= quitarPA;
-                rey.turnosRestantes -= quitarTurnos;
-
-                // 🔥 Dibuja la línea exclusiva en color de ataque real
-                Vector2Int pasoLinea = posicionActual + direccionRey;
-                while (pasoLinea != posicionRey)
-                {
-                    Tile tile = BoardManagerGlobal.Instance.GetTileAt(pasoLinea);
-                    if (tile == null) break;
-
-                    tile.HighlightEnemyAttack(true);
-                    pasoLinea += direccionRey;
-                }
+                rey.GanarPuntoMovimiento(-2);
+                rey.puntosAccionActual -= 2;
+                rey.turnosRestantes -= 1;
             }
         }
     }
@@ -151,6 +165,10 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
     private IEnumerator MatarReyDespuesDelay(KingController rey, Vector2Int posicionRey)
     {
         transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(posicionRey);
+
+        Destroy(rey.gameObject);
+        Debug.Log("💀 Rey destruido visualmente del tablero.");
+
         yield return new WaitForSeconds(2f);
 
         rey.turnosRestantes = 0;
@@ -163,18 +181,48 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         FindFirstObjectByType<ChessGameManager>().DetenerJuego();
     }
 
-    public void SetPosicionActual(Vector2Int nuevaPos)
+    // === Previsualización con Tiles ===
+    public void MostrarRangoDeAtaque()
     {
-        posicionActual = nuevaPos;
+        OcultarRangoDeAtaque();
+
+        Tile tileCentral = BoardManagerGlobal.Instance.GetTileAt(posicionActual);
+        if (tileCentral != null)
+            tileCentral.HighlightEnemyKillZone(true);
+
+        Vector2Int[] direcciones = {
+            new Vector2Int(1,0), new Vector2Int(-1,0),
+            new Vector2Int(0,1), new Vector2Int(0,-1),
+            new Vector2Int(1,1), new Vector2Int(-1,1),
+            new Vector2Int(1,-1), new Vector2Int(-1,-1)
+        };
+
+        foreach (var dir in direcciones)
+        {
+            for (int i = 1; i <= rangoRangeZone; i++)
+            {
+                Vector2Int coord = posicionActual + dir * i;
+                if (coord.x < 0 || coord.y < 0 || coord.x > 7 || coord.y > 7)
+                    break;
+
+                Tile tile = BoardManagerGlobal.Instance.GetTileAt(coord);
+                if (tile == null) break;
+
+                if (i <= rangoKillZone)
+                    tile.HighlightEnemyKillZone(true);
+                else
+                    tile.HighlightEnemyRangeZone(true);
+            }
+        }
     }
 
-    public Vector2Int GetPosicionActual()
+    public void OcultarRangoDeAtaque()
     {
-        return posicionActual;
+        foreach (Tile tile in BoardManagerGlobal.Instance.tiles)
+            tile.ResetColor();
     }
 
-    public void VerificarTurnoActual(int turnoActual)
-    {
-        // por ahora sin lógica especial por turno
-    }
+    public void SetPosicionActual(Vector2Int nuevaPos) => posicionActual = nuevaPos;
+    public Vector2Int GetPosicionActual() => posicionActual;
+    public void VerificarTurnoActual(int turnoActual) { /* reservado para el futuro */ }
 }

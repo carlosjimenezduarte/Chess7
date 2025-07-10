@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Linq;
+using UnityEngine.SceneManagement; // para usar SceneManager
 
 public class ChessGameManager : MonoBehaviour
 {
@@ -9,6 +10,11 @@ public class ChessGameManager : MonoBehaviour
 
     public Button startButton;
     public Button passTurnButton;
+
+    // 🔥 NUEVOS BOTONES
+    public Button restartButton;
+    public Button exitButton;
+
     public TMP_Text timerText;
     public TMP_Text pmText;
     public TMP_Text turnosText;
@@ -16,7 +22,7 @@ public class ChessGameManager : MonoBehaviour
 
     private float turnoDuration = 30f;
     private float tiempoRestante;
-    private float tiempoNivelAcumulado = 0f; // 🔥 nuevo acumulador del tiempo jugado
+    private float tiempoNivelAcumulado = 0f;
 
     private bool turnoActivo = false;
     private int turnoActual = 0;
@@ -26,6 +32,12 @@ public class ChessGameManager : MonoBehaviour
         passTurnButton.gameObject.SetActive(false);
         startButton.onClick.AddListener(IniciarJuego);
         passTurnButton.onClick.AddListener(PasarTurno);
+
+        // 🔥 NUEVOS listeners para los botones
+        if (restartButton != null)
+            restartButton.onClick.AddListener(Restart);
+        if (exitButton != null)
+            exitButton.onClick.AddListener(Exit);
 
         timerText.text = "";
         pmText.text = "";
@@ -40,7 +52,7 @@ public class ChessGameManager : MonoBehaviour
         if (turnoActivo)
         {
             tiempoRestante -= Time.deltaTime;
-            tiempoNivelAcumulado += Time.deltaTime; // 🔥 suma el tiempo efectivo jugado
+            tiempoNivelAcumulado += Time.deltaTime;
             timerText.text = Mathf.CeilToInt(tiempoRestante).ToString();
 
             if (tiempoRestante <= 0f)
@@ -58,8 +70,7 @@ public class ChessGameManager : MonoBehaviour
 
         turnoActivo = true;
         tiempoRestante = turnoDuration;
-        tiempoNivelAcumulado = 0f; // 🔥 reinicia acumulador al iniciar el juego
-
+        tiempoNivelAcumulado = 0f;
         turnoActual = 1;
 
         rey.ReiniciarTurno();
@@ -72,7 +83,6 @@ public class ChessGameManager : MonoBehaviour
     private void PasarTurno()
     {
         Debug.Log("¡Pasando turno!");
-
         tiempoRestante = turnoDuration;
         turnoActual++;
 
@@ -80,17 +90,7 @@ public class ChessGameManager : MonoBehaviour
         rey.RestarTurno();
 
         NotificarEfectosTurno();
-
         ActualizarHUD();
-
-        Debug.Log($"=== Estado global de los objetos en turno {turnoActual} ===");
-        foreach (ITileEffect efecto in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ITileEffect>())
-        {
-            if (efecto is MonoBehaviour mb)
-            {
-                Debug.Log($"  - Objeto {mb.gameObject.name}, activo: {mb.gameObject.activeSelf}");
-            }
-        }
     }
 
     private void NotificarEfectosTurno()
@@ -121,7 +121,7 @@ public class ChessGameManager : MonoBehaviour
     public void AgregarTiempoAlTurno(float segundos)
     {
         tiempoRestante += segundos;
-        tiempoRestante = Mathf.Max(tiempoRestante, 0f); // 🔥 nunca menos de 0
+        tiempoRestante = Mathf.Max(tiempoRestante, 0f);
         Debug.Log($"⏰ Tiempo ajustado: {segundos:+0.##;-0.##}s -> Tiempo restante: {tiempoRestante:F1}s");
     }
 
@@ -134,8 +134,22 @@ public class ChessGameManager : MonoBehaviour
     {
         return tiempoNivelAcumulado;
     }
+
     public bool IsJuegoActivo()
     {
-    return turnoActivo;
+        return turnoActivo;
+    }
+
+    // === NUEVAS FUNCIONES PARA LOS BOTONES ===
+    public void Restart()
+    {
+        Debug.Log("🔄 Reiniciando nivel...");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void Exit()
+    {
+        Debug.Log("🏠 Saliendo al GameHome...");
+        SceneManager.LoadScene("GameHome");
     }
 }
