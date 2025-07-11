@@ -80,6 +80,11 @@ public class ClockSubtractTime : MonoBehaviour, ITileEffect
             Destroy(gameObject);
     }
 
+    public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
+    {
+    // Por ahora no hace nada si el Peón llega a este tile.
+    }
+
     private IEnumerator DesaparecerDespuesDe(float tiempo)
     {
         yield return new WaitForSeconds(tiempo);

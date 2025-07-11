@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
 
-public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEffect
+public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEffect, IPieceWithPosition
 {
     [Header("Alcances tipo Reina")]
     public int rangoKillZone = 3;
@@ -36,6 +36,26 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         }
     }
 
+    // === Implementación interfaz IPieceWithPosition ===
+    public void SetPosicionActual(Vector2Int nuevaPos)
+    {
+        posicionActual = nuevaPos;
+
+        // 🔥 También sincroniza el PiecePositioner si existe
+        PiecePositioner piecePositioner = GetComponent<PiecePositioner>();
+        if (piecePositioner != null)
+        {
+            piecePositioner.tileCoords = nuevaPos;
+        }
+
+        Debug.Log($"♛ Reina actualizó su posición lógica a {nuevaPos}");
+    }
+
+    public Vector2Int GetPosicionActual()
+    {
+        return posicionActual;
+    }
+
     // === Click manual para mostrar u ocultar el rango con Tiles ===
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -63,7 +83,6 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
     // === Visualización con Prefabs en línea directa al Rey ===
     public void VerificarSiReyEstaAmenazado(Vector2Int posicionRey)
     {
-        // Limpia cualquier overlay anterior
         foreach (var obj in overlaysInstanciados)
             Destroy(obj);
         overlaysInstanciados.Clear();
@@ -222,7 +241,12 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
             tile.ResetColor();
     }
 
-    public void SetPosicionActual(Vector2Int nuevaPos) => posicionActual = nuevaPos;
-    public Vector2Int GetPosicionActual() => posicionActual;
-    public void VerificarTurnoActual(int turnoActual) { /* reservado para el futuro */ }
+    public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
+    {
+    // Por ahora no hace nada si el Peón llega a este tile.
+    }
+    public void VerificarTurnoActual(int turnoActual)
+    {
+        // reservado para lógica futura
+    }
 }

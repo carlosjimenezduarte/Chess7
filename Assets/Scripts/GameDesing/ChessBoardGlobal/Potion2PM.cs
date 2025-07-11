@@ -63,6 +63,11 @@ public class Potion2PM : MonoBehaviour, ITileEffect
         }
     }
 
+    public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
+    {
+    // Por ahora no hace nada si el Peón llega a este tile.
+    }
+
     private System.Collections.IEnumerator DesaparecerDespuesDe(float tiempo)
     {
         yield return new WaitForSeconds(tiempo);

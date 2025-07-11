@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8567370344256404383}
   - component: {fileID: -9084432366486781030}
   - component: {fileID: -2422536028475717728}
+  - component: {fileID: 1195796207621731603}
   m_Layer: 5
   m_Name: Potion1PM
   m_TagString: Untagged
@@ -89,7 +90,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74e5e04f83e472a4281766b56f53ad24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileCoords: {x: 0, y: 0}
+  tileCoords: {x: 1, y: 2}
 --- !u!114 &-2422536028475717728
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -100,6 +101,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f658708aa60ec84983741946d6b625b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileCoords: {x: 1, y: 2}
+  turnoAparece: 1
+  visibleDesdeInicio: 1
+--- !u!114 &1195796207621731603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4499433439523205857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33d1fb08166c8ac48b559443f7486744, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   tileCoords: {x: 0, y: 0}

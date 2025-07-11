@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5539238905305469014}
   - component: {fileID: -2324540620641608523}
   - component: {fileID: 8865268356594007076}
+  - component: {fileID: 2158612651088761418}
   m_Layer: 5
   m_Name: CollectibleDiamond
   m_TagString: Untagged
@@ -61,7 +62,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -89,7 +90,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74e5e04f83e472a4281766b56f53ad24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileCoords: {x: 6, y: 0}
+  tileCoords: {x: 2, y: 1}
 --- !u!114 &8865268356594007076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102,6 +103,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76380d8511104f64ca505664393b3a5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileCoords: {x: 0, y: 0}
+  tileCoords: {x: 2, y: 1}
   turnoAparece: 1
-  visibleDesdeInicio: 0
+  visibleDesdeInicio: 1
+--- !u!114 &2158612651088761418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3483097138107289214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33d1fb08166c8ac48b559443f7486744, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileCoords: {x: 0, y: 0}

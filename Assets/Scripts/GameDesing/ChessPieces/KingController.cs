@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Linq;
 
-public class KingController : MonoBehaviour, IPointerClickHandler
+public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPosition
 {
     public int puntosMovimientoMax = 3;
     public int puntosMovimientoActual;
@@ -15,8 +15,28 @@ public class KingController : MonoBehaviour, IPointerClickHandler
 
     private void Start()
     {
-        puntosMovimientoActual = puntosMovimientoMax;
-        posicionActual = new Vector2Int(0, 0);
+        PiecePositioner piecePositioner = GetComponent<PiecePositioner>();
+        if (piecePositioner != null)
+        {
+            posicionActual = piecePositioner.tileCoords;
+            Debug.Log($"♔ Rey inició en {posicionActual}");
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ No hay PiecePositioner en el Rey. Usando (0,0).");
+            posicionActual = new Vector2Int(0, 0);
+        }
+    }
+
+    // 👑 interfaz
+    public void SetPosicionActual(Vector2Int nuevaPos)
+    {
+        posicionActual = nuevaPos;
+    }
+
+    public Vector2Int GetPosicionActual()
+    {
+        return posicionActual;
     }
 
     public void ActivarJuego()
@@ -30,7 +50,7 @@ public class KingController : MonoBehaviour, IPointerClickHandler
     {
         if (!juegoActivo) return;
 
-        Debug.Log("Mostrando casillas alcanzables con " + puntosMovimientoActual + " PM.");
+        Debug.Log($"Mostrando casillas alcanzables con {puntosMovimientoActual} PM.");
 
         foreach (Tile tile in BoardManagerGlobal.Instance.tiles)
         {
@@ -43,9 +63,7 @@ public class KingController : MonoBehaviour, IPointerClickHandler
     private void OcultarMovimientos()
     {
         foreach (Tile tile in BoardManagerGlobal.Instance.tiles)
-        {
             tile.HighlightMove(false);
-        }
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -68,54 +86,56 @@ public class KingController : MonoBehaviour, IPointerClickHandler
 
     public void MoverA(Vector2Int nuevaPos)
     {
-    if (!juegoActivo) return;
+        if (!juegoActivo) return;
 
-    int distancia = Mathf.Abs(posicionActual.x - nuevaPos.x) + Mathf.Abs(posicionActual.y - nuevaPos.y);
+        int distancia = Mathf.Abs(posicionActual.x - nuevaPos.x) + Mathf.Abs(posicionActual.y - nuevaPos.y);
 
-    if (distancia <= puntosMovimientoActual)
-    {
-        Debug.Log($"Moviendo al Rey desde {posicionActual} a {nuevaPos} con recorrido paso a paso, consumiendo {distancia} PM.");
-
-        Vector2Int paso = posicionActual;
-
-        // Recorre lógica paso a paso
-        while (paso != nuevaPos)
+        if (distancia <= puntosMovimientoActual)
         {
-            if (paso.x < nuevaPos.x) paso.x++;
-            else if (paso.x > nuevaPos.x) paso.x--;
+            Debug.Log($"Moviendo al Rey desde {posicionActual} a {nuevaPos}, consumiendo {distancia} PM.");
 
-            if (paso.y < nuevaPos.y) paso.y++;
-            else if (paso.y > nuevaPos.y) paso.y--;
+            Vector2Int paso = posicionActual;
 
-            Debug.Log($"🚶 El Rey pasa por {paso}");
-
-            foreach (ITileEffect efecto in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ITileEffect>())
+            // 🔥 Recorre casilla por casilla
+            while (paso != nuevaPos)
             {
-                efecto.RevisarSiReyLlegó(paso, this);
+                if (paso.x < nuevaPos.x) paso.x++;
+                else if (paso.x > nuevaPos.x) paso.x--;
+
+                if (paso.y < nuevaPos.y) paso.y++;
+                else if (paso.y > nuevaPos.y) paso.y--;
+
+                // 🚀 Actualiza posición lógica en cada paso
+                SetPosicionActual(paso);
+
+                Debug.Log($"🚶 El Rey pasa por {paso}");
+
+                foreach (ITileEffect efecto in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ITileEffect>())
+                {
+                    efecto.RevisarSiReyLlegó(paso, this);
+                }
             }
-        }
 
-        posicionActual = nuevaPos;
-        transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(nuevaPos);
+            transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(nuevaPos);
+            puntosMovimientoActual -= distancia;
 
-        puntosMovimientoActual -= distancia;
+            MostrarMovimientoPosible();
+            mostrandoMovimientos = true;
 
-        MostrarMovimientoPosible();
-        mostrandoMovimientos = true;
+            // ⚔ actualiza amenaza de la Reina
+            var reina = FindFirstObjectByType<QueenEnemyController>();
+            if (reina != null)
+                reina.VerificarSiReyEstaAmenazado(posicionActual);
 
-        // 🔥 NUEVO: la Reina verifica si debe mostrar overlays
-        FindFirstObjectByType<QueenEnemyController>().VerificarSiReyEstaAmenazado(posicionActual);
+            FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
 
-        FindFirstObjectByType<ChessGameManager>().ActualizarHUD();
-
-            // 🚀 CHEQUEO META
+            // 🏁 Meta
             if (posicionActual == new Vector2Int(7, 7))
             {
-                Debug.Log("🚀 El Rey llegó a la meta (H8). Calculando bonus y mostrando resultados.");
+                Debug.Log("🚀 El Rey llegó a la meta (H8). Calculando bonus.");
 
                 int bonus = turnosRestantes * 50;
                 PlayerScore.Instance.AddScore(bonus);
-                Debug.Log($"🎉 Bonus por vidas: {turnosRestantes} x 50 = +{bonus}");
 
                 LevelResultUI.Instance.ShowResults(
                     LevelProgress.Instance.keysCollected,
@@ -125,13 +145,13 @@ public class KingController : MonoBehaviour, IPointerClickHandler
                 );
 
                 juegoActivo = false;
-                FindFirstObjectByType<ChessGameManager>().DetenerJuego();
-        }
+                FindFirstObjectByType<ChessGameManager>()?.DetenerJuego();
+            }
 
-            // 🚀 CHEQUEO DERROTA
+            // 💀 Derrota
             if (turnosRestantes <= 0)
             {
-                Debug.Log("💀 El Rey se quedó sin vidas. Mostrando panel de derrota.");
+                Debug.Log("💀 El Rey sin vidas.");
 
                 LevelResultUI.Instance.ShowResults(
                     LevelProgress.Instance.keysCollected,
@@ -141,20 +161,19 @@ public class KingController : MonoBehaviour, IPointerClickHandler
                 );
 
                 juegoActivo = false;
-                FindFirstObjectByType<ChessGameManager>().DetenerJuego();
+                FindFirstObjectByType<ChessGameManager>()?.DetenerJuego();
+            }
+        }
+        else
+        {
+            Debug.Log("🚫 Movimiento no permitido, no hay suficientes PM.");
         }
     }
-    else
-    {
-        Debug.Log("Movimiento no permitido, no hay suficientes PM.");
-    }
-    }
-
 
     public void ReiniciarTurno()
     {
         puntosMovimientoActual = puntosMovimientoMax;
-        Debug.Log($"Nuevo turno. El Rey tiene {puntosMovimientoActual} PM.");
+        Debug.Log($"Nuevo turno: {puntosMovimientoActual} PM.");
         MostrarMovimientoPosible();
         mostrandoMovimientos = true;
     }
@@ -162,34 +181,34 @@ public class KingController : MonoBehaviour, IPointerClickHandler
     public void GanarPuntoMovimiento(int cantidad)
     {
         puntosMovimientoActual += cantidad;
-        Debug.Log($"El Rey ganó +{cantidad} PM y ahora tiene {puntosMovimientoActual} PM.");
+        Debug.Log($"El Rey gana +{cantidad} PM. Total: {puntosMovimientoActual}.");
         MostrarMovimientoPosible();
         mostrandoMovimientos = true;
-        FindFirstObjectByType<ChessGameManager>().ActualizarHUD();
+        FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
     }
 
     public void GanarVida(int cantidad)
     {
         turnosRestantes += cantidad;
-        Debug.Log($"❤️ El Rey ganó +{cantidad} vida(s) y ahora tiene {turnosRestantes} vidas restantes.");
-        FindFirstObjectByType<ChessGameManager>().ActualizarHUD();
+        Debug.Log($"❤️ El Rey gana +{cantidad} vida(s). Ahora tiene {turnosRestantes}.");
+        FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
     }
 
-    public void TestMoverRey()
-    {
-        Debug.Log("Botón test presionado. Moviendo Rey a (2,2).");
-        MoverA(new Vector2Int(2, 2));
-    }
+    //    public void TestMoverRey()
+    //    {
+    //        Debug.Log("Botón test presionado. Moviendo Rey a (2,2).");
+    //        MoverA(new Vector2Int(2, 2));
+    //    }
 
     public void RestarTurno()
     {
         turnosRestantes--;
-        Debug.Log("Turnos restantes: " + turnosRestantes);
-        FindFirstObjectByType<ChessGameManager>().ActualizarHUD();
+        Debug.Log($"Turnos restantes: {turnosRestantes}");
+        FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
 
         if (turnosRestantes <= 0)
         {
-            Debug.Log("💀 El Rey se quedó sin vidas tras pasar turno. Mostrando panel de derrota.");
+            Debug.Log("💀 Sin vidas tras pasar turno.");
 
             LevelResultUI.Instance.ShowResults(
                 LevelProgress.Instance.keysCollected,
@@ -197,14 +216,15 @@ public class KingController : MonoBehaviour, IPointerClickHandler
                 0,
                 PlayerScore.Instance.GetTotalScore()
             );
-
             juegoActivo = false;
-            FindFirstObjectByType<ChessGameManager>().DetenerJuego();
+            FindFirstObjectByType<ChessGameManager>()?.DetenerJuego();
         }
     }
-
-    public Vector2Int GetPosicionActual()
+    public void ConsumirPA(int cantidad)
     {
-        return posicionActual;
+    puntosAccionActual -= cantidad;
+    Debug.Log($"♔ El Rey consume {cantidad} PA. Quedan: {puntosAccionActual}");
+    FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
     }
+
 }

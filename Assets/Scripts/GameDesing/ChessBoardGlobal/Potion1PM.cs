@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Potion1PM : MonoBehaviour, ITileEffect
+public class Potion1PM : MonoBehaviour, ITileEffect, IPieceWithPosition
 {
     public Vector2Int tileCoords;
     public int turnoAparece = 1;
@@ -10,22 +10,29 @@ public class Potion1PM : MonoBehaviour, ITileEffect
     private bool activadoEnJuego = false;
     private Image image;
 
+    private PiecePositioner piecePositioner;
+
     private void Awake()
     {
         image = GetComponent<Image>();
+        piecePositioner = GetComponent<PiecePositioner>();
+
         if (image == null)
-        {
-            Debug.LogError($"🚨 El objeto {gameObject.name} no tiene un componente Image.");
-        }
+            Debug.LogError($"🚨 {gameObject.name} no tiene componente Image.");
+
+        if (piecePositioner != null)
+            piecePositioner.tileCoords = tileCoords;  // inicial sincronía
     }
 
     private void Start()
     {
+        if (piecePositioner != null)
+            tileCoords = piecePositioner.tileCoords;  // inicialización por PiecePositioner
+
         if (visibleDesdeInicio && turnoAparece <= 1)
         {
-            activadoEnJuego = true;
-            image.enabled = true;
-            Debug.Log($"🌟 Pocion en {tileCoords} aparece desde el inicio (turnoAparece={turnoAparece})");
+            ActivarVisual();
+            Debug.Log($"🌟 Poción inicia visible en {tileCoords}");
         }
         else
         {
@@ -33,39 +40,83 @@ public class Potion1PM : MonoBehaviour, ITileEffect
         }
     }
 
+    private void Update()
+    {
+        if (!activadoEnJuego) return;
+
+        var rey = FindFirstObjectByType<KingController>();
+        if (rey != null)
+            VerificarAutoChequeo(rey);
+    }
+
+    public void VerificarAutoChequeo(KingController rey)
+    {
+        if (activadoEnJuego && tileCoords == rey.GetPosicionActual())
+        {
+            Debug.Log($"🧲 Poción en {tileCoords} detectó al Rey. Se activará.");
+            RecogerPocion(rey);
+        }
+    }
+
     public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey)
     {
-        if (posicionRey == tileCoords && activadoEnJuego)
-        {
-            Debug.Log($"🧪 El Rey recogió una poción en {tileCoords} y ganó +1 PM.");
-            rey.GanarPuntoMovimiento(1);
-            Destroy(gameObject);
-        }
+        VerificarAutoChequeo(rey);
+    }
+
+    public void RecogerPocion(KingController rey)
+    {
+        Debug.Log($"🧪 El Rey recogió la poción en {tileCoords} (+1 PM).");
+        rey.GanarPuntoMovimiento(1);
+        Destroy(gameObject);
     }
 
     public void VerificarTurnoActual(int turnoActual)
     {
-        Debug.Log($"🔍 Pocion en {tileCoords}: turnoActual={turnoActual}, turnoAparece={turnoAparece}, ActivadoJuego={activadoEnJuego}");
-
         if (!activadoEnJuego && turnoActual >= turnoAparece)
         {
-            activadoEnJuego = true;
-            image.enabled = true;
-            Debug.Log($"✅ Pocion en {tileCoords} SE ACTIVÓ en el turno {turnoActual}");
+            ActivarVisual();
+            Debug.Log($"✅ Poción en {tileCoords} se activó en el turno {turnoActual}.");
 
-            KingController rey = FindFirstObjectByType<KingController>();
-            if (rey != null && rey.GetPosicionActual() == tileCoords)
-            {
-                Debug.Log($"🧪 El Rey ya estaba sobre la poción en {tileCoords}. Mostrando 1 seg antes de desaparecer.");
-                rey.GanarPuntoMovimiento(1);
-                StartCoroutine(DesaparecerDespuesDe(1f));
-            }
+            var rey = FindFirstObjectByType<KingController>();
+            if (rey != null)
+                VerificarAutoChequeo(rey);
         }
     }
 
-    private System.Collections.IEnumerator DesaparecerDespuesDe(float tiempo)
+    public void ForzarActivacion()
     {
-        yield return new WaitForSeconds(tiempo);
-        Destroy(gameObject);
+        if (!activadoEnJuego)
+        {
+            ActivarVisual();
+            Debug.Log($"🚀 Poción en {tileCoords} activada manualmente.");
+
+            var rey = FindFirstObjectByType<KingController>();
+            if (rey != null)
+                VerificarAutoChequeo(rey);
+        }
+    }
+
+    private void ActivarVisual()
+    {
+        activadoEnJuego = true;
+        image.enabled = true;
+    }
+
+    // === INTERFAZ IPieceWithPosition ===
+    public void SetPosicionActual(Vector2Int nuevaPos)
+    {
+        tileCoords = nuevaPos;
+        if (piecePositioner != null)
+            piecePositioner.tileCoords = nuevaPos;
+    }
+
+    public Vector2Int GetPosicionActual()
+    {
+        return tileCoords;
+    }
+    public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
+    {
+   
     }
 }
+

@@ -43,6 +43,16 @@ public class CollectibleUP : MonoBehaviour, ITileEffect
         }
     }
 
+    public void RevisarSiPeonLlegó(Vector2Int posicionRey, KingController rey)
+    {
+        if (posicionRey == tileCoords && activadoEnJuego)
+        {
+            Debug.Log($"❤️ El Peón recogió un corazón en {tileCoords} y ganó +1 vida.");
+            rey.GanarVida(1);
+            Destroy(gameObject);
+        }
+    }
+
     public void VerificarTurnoActual(int turnoActual)
     {
         Debug.Log($"🔍 Corazón en {tileCoords}: turnoActual={turnoActual}, turnoAparece={turnoAparece}, ActivadoJuego={activadoEnJuego}");
@@ -63,6 +73,10 @@ public class CollectibleUP : MonoBehaviour, ITileEffect
         }
     }
 
+    public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
+    {
+    // Por ahora no hace nada si el Peón llega a este tile.
+    }
     private System.Collections.IEnumerator DesaparecerDespuesDe(float tiempo)
     {
         yield return new WaitForSeconds(tiempo);
