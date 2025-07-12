@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Linq;
+using System.Collections.Generic;
 
 public class Expansion : MonoBehaviour, ITileEffect
 {
@@ -6,70 +8,76 @@ public class Expansion : MonoBehaviour, ITileEffect
 
     public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey)
     {
-        if (posicionRey == tileCoords)
-            ActivarExpansion(rey);
+        if (posicionRey == tileCoords) ActivarExpansion(rey);
     }
 
     public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
     {
-        if (posicionPeon == tileCoords)
-            ActivarExpansion(peon);
+        if (posicionPeon == tileCoords) ActivarExpansion(peon);
     }
 
     private void ActivarExpansion(MonoBehaviour activador)
     {
-        Debug.Log($"💥 Expansion activado en {tileCoords}. Empujará todos los objetos cercanos excepto a {activador.name}.");
+        Debug.Log($"💥 Expansion en {tileCoords} activado por {activador.name}.");
 
-        var allMovables = FindObjectsByType<MovableTileObject>(FindObjectsSortMode.None);
-        foreach (var movable in allMovables)
+        // Tomamos todos los MovableTileObject, ordenados de más lejos a más cerca
+        List<MovableTileObject> todos = FindObjectsByType<MovableTileObject>(FindObjectsSortMode.None)
+            .OrderByDescending(m => Vector2Int.Distance(m.tileCoords, tileCoords))
+            .ToList();
+
+        foreach (var obj in todos)
         {
-            // 🚫 No afectar la propia casilla ni al activador
-            if (movable.tileCoords == tileCoords || movable.GetComponent<KingController>() == activador || movable.GetComponent<PawnController>() == activador)
-                continue;
+            if (EsIgnorable(obj, activador)) continue;
+            if (!EstaVisibleYRecolectable(obj)) continue;
 
-            Vector2Int delta = movable.tileCoords - tileCoords;
-            Vector2Int dir = Vector2Int.zero;
+            Vector2Int dir = CalcularDireccion(obj.tileCoords - tileCoords);
+            Vector2Int destino = obj.tileCoords + dir;
 
-            // Caso diagonal perfecta
-            if (Mathf.Abs(delta.x) == Mathf.Abs(delta.y))
+            if (!EsDentroTablero(destino))
             {
-                dir = new Vector2Int(delta.x > 0 ? 1 : -1, delta.y > 0 ? 1 : -1);
-            }
-            // Caso misma fila
-            else if (delta.y == 0)
-            {
-                dir = new Vector2Int(delta.x > 0 ? 1 : -1, 0);
-            }
-            // Caso misma columna
-            else if (delta.x == 0)
-            {
-                dir = new Vector2Int(0, delta.y > 0 ? 1 : -1);
-            }
-            // Caso no alineado: empuja en el eje dominante
-            else
-            {
-                if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y))
-                    dir = new Vector2Int(delta.x > 0 ? 1 : -1, 0);
-                else
-                    dir = new Vector2Int(0, delta.y > 0 ? 1 : -1);
-            }
-
-            Vector2Int nuevaPos = movable.tileCoords + dir;
-
-            // 🔥 Verificar que no salga del tablero
-            if (nuevaPos.x < 0 || nuevaPos.y < 0 || nuevaPos.x > 7 || nuevaPos.y > 7)
-            {
-                Debug.Log($"🚫 {movable.gameObject.name} no puede salir del tablero hacia {nuevaPos}.");
+                Debug.Log($"🚫 {obj.name} no puede salir hacia {destino}.");
                 continue;
             }
 
-            Debug.Log($"💥 {movable.gameObject.name} expulsado de {movable.tileCoords} a {nuevaPos}.");
-            movable.MoverA(nuevaPos);
+            Debug.Log($"💥 {obj.name} de {obj.tileCoords} a {destino}.");
+            obj.MoverA(destino);
         }
     }
 
-    public void VerificarTurnoActual(int turnoActual)
+    private bool EsIgnorable(MovableTileObject obj, MonoBehaviour activador)
     {
-        // sin efecto por turno
+        if (obj.tileCoords == tileCoords) return true;
+        return obj.GetComponent<KingController>() == activador || obj.GetComponent<PawnController>() == activador;
     }
+
+    private bool EstaVisibleYRecolectable(MovableTileObject obj)
+    {
+        // Si es pocima (u otro recolectable) y aún no está activada, la ignoramos
+        var pocion = obj.GetComponent<Potion1PM>();
+        if (pocion != null && !pocion.IsVisible()) return false;
+
+        // Aquí podrías agregar lógica para otros recolectables similares
+
+        return true;
+    }
+
+    private Vector2Int CalcularDireccion(Vector2Int delta)
+    {
+    if (delta.x == 0 && delta.y == 0) return Vector2Int.zero;  
+    if (Mathf.Abs(delta.x) == Mathf.Abs(delta.y)) 
+        return new Vector2Int((int)Mathf.Sign(delta.x), (int)Mathf.Sign(delta.y));
+    if (delta.y == 0) 
+        return new Vector2Int((int)Mathf.Sign(delta.x), 0);
+    if (delta.x == 0) 
+        return new Vector2Int(0, (int)Mathf.Sign(delta.y));
+    return Mathf.Abs(delta.x) > Mathf.Abs(delta.y)
+        ? new Vector2Int((int)Mathf.Sign(delta.x), 0)
+        : new Vector2Int(0, (int)Mathf.Sign(delta.y));
+    }
+
+
+    private bool EsDentroTablero(Vector2Int p)
+        => p.x >= 0 && p.x <= 7 && p.y >= 0 && p.y <= 7;
+
+    public void VerificarTurnoActual(int turnoActual) { }
 }

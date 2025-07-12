@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 
-public class Potion1PM : MonoBehaviour, ITileEffect
+public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable
 {
     public Vector2Int tileCoords;
     public int turnoAparece = 1;
@@ -16,36 +16,121 @@ public class Potion1PM : MonoBehaviour, ITileEffect
     {
         image = GetComponent<Image>();
         piecePositioner = GetComponent<PiecePositioner>();
-
         if (piecePositioner != null)
             piecePositioner.tileCoords = tileCoords;
     }
 
     private void Start()
     {
-        if (piecePositioner != null)
-            tileCoords = piecePositioner.tileCoords;
+    if (piecePositioner != null)
+        tileCoords = piecePositioner.tileCoords;
 
-        if (visibleDesdeInicio && turnoAparece <= 1)
+    // 🚫 Siempre inicia invisible
+    image.enabled = false;
+
+    if (visibleDesdeInicio && turnoAparece <= 1)
+    {
+        Debug.Log($"🌟 Poción planea aparecer en {tileCoords}");
+        if (PuedeAparecerEn(tileCoords))
         {
             ActivarVisual();
-            Debug.Log($"🌟 Poción inicia visible en {tileCoords}");
+            Debug.Log($"✅ Poción apareció normalmente en {tileCoords}");
         }
         else
         {
-            image.enabled = false;
+            Debug.Log($"❌ Poción decidió NO aparecer en {tileCoords} y se destruye.");
+            Destroy(gameObject, 0);
         }
+    }
     }
 
     private void Update()
     {
-        // 🚀 Sincroniza siempre con PiecePositioner
         if (piecePositioner != null)
             tileCoords = piecePositioner.tileCoords;
 
         if (!activadoEnJuego) return;
 
         VerificarAutoChequeoGeneral();
+    }
+
+    public void VerificarTurnoActual(int turnoActual)
+    {
+        if (!activadoEnJuego && turnoActual >= turnoAparece)
+        {
+            Debug.Log($"⏳ Pocion en {tileCoords} evalúa si puede aparecer en turno {turnoActual}.");
+
+            if (PuedeAparecerEn(tileCoords))
+            {
+                ActivarVisual();
+                Debug.Log($"✅ Poción en {tileCoords} se activó normalmente en el turno {turnoActual}.");
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
+    }
+
+    private bool PuedeAparecerEn(Vector2Int coords)
+    {
+        // 🚫 Primero, verifica si hay otro objeto recoleccionable
+        var objetos = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+            .Where(obj => obj is IObjetoRecoleccionable);
+
+        foreach (var obj in objetos)
+        {
+            if (obj == this) continue;
+
+            Vector2Int pos = Vector2Int.zero;
+            if (obj.TryGetComponent<PiecePositioner>(out var posr))
+                pos = posr.tileCoords;
+            else if (obj is IPieceWithPosition pieza)
+                pos = pieza.GetPosicionActual();
+
+            if (pos == coords)
+            {
+                Debug.Log($"🚫 Poción decidió NO aparecer en {coords} porque ya hay otro objeto recoleccionable: {obj.name}");
+                return false;
+            }
+        }
+
+        // 🚀 Ahora, verifica si hay una ficha (Rey o Peón) para otorgarle el efecto de inmediato
+        var rey = FindFirstObjectByType<KingController>();
+        if (rey != null && coords == rey.GetPosicionActual())
+        {
+            Debug.Log($"⚡ Poción apareció en {coords} encima del Rey. Activa efecto inmediatamente.");
+            RecogerPocion(rey);
+            return false;
+        }
+
+        var peones = FindObjectsByType<PawnController>(FindObjectsSortMode.None);
+        foreach (var peon in peones)
+        {
+            if (coords == peon.GetPosicionActual())
+            {
+                Debug.Log($"⚡ Poción apareció en {coords} encima del Peón. Activa efecto silencioso.");
+                peon.GanarPuntoMovimientoSilencioso(1);
+                Destroy(gameObject);
+                return false;
+            }
+        }
+
+        // ✅ Si no hay conflictos, puede aparecer normalmente
+        return true;
+    }
+
+    private void ActivarVisual()
+    {
+        activadoEnJuego = true;
+        image.enabled = true;
+    }
+
+    private void RecogerPocion(KingController rey)
+    {
+        Debug.Log($"🧪 El Rey recogió la poción en {tileCoords} (+1 PM).");
+        rey.GanarPuntoMovimiento(1);
+        Destroy(gameObject);
     }
 
     public void VerificarAutoChequeoGeneral()
@@ -70,82 +155,12 @@ public class Potion1PM : MonoBehaviour, ITileEffect
             }
         }
     }
-
-    public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey)
+    public bool IsVisible()
     {
-        VerificarAutoChequeoGeneral();
+    return activadoEnJuego;
     }
 
-    public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
-    {
-        VerificarAutoChequeoGeneral();
-    }
 
-    public void VerificarTurnoActual(int turnoActual)
-    {
-        if (!activadoEnJuego && turnoActual >= turnoAparece)
-        {
-            ActivarVisual();
-            Debug.Log($"✅ Poción en {tileCoords} se activó en el turno {turnoActual}.");
-        }
-    }
-
-    private void ActivarVisual()
-    {
-        activadoEnJuego = true;
-        image.enabled = true;
-    }
-
-    private void RecogerPocion(KingController rey)
-    {
-        Debug.Log($"🧪 El Rey recogió la poción en {tileCoords} (+1 PM).");
-        rey.GanarPuntoMovimiento(1);
-        Destroy(gameObject);
-    }
-
-    // 🚀 NUEVO: verificación si la casilla está ocupada
-    public bool EstaCasillaOcupada(Vector2Int coords)
-    {
-        var piezas = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-            .Where(obj => 
-                obj is KingController ||
-                obj is PawnController ||
-                obj.GetComponent<Potion1PM>() != null
-            );
-
-        foreach (var pieza in piezas)
-        {
-            Vector2Int pos = Vector2Int.zero;
-
-            if (pieza is KingController rey) pos = rey.GetPosicionActual();
-            else if (pieza is PawnController peon) pos = peon.GetPosicionActual();
-            else if (pieza.GetComponent<Potion1PM>() != null) pos = pieza.GetComponent<Potion1PM>().tileCoords;
-
-            // ⚠️ Evita considerarse a sí misma
-            if (pos == coords && pieza.gameObject != this.gameObject)
-            {
-                Debug.Log($"🚫 La casilla {coords} está ocupada por {pieza.gameObject.name}");
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // 🚀 NUEVO: SetPosicionActual inteligente que regresa si hay colisión
-    public void SetPosicionActual(Vector2Int nuevaPos)
-    {
-        Vector2Int posicionPrev = tileCoords;
-
-        tileCoords = nuevaPos;
-        if (piecePositioner != null)
-            piecePositioner.tileCoords = nuevaPos;
-
-        if (EstaCasillaOcupada(nuevaPos))
-        {
-            Debug.Log($"⛔ {gameObject.name} encontró la casilla {nuevaPos} ocupada. Regresará a {posicionPrev}.");
-            tileCoords = posicionPrev;
-            if (piecePositioner != null)
-                piecePositioner.tileCoords = posicionPrev;
-        }
-    }
+    public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey) => VerificarAutoChequeoGeneral();
+    public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon) => VerificarAutoChequeoGeneral();
 }

@@ -100,65 +100,68 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
     public void MoverA(Vector2Int nuevaPos, KingController rey)
     {
-        Debug.Log($"♙ {gameObject.name} juegoActivo={juegoActivo}");
-        if (!juegoActivo) return;
+    Debug.Log($"♙ {gameObject.name} juegoActivo={juegoActivo}");
+    if (!juegoActivo) return;
+    Debug.Log($"♙ {gameObject.name} juegoActivo={juegoActivo}");
+
+    int distancia = Mathf.Abs(posicionActual.x - nuevaPos.x) + Mathf.Abs(posicionActual.y - nuevaPos.y);
+    int rango = Mathf.Max(1, puntosMovimientoActual);
+
+    if (distancia <= rango && rey.puntosAccionActual > 0)
+    {
+        Debug.Log($"Moviendo al Peón desde {posicionActual} a {nuevaPos}, recorriendo {distancia} casillas. Consumirá 1 PA del Rey.");
         Debug.Log($"♙ {gameObject.name} juegoActivo={juegoActivo}");
 
-        int distancia = Mathf.Abs(posicionActual.x - nuevaPos.x) + Mathf.Abs(posicionActual.y - nuevaPos.y);
-        int rango = Mathf.Max(1, puntosMovimientoActual);
+        Vector2Int paso = posicionActual;
 
-        if (distancia <= rango && rey.puntosAccionActual > 0)
+        while (paso != nuevaPos)
         {
-            Debug.Log($"Moviendo al Peón desde {posicionActual} a {nuevaPos}, recorriendo {distancia} casillas. Consumirá 1 PA del Rey.");
-            Debug.Log($"♙ {gameObject.name} juegoActivo={juegoActivo}");
-            Vector2Int paso = posicionActual;
+            if (paso.x < nuevaPos.x) paso.x++;
+            else if (paso.x > nuevaPos.x) paso.x--;
 
-            while (paso != nuevaPos)
-            {
-                if (paso.x < nuevaPos.x) paso.x++;
-                else if (paso.x > nuevaPos.x) paso.x--;
+            if (paso.y < nuevaPos.y) paso.y++;
+            else if (paso.y > nuevaPos.y) paso.y--;
 
-                if (paso.y < nuevaPos.y) paso.y++;
-                else if (paso.y > nuevaPos.y) paso.y--;
+            SetPosicionActual(paso);
+            Debug.Log($"🚶 El Peón pasa por {paso}");
 
-                SetPosicionActual(paso);
-                Debug.Log($"🚶 El Peón pasa por {paso}");
+            foreach (ITileEffect efecto in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ITileEffect>())
+                efecto.RevisarSiPeonLlegó(paso, this);
+        }
 
-                foreach (ITileEffect efecto in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ITileEffect>())
-                    efecto.RevisarSiPeonLlegó(paso, this);
-            }
+        transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(nuevaPos);
+        puntosMovimientoActual -= distancia;
+        rey.puntosAccionActual -= 1;
 
-            transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(nuevaPos);
-            puntosMovimientoActual -= distancia; // reduce PM temporal por si es una poción
-            rey.puntosAccionActual -= 1;         // siempre consume 1 PA
+        MostrarMovimientoPosible();
+        mostrandoMovimientos = true;
 
-            MostrarMovimientoPosible();
-            mostrandoMovimientos = true;
+        var reina = FindFirstObjectByType<QueenEnemyController>();
+        if (reina != null)
+            reina.VerificarAmenazaSobre(posicionActual);
 
-            // 🚀 NUEVO: que la Reina actualice amenaza hacia el Peón
-            var reina = FindFirstObjectByType<QueenEnemyController>();
-            if (reina != null)
-                reina.VerificarAmenazaSobre(posicionActual);
+        // 🚀 NUEVO: revisar colisiones con objetos recoleccionables en esta casilla
+        RevisarObjetosEnCasilla();
 
+        FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
+
+        if (posicionActual == new Vector2Int(7, 7))
+        {
+            Debug.Log("♕ El Peón ha coronado en H8. Otorgando bonus al Rey.");
+            rey.puntosAccionActual += 7;
+            rey.puntosMovimientoActual += 7;
+            rey.GanarVida(3);
             FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
-
-            if (posicionActual == new Vector2Int(7, 7))
-            {
-                Debug.Log("♕ El Peón ha coronado en H8. Otorgando bonus al Rey.");
-                rey.puntosAccionActual += 7;
-                rey.puntosMovimientoActual += 7;
-                rey.GanarVida(3);
-                FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
-                Destroy(gameObject);
-            }
+            Destroy(gameObject);
         }
-        else
-        {
-            if (distancia > rango)
-                Debug.Log("🚫 Movimiento no permitido, no hay suficiente rango PM del Peón.");
-            else if (rey.puntosAccionActual <= 0)
-                Debug.Log("🚫 Movimiento no permitido, no hay suficientes PA del Rey.");
-        }
+    }
+    else
+    {
+        if (distancia > rango)
+            Debug.Log("🚫 Movimiento no permitido, no hay suficiente rango PM del Peón.");
+        else if (rey.puntosAccionActual <= 0)
+            Debug.Log("🚫 Movimiento no permitido, no hay suficientes PA del Rey.");
+    }
     }
 
 
@@ -171,24 +174,57 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
     }
 
     public void GanarPuntoMovimiento(int cantidad)
-    {
-        puntosMovimientoActual += cantidad;
-        Debug.Log($"El Peón gana +{cantidad} PM. Total ahora: {puntosMovimientoActual}.");
-        MostrarMovimientoPosible();
-        mostrandoMovimientos = true;
-        FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
-    }
+{
+    puntosMovimientoMax += cantidad;
+    puntosMovimientoActual = puntosMovimientoMax;
+
+    Debug.Log($"El Peón gana +{cantidad} PM máximo. Ahora tiene {puntosMovimientoMax} PM por turno.");
+    MostrarMovimientoPosible();
+    mostrandoMovimientos = true;
+    FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
+}
 
     public void DesactivarJuego()
     {
         juegoActivo = false;
     }
-    
+
     public void GanarPuntoMovimientoSilencioso(int cantidad)
-    {
-    puntosMovimientoActual += cantidad;
-    Debug.Log($"🤫 El Peón gana +{cantidad} PM silenciosamente. Total: {puntosMovimientoActual}.");
+{
+    puntosMovimientoMax += cantidad;
+    puntosMovimientoActual = puntosMovimientoMax;
+
+    Debug.Log($"🤫 El Peón gana +{cantidad} PM máximo silenciosamente. Ahora tiene {puntosMovimientoMax} PM por turno.");
     FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
+}
+    
+    private void RevisarObjetosEnCasilla()
+{
+    var objetos = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+        .Where(obj => obj is IObjetoRecoleccionable);
+
+    foreach (var obj in objetos)
+    {
+        // Primero localiza su posición
+        Vector2Int pos = Vector2Int.zero;
+        if (obj.TryGetComponent<PiecePositioner>(out var posr))
+            pos = posr.tileCoords;
+        else if (obj is IPieceWithPosition pieza)
+            pos = pieza.GetPosicionActual();
+
+        // Si está en la misma casilla
+        if (pos == posicionActual)
+        {
+            Debug.Log($"♙ Peón en {posicionActual} absorbe objeto {obj.name}.");
+
+            // Intenta "activar" su efecto de forma genérica
+            if (obj.TryGetComponent<ITileEffect>(out var efecto))
+            {
+                efecto.RevisarSiPeonLlegó(posicionActual, this);
+            }
+        }
     }
+}
+
 
 }
