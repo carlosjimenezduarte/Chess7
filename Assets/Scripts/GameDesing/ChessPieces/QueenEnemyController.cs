@@ -81,96 +81,105 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
     }
 
     // === Visualización con Prefabs en línea directa al Rey ===
-    public void VerificarSiReyEstaAmenazado(Vector2Int posicionRey)
+    public void VerificarAmenazaSobre(Vector2Int posicionPieza)
     {
-        foreach (var obj in overlaysInstanciados)
-            Destroy(obj);
-        overlaysInstanciados.Clear();
+    foreach (var obj in overlaysInstanciados)
+        Destroy(obj);
+    overlaysInstanciados.Clear();
 
-        int dx = posicionRey.x - posicionActual.x;
-        int dy = posicionRey.y - posicionActual.y;
+    int dx = posicionPieza.x - posicionActual.x;
+    int dy = posicionPieza.y - posicionActual.y;
 
-        bool esDireccionValida = (dx == 0 || dy == 0 || Mathf.Abs(dx) == Mathf.Abs(dy));
-        if (!esDireccionValida)
-        {
-            ultimaPosicionAmenaza = new Vector2Int(-99, -99);
-            return;
-        }
-
-        Vector2Int direccionRey = new Vector2Int(
-            dx == 0 ? 0 : (dx > 0 ? 1 : -1),
-            dy == 0 ? 0 : (dy > 0 ? 1 : -1)
-        );
-
-        Vector2Int paso = posicionActual;
-        int pasosContados = 0;
-        List<Vector2Int> lineaDeAtaque = new List<Vector2Int>();
-
-        while (pasosContados <= rangoRangeZone && paso != posicionRey)
-        {
-            if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
-                break;
-
-            lineaDeAtaque.Add(paso);
-            paso += direccionRey;
-            pasosContados++;
-        }
-
-        if (paso == posicionRey)
-        {
-            lineaDeAtaque.Add(posicionRey);
-
-            Debug.Log($"♛ Pintando línea de prefabs hacia Rey en {posicionRey}");
-
-            foreach (Vector2Int coord in lineaDeAtaque)
-            {
-                GameObject overlay = Instantiate(prefabRojo, dangerOverlayParent);
-                overlay.GetComponent<RectTransform>().anchoredPosition = 
-                    BoardManagerGlobal.Instance.GetTileAnchoredPosition(coord);
-                overlaysInstanciados.Add(overlay);
-            }
-
-            ultimaPosicionAmenaza = posicionRey;
-        }
-        else
-        {
-            ultimaPosicionAmenaza = new Vector2Int(-99, -99);
-        }
+    bool esDireccionValida = (dx == 0 || dy == 0 || Mathf.Abs(dx) == Mathf.Abs(dy));
+    if (!esDireccionValida)
+    {
+        ultimaPosicionAmenaza = new Vector2Int(-99, -99);
+        return;
     }
 
-    // === Método ITileEffect: lógica para atacar directamente al Rey ===
-    public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey)
+    Vector2Int direccion = new Vector2Int(
+        dx == 0 ? 0 : (dx > 0 ? 1 : -1),
+        dy == 0 ? 0 : (dy > 0 ? 1 : -1)
+    );
+
+    Vector2Int paso = posicionActual;
+    int pasosContados = 0;
+    List<Vector2Int> lineaDeAtaque = new List<Vector2Int>();
+
+    while (pasosContados <= rangoRangeZone && paso != posicionPieza)
     {
-        int dx = posicionRey.x - posicionActual.x;
-        int dy = posicionRey.y - posicionActual.y;
+        if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
+            break;
 
-        bool esDireccionValida = (dx == 0 || dy == 0 || Mathf.Abs(dx) == Mathf.Abs(dy));
-        if (!esDireccionValida)
-            return;
+        lineaDeAtaque.Add(paso);
+        paso += direccion;
+        pasosContados++;
+    }
 
-        Vector2Int direccionRey = new Vector2Int(
-            dx == 0 ? 0 : (dx > 0 ? 1 : -1),
-            dy == 0 ? 0 : (dy > 0 ? 1 : -1)
-        );
+    if (paso == posicionPieza)
+    {
+        lineaDeAtaque.Add(posicionPieza);
 
-        Vector2Int paso = posicionActual + direccionRey;
-        int pasosContados = 1;
+        Debug.Log($"♛ Pintando línea de prefabs hacia pieza en {posicionPieza}");
 
-        while (pasosContados <= rangoRangeZone && paso != posicionRey)
+        foreach (Vector2Int coord in lineaDeAtaque)
         {
-            if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
-                break;
-
-            paso += direccionRey;
-            pasosContados++;
+            GameObject overlay = Instantiate(prefabRojo, dangerOverlayParent);
+            overlay.GetComponent<RectTransform>().anchoredPosition = 
+                BoardManagerGlobal.Instance.GetTileAnchoredPosition(coord);
+            overlaysInstanciados.Add(overlay);
         }
 
-        if (paso == posicionRey)
+        ultimaPosicionAmenaza = posicionPieza;
+    }
+    else
+    {
+        ultimaPosicionAmenaza = new Vector2Int(-99, -99);
+    }
+    }
+
+
+    // === Método ITileEffect: lógica para atacar directamente al Rey ===
+    private void RevisarAmenazaAPieza(Vector2Int posicionPieza, System.Action efectoSobrePieza)
+    {
+    int dx = posicionPieza.x - posicionActual.x;
+    int dy = posicionPieza.y - posicionActual.y;
+
+    bool esDireccionValida = (dx == 0 || dy == 0 || Mathf.Abs(dx) == Mathf.Abs(dy));
+    if (!esDireccionValida)
+        return;
+
+    Vector2Int direccion = new Vector2Int(
+        dx == 0 ? 0 : (dx > 0 ? 1 : -1),
+        dy == 0 ? 0 : (dy > 0 ? 1 : -1)
+    );
+
+    Vector2Int paso = posicionActual + direccion;
+    int pasosContados = 1;
+
+    while (pasosContados <= rangoRangeZone && paso != posicionPieza)
+    {
+        if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
+            break;
+
+        paso += direccion;
+        pasosContados++;
+    }
+
+    if (paso == posicionPieza)
+    {
+        Debug.Log($"💀 Pieza alcanzada en {posicionPieza}");
+        efectoSobrePieza.Invoke();
+    }
+    }
+
+    public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey)
+    {
+        RevisarAmenazaAPieza(posicionRey, () =>
         {
-            Debug.Log($"💀 El Rey fue alcanzado en {posicionRey}");
-            if (pasosContados <= rangoKillZone)
+            if (Vector2Int.Distance(posicionActual, posicionRey) <= rangoKillZone)
             {
-                StartCoroutine(MatarReyDespuesDelay(rey, posicionRey));
+                StartCoroutine(MatarPiezaDespuesDelay(rey, posicionRey));
             }
             else
             {
@@ -178,26 +187,66 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
                 rey.puntosAccionActual -= 2;
                 rey.turnosRestantes -= 1;
             }
-        }
+        });
+    
     }
 
-    private IEnumerator MatarReyDespuesDelay(KingController rey, Vector2Int posicionRey)
+    public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
     {
-        transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(posicionRey);
+    RevisarAmenazaAPieza(posicionPeon, () => 
+    {
+        if (Vector2Int.Distance(posicionActual, posicionPeon) <= rangoKillZone)
+        {
+            StartCoroutine(MatarPiezaDespuesDelay(peon, posicionPeon));
+            Debug.Log($"💥 Peón eliminado por la Reina en {posicionPeon}");
+        }
+        else
+        {
+            peon.GanarPuntoMovimiento(-2);
+            FindFirstObjectByType<KingController>().puntosAccionActual -= 2;
+        }
+    });
+    }
 
-        Destroy(rey.gameObject);
-        Debug.Log("💀 Rey destruido visualmente del tablero.");
+    private IEnumerator MatarPiezaDespuesDelay(MonoBehaviour pieza, Vector2Int posicion)
+    {
+    if (this is IPieceWithPosition pieceWithPosition)
+        pieceWithPosition.SetPosicionActual(posicion);
 
-        yield return new WaitForSeconds(2f);
+    transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(posicion);
 
+    yield return new WaitForSeconds(0.2f);
+
+    if (pieza is IPieceWithPosition piezaVictima)
+    {
+        piezaVictima.SetPosicionActual(new Vector2Int(-1, -1));
+    }
+
+    if (pieza is PawnController peon)
+    {
+        peon.OcultarMovimientos();
+        peon.mostrandoMovimientos = false;
+        Debug.Log("🧹 Ocultando previsualización del Peón antes de destruirlo.");
+    }
+
+    Destroy(pieza.gameObject);
+    Debug.Log($"💀 {pieza.name} destruido visualmente del tablero.");
+
+    yield return new WaitForSeconds(2f);
+
+    if (pieza is KingController rey)
+    {
         rey.turnosRestantes = 0;
-        LevelResultUI.Instance.ShowResults(
+
+            LevelResultUI.Instance.ShowResults(
             LevelProgress.Instance.keysCollected,
             LevelProgress.Instance.hasDiamond,
             0,
             PlayerScore.Instance.GetTotalScore()
         );
+
         FindFirstObjectByType<ChessGameManager>().DetenerJuego();
+    }
     }
 
     // === Previsualización con Tiles ===
@@ -241,10 +290,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
             tile.ResetColor();
     }
 
-    public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
-    {
-    // Por ahora no hace nada si el Peón llega a este tile.
-    }
+   
     public void VerificarTurnoActual(int turnoActual)
     {
         // reservado para lógica futura

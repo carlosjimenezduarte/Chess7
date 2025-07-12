@@ -5,13 +5,16 @@ using System.Linq;
 public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPosition
 {
     public int puntosMovimientoMax = 3;
+    public int puntosAccionMax = 5;
+
+    [HideInInspector]
     public int puntosMovimientoActual;
     public int puntosAccionActual = 5;
     public int turnosRestantes = 7;
 
     private Vector2Int posicionActual;
     private bool juegoActivo = false;
-    private bool mostrandoMovimientos = false;
+    public bool mostrandoMovimientos = false;
 
     private void Start()
     {
@@ -60,7 +63,7 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         }
     }
 
-    private void OcultarMovimientos()
+    public void OcultarMovimientos()
     {
         foreach (Tile tile in BoardManagerGlobal.Instance.tiles)
             tile.HighlightMove(false);
@@ -68,21 +71,33 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (!juegoActivo) return;
+        var gameManager = FindFirstObjectByType<ChessGameManager>();
+        bool esNuevaSeleccion = gameManager.fichaSeleccionadaActual != this;
+        gameManager.fichaSeleccionadaActual = this;
 
-        mostrandoMovimientos = !mostrandoMovimientos;
+        // Oculta rangos del Rey si existe
+        var rey = FindFirstObjectByType<KingController>();
+        if (rey != null && rey != this)
+            rey.OcultarMovimientos();
 
-        if (mostrandoMovimientos)
+        // Si es la primera vez que se selecciona esta ficha,
+        // fuerza la visualización del rango automáticamente
+        if (esNuevaSeleccion || !mostrandoMovimientos)
         {
-            Debug.Log("🟢 Mostrando previsualización de movimientos del Rey.");
+            mostrandoMovimientos = true;
             MostrarMovimientoPosible();
+            Debug.Log("🟢 Mostrando previsualización automática del Rey.");
         }
         else
         {
-            Debug.Log("🔴 Ocultando previsualización de movimientos del Rey.");
+            mostrandoMovimientos = false;
             OcultarMovimientos();
+            Debug.Log("🔴 Ocultando previsualización del Rey.");
         }
+
     }
+
+
 
     public void MoverA(Vector2Int nuevaPos)
     {
@@ -125,7 +140,7 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
             // ⚔ actualiza amenaza de la Reina
             var reina = FindFirstObjectByType<QueenEnemyController>();
             if (reina != null)
-                reina.VerificarSiReyEstaAmenazado(posicionActual);
+                reina.VerificarAmenazaSobre(posicionActual);
 
             FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
 
@@ -166,17 +181,20 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         }
         else
         {
-            Debug.Log("🚫 Movimiento no permitido, no hay suficientes PM.");
+            Debug.Log("🚫 Movimiento no permitido, no hay suficientes PM. Soy el Rey");
         }
     }
 
     public void ReiniciarTurno()
     {
         puntosMovimientoActual = puntosMovimientoMax;
-        Debug.Log($"Nuevo turno: {puntosMovimientoActual} PM.");
+        puntosAccionActual = puntosAccionMax;
+        Debug.Log($"Nuevo turno: {puntosMovimientoActual} PM, {puntosAccionActual} PA.");
+
         MostrarMovimientoPosible();
         mostrandoMovimientos = true;
     }
+
 
     public void GanarPuntoMovimiento(int cantidad)
     {
@@ -194,11 +212,6 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
     }
 
-    //    public void TestMoverRey()
-    //    {
-    //        Debug.Log("Botón test presionado. Moviendo Rey a (2,2).");
-    //        MoverA(new Vector2Int(2, 2));
-    //    }
 
     public void RestarTurno()
     {
@@ -220,11 +233,9 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
             FindFirstObjectByType<ChessGameManager>()?.DetenerJuego();
         }
     }
-    public void ConsumirPA(int cantidad)
+    public void DesactivarJuego()
     {
-    puntosAccionActual -= cantidad;
-    Debug.Log($"♔ El Rey consume {cantidad} PA. Quedan: {puntosAccionActual}");
-    FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
+    juegoActivo = false;
     }
-
+    
 }
