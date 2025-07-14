@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Linq;
 
-public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPosition
+public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPosition, IFicha
 {
     public int puntosMovimientoMax = 3;
     public int puntosAccionMax = 5;

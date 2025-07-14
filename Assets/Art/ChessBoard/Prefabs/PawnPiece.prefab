@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 6119706278773528034}
   - component: {fileID: 8791524645445745211}
   - component: {fileID: 6716028131665348417}
-  - component: {fileID: 5020621982416211195}
   m_Layer: 5
   m_Name: PawnPiece
   m_TagString: Untagged
@@ -119,16 +118,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   puntosMovimientoMax: 1
   mostrandoMovimientos: 0
---- !u!114 &5020621982416211195
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8455176439168668971}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33d1fb08166c8ac48b559443f7486744, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tileCoords: {x: 3, y: 3}

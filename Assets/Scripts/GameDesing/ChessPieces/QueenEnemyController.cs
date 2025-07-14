@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
 
-public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEffect, IPieceWithPosition
+public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEffect, IPieceWithPosition, IFicha
 {
     [Header("Alcances tipo Reina")]
     public int rangoKillZone = 3;
