@@ -67,61 +67,61 @@ public class ChessGameManager : MonoBehaviour
 
     private void IniciarJuego()
     {
-    Debug.Log("¡Inicio del juego!");
-    startButton.gameObject.SetActive(false);
-    passTurnButton.gameObject.SetActive(true);
+        Debug.Log("¡Inicio del juego!");
+        startButton.gameObject.SetActive(false);
+        passTurnButton.gameObject.SetActive(true);
 
-    turnoActivo = true;
-    tiempoRestante = turnoDuration;
-    tiempoNivelAcumulado = 0f;
-    turnoActual = 1;
+        turnoActivo = true;
+        tiempoRestante = turnoDuration;
+        tiempoNivelAcumulado = 0f;
+        turnoActual = 1;
 
-    fichaSeleccionadaActual = rey;
+        fichaSeleccionadaActual = rey;
 
-    rey.ActivarJuego(); 
-    Invoke(nameof(MostrarRangoInicialRey), 0.02f);
+        rey.ActivarJuego();
+        Invoke(nameof(MostrarRangoInicialRey), 0.02f);
 
-    var peones = FindObjectsByType<PawnController>(FindObjectsSortMode.None);
-    foreach (var peon in peones)
-    {
-        peon.ActivarJuego();
-        peon.OcultarMovimientos();
-        peon.mostrandoMovimientos = false;
-    }
+        var peones = FindObjectsByType<PawnController>(FindObjectsSortMode.None);
+        foreach (var peon in peones)
+        {
+            peon.ActivarJuego();
+            peon.OcultarMovimientos();
+            peon.mostrandoMovimientos = false;
+        }
 
-    ActualizarHUD();
-    NotificarEfectosTurno();
+        ActualizarHUD();
+        NotificarEfectosTurno();
     }
 
     private void MostrarRangoInicialRey()
     {
-    rey.mostrandoMovimientos = true;
-    rey.MostrarMovimientoPosible();
+        rey.mostrandoMovimientos = true;
+        rey.MostrarMovimientoPosible();
     }
 
 
     private void PasarTurno()
     {
-    Debug.Log("¡Pasando turno!");
-    tiempoRestante = turnoDuration;
-    turnoActual++;
+        Debug.Log("¡Pasando turno!");
+        tiempoRestante = turnoDuration;
+        turnoActual++;
 
-    // El Rey siempre reinicia su turno (recarga PM y PA)
-    rey.ReiniciarTurno();
-    rey.RestarTurno(); 
+        // El Rey siempre reinicia su turno (recarga PM y PA)
+        rey.ReiniciarTurno();
+        rey.RestarTurno();
 
-    // Si el peón está seleccionado, reinicia su rango
-    if (fichaSeleccionadaActual is PawnController peon)
-    {
-        peon.ReiniciarTurno();
-    }
-    else if (fichaSeleccionadaActual is KingController reySeleccionado)
-    {
-        reySeleccionado.ReiniciarTurno();
-    }
+        // Si el peón está seleccionado, reinicia su rango
+        if (fichaSeleccionadaActual is PawnController peon)
+        {
+            peon.ReiniciarTurno();
+        }
+        else if (fichaSeleccionadaActual is KingController reySeleccionado)
+        {
+            reySeleccionado.ReiniciarTurno();
+        }
 
-    NotificarEfectosTurno();
-    ActualizarHUD();
+        NotificarEfectosTurno();
+        ActualizarHUD();
     }
 
     private void NotificarEfectosTurno()
@@ -182,6 +182,14 @@ public class ChessGameManager : MonoBehaviour
     {
         Debug.Log("🏠 Saliendo al GameHome...");
         SceneManager.LoadScene("GameHome");
+    }
+    public void NotifyBoardChanged()
+{
+    var reinas = FindObjectsByType<QueenEnemyController>(FindObjectsSortMode.None);
+    foreach (var reina in reinas)
+    {
+        reina.RevisarAmenazasEnZona();
+    }
     }
     
 }

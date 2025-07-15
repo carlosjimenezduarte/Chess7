@@ -235,7 +235,20 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
     }
     public void DesactivarJuego()
     {
-    juegoActivo = false;
+        juegoActivo = false;
     }
+    
+    public void MostrarRango()
+    {
+    MostrarMovimientoPosible();
+    mostrandoMovimientos = true;
+    }
+
+public void OcultarRango()
+    {
+    OcultarMovimientos();
+    mostrandoMovimientos = false;
+    }
+
     
 }

@@ -29,44 +29,68 @@ public class TileClickHandler : MonoBehaviour, IPointerClickHandler
 
             if (posPieza == tileCoords)
             {
-                Debug.Log($"✅ Seleccionando pieza {((MonoBehaviour)pieza).name} en {tileCoords}");
-                gameManager.fichaSeleccionadaActual = (MonoBehaviour)pieza;
-
-                // Desactivar todas las demás
-                foreach (var otra in piezas)
+                
+                if (pieza is IFichaEnemiga enemiga)
                 {
-                    if (otra != pieza)
+                    if (gameManager.fichaSeleccionadaActual == null)
                     {
-                        if (otra is KingController rey)
+                        if ((MonoBehaviour)pieza == gameManager.fichaSeleccionadaActual)
                         {
-                            rey.OcultarMovimientos();
-                            rey.mostrandoMovimientos = false;
-                            rey.DesactivarJuego();
+                            enemiga.OcultarRango();
+                            Debug.Log($"⚪ Ocultando rango de {((MonoBehaviour)pieza).name}");
+                            gameManager.fichaSeleccionadaActual = null;
                         }
-                        else if (otra is PawnController peon)
+                        else
                         {
-                            peon.OcultarMovimientos();
-                            peon.mostrandoMovimientos = false;
-                            peon.DesactivarJuego();
+                            foreach (var otra in piezas)
+                            {
+                                if (otra != pieza && otra is IFichaEnemiga otraEnemiga)
+                                {
+                                    otraEnemiga.OcultarRango();
+                                }
+                            }
+
+                            enemiga.MostrarRango();
+                            Debug.Log($"🔴 Mostrando rango de ataque de {((MonoBehaviour)pieza).name}");
+                            gameManager.fichaSeleccionadaActual = (MonoBehaviour)pieza;
                         }
+                        return; // solo regresa si NO hay ficha seleccionada
                     }
+                    // si hay ficha seleccionada, no retorna y sigue a intentar mover abajo
                 }
 
-                // 🚀 Activar el juegoActivo solo de esta pieza seleccionada
-                if (pieza is KingController reyPieza)
-                {
-                    reyPieza.ActivarJuego();
-                }
-                else if (pieza is PawnController peonPieza)
-                {
-                    peonPieza.ActivarJuego();
-                }
 
-                return; // terminamos, ya se seleccionó
+                // 🚀 Si es ficha aliada
+                if (pieza is IFichaAliada aliada)
+                {
+                    // Toggle si clickeas la misma pieza ya seleccionada
+                    if ((MonoBehaviour)pieza == gameManager.fichaSeleccionadaActual)
+                    {
+                        aliada.OcultarRango();
+                        Debug.Log($"⚪ Desactivando rango de {((MonoBehaviour)pieza).name}");
+                        gameManager.fichaSeleccionadaActual = null;
+                    }
+                    else
+                    {
+                        // Desactiva todas las demás aliadas
+                        foreach (var otra in piezas)
+                        {
+                            if (otra != pieza && otra is IFichaAliada otraAliada)
+                            {
+                                otraAliada.OcultarRango();
+                            }
+                        }
+
+                        aliada.MostrarRango();
+                        Debug.Log($"🟢 Mostrando rango de {((MonoBehaviour)pieza).name}");
+                        gameManager.fichaSeleccionadaActual = (MonoBehaviour)pieza;
+                    }
+                    return;
+                }
             }
         }
 
-        // Si no hay pieza, intentar mover ficha seleccionada
+        // 🚀 Si no hay pieza, intenta mover la ficha seleccionada
         if (gameManager.fichaSeleccionadaActual != null)
         {
             var ficha = gameManager.fichaSeleccionadaActual;

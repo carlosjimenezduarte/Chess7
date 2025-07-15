@@ -2,12 +2,14 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
-public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEffect, IPieceWithPosition, IFicha
+public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEffect, IPieceWithPosition, IFicha, IFichaEnemiga
 {
     [Header("Alcances tipo Reina")]
     public int rangoKillZone = 3;
     public int rangoRangeZone = 5;
+    public bool ataquesConcatenados = false;
 
     [Header("Prefab para zonas peligrosas")]
     public GameObject prefabRojo;
@@ -36,30 +38,20 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         }
     }
 
-    // === Implementación interfaz IPieceWithPosition ===
     public void SetPosicionActual(Vector2Int nuevaPos)
     {
         posicionActual = nuevaPos;
-
-        // 🔥 También sincroniza el PiecePositioner si existe
-        PiecePositioner piecePositioner = GetComponent<PiecePositioner>();
-        if (piecePositioner != null)
-        {
+        if (TryGetComponent<PiecePositioner>(out var piecePositioner))
             piecePositioner.tileCoords = nuevaPos;
-        }
 
         Debug.Log($"♛ Reina actualizó su posición lógica a {nuevaPos}");
     }
 
-    public Vector2Int GetPosicionActual()
-    {
-        return posicionActual;
-    }
+    public Vector2Int GetPosicionActual() => posicionActual;
 
-    // === Click manual para mostrar u ocultar el rango con Tiles ===
     public void OnPointerClick(PointerEventData eventData)
     {
-        ChessGameManager manager = FindFirstObjectByType<ChessGameManager>();
+        var manager = FindFirstObjectByType<ChessGameManager>();
         if (manager == null || !manager.IsJuegoActivo())
         {
             Debug.Log("♛ No se puede mostrar rango: juego no activo.");
@@ -80,97 +72,36 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         }
     }
 
-    // === Visualización con Prefabs en línea directa al Rey ===
-    public void VerificarAmenazaSobre(Vector2Int posicionPieza)
-    {
-    foreach (var obj in overlaysInstanciados)
-        Destroy(obj);
-    overlaysInstanciados.Clear();
-
-    int dx = posicionPieza.x - posicionActual.x;
-    int dy = posicionPieza.y - posicionActual.y;
-
-    bool esDireccionValida = (dx == 0 || dy == 0 || Mathf.Abs(dx) == Mathf.Abs(dy));
-    if (!esDireccionValida)
-    {
-        ultimaPosicionAmenaza = new Vector2Int(-99, -99);
-        return;
-    }
-
-    Vector2Int direccion = new Vector2Int(
-        dx == 0 ? 0 : (dx > 0 ? 1 : -1),
-        dy == 0 ? 0 : (dy > 0 ? 1 : -1)
-    );
-
-    Vector2Int paso = posicionActual;
-    int pasosContados = 0;
-    List<Vector2Int> lineaDeAtaque = new List<Vector2Int>();
-
-    while (pasosContados <= rangoRangeZone && paso != posicionPieza)
-    {
-        if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
-            break;
-
-        lineaDeAtaque.Add(paso);
-        paso += direccion;
-        pasosContados++;
-    }
-
-    if (paso == posicionPieza)
-    {
-        lineaDeAtaque.Add(posicionPieza);
-
-        Debug.Log($"♛ Pintando línea de prefabs hacia pieza en {posicionPieza}");
-
-        foreach (Vector2Int coord in lineaDeAtaque)
-        {
-            GameObject overlay = Instantiate(prefabRojo, dangerOverlayParent);
-            overlay.GetComponent<RectTransform>().anchoredPosition = 
-                BoardManagerGlobal.Instance.GetTileAnchoredPosition(coord);
-            overlaysInstanciados.Add(overlay);
-        }
-
-        ultimaPosicionAmenaza = posicionPieza;
-    }
-    else
-    {
-        ultimaPosicionAmenaza = new Vector2Int(-99, -99);
-    }
-    }
-
-
-    // === Método ITileEffect: lógica para atacar directamente al Rey ===
     private void RevisarAmenazaAPieza(Vector2Int posicionPieza, System.Action efectoSobrePieza)
     {
-    int dx = posicionPieza.x - posicionActual.x;
-    int dy = posicionPieza.y - posicionActual.y;
+        int dx = posicionPieza.x - posicionActual.x;
+        int dy = posicionPieza.y - posicionActual.y;
 
-    bool esDireccionValida = (dx == 0 || dy == 0 || Mathf.Abs(dx) == Mathf.Abs(dy));
-    if (!esDireccionValida)
-        return;
+        bool esDireccionValida = (dx == 0 || dy == 0 || Mathf.Abs(dx) == Mathf.Abs(dy));
+        if (!esDireccionValida) return;
 
-    Vector2Int direccion = new Vector2Int(
-        dx == 0 ? 0 : (dx > 0 ? 1 : -1),
-        dy == 0 ? 0 : (dy > 0 ? 1 : -1)
-    );
+        Vector2Int direccion = new Vector2Int(
+            dx == 0 ? 0 : (dx > 0 ? 1 : -1),
+            dy == 0 ? 0 : (dy > 0 ? 1 : -1)
+        );
 
-    Vector2Int paso = posicionActual + direccion;
-    int pasosContados = 1;
+        Vector2Int paso = posicionActual + direccion;
+        int pasosContados = 1;
 
-    while (pasosContados <= rangoRangeZone && paso != posicionPieza)
-    {
-        if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
-            break;
+        while (pasosContados <= rangoRangeZone && paso != posicionPieza)
+        {
+            if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
+                break;
 
-        paso += direccion;
-        pasosContados++;
-    }
+            paso += direccion;
+            pasosContados++;
+        }
 
-    if (paso == posicionPieza)
-    {
-        Debug.Log($"💀 Pieza alcanzada en {posicionPieza}");
-        efectoSobrePieza.Invoke();
-    }
+        if (paso == posicionPieza)
+        {
+            Debug.Log($"💀 Pieza alcanzada en {posicionPieza}");
+            efectoSobrePieza.Invoke();
+        }
     }
 
     public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey)
@@ -178,9 +109,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         RevisarAmenazaAPieza(posicionRey, () =>
         {
             if (Vector2Int.Distance(posicionActual, posicionRey) <= rangoKillZone)
-            {
                 StartCoroutine(MatarPiezaDespuesDelay(rey, posicionRey));
-            }
             else
             {
                 rey.GanarPuntoMovimiento(-2);
@@ -188,68 +117,46 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
                 rey.turnosRestantes -= 1;
             }
         });
-    
     }
 
     public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
     {
-    RevisarAmenazaAPieza(posicionPeon, () => 
-    {
-        if (Vector2Int.Distance(posicionActual, posicionPeon) <= rangoKillZone)
+        RevisarAmenazaAPieza(posicionPeon, () =>
         {
-            StartCoroutine(MatarPiezaDespuesDelay(peon, posicionPeon));
-            Debug.Log($"💥 Peón eliminado por la Reina en {posicionPeon}");
-        }
-        else
-        {
-            peon.GanarPuntoMovimiento(-2);
-            FindFirstObjectByType<KingController>().puntosAccionActual -= 2;
-        }
-    });
+            if (Vector2Int.Distance(posicionActual, posicionPeon) <= rangoKillZone)
+                StartCoroutine(MatarPiezaDespuesDelay(peon, posicionPeon));
+            else
+            {
+                peon.GanarPuntoMovimiento(-2);
+                FindFirstObjectByType<KingController>().puntosAccionActual -= 2;
+            }
+        });
     }
 
     private IEnumerator MatarPiezaDespuesDelay(MonoBehaviour pieza, Vector2Int posicion)
     {
-    if (this is IPieceWithPosition pieceWithPosition)
-        pieceWithPosition.SetPosicionActual(posicion);
+        SetPosicionActual(posicion);
+        if (TryGetComponent<MovableTileObject>(out var movable))
+            movable.tileCoords = posicion;
 
-    transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(posicion);
+        transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(posicion);
 
-    yield return new WaitForSeconds(0.2f);
+        if (pieza is IPieceWithPosition piezaVictima)
+            piezaVictima.SetPosicionActual(new Vector2Int(-1, -1));
 
-    if (pieza is IPieceWithPosition piezaVictima)
-    {
-        piezaVictima.SetPosicionActual(new Vector2Int(-1, -1));
+        if (pieza is PawnController peon)
+        {
+            peon.OcultarMovimientos();
+            peon.mostrandoMovimientos = false;
+        }
+
+        Destroy(pieza.gameObject);
+
+        Debug.Log($"💀 {pieza.name} ejecutado por la Reina en {posicion}");
+
+        yield return new WaitForSeconds(1f);
     }
 
-    if (pieza is PawnController peon)
-    {
-        peon.OcultarMovimientos();
-        peon.mostrandoMovimientos = false;
-        Debug.Log("🧹 Ocultando previsualización del Peón antes de destruirlo.");
-    }
-
-    Destroy(pieza.gameObject);
-    Debug.Log($"💀 {pieza.name} destruido visualmente del tablero.");
-
-    yield return new WaitForSeconds(2f);
-
-    if (pieza is KingController rey)
-    {
-        rey.turnosRestantes = 0;
-
-            LevelResultUI.Instance.ShowResults(
-            LevelProgress.Instance.keysCollected,
-            LevelProgress.Instance.hasDiamond,
-            0,
-            PlayerScore.Instance.GetTotalScore()
-        );
-
-        FindFirstObjectByType<ChessGameManager>().DetenerJuego();
-    }
-    }
-
-    // === Previsualización con Tiles ===
     public void MostrarRangoDeAtaque()
     {
         OcultarRangoDeAtaque();
@@ -290,9 +197,116 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
             tile.ResetColor();
     }
 
-   
     public void VerificarTurnoActual(int turnoActual)
     {
-        // reservado para lógica futura
+        RevisarAmenazasEnZona(); // ✅ no coroutine doble
+    }
+
+    public void RevisarAmenazasEnZona()
+    {
+        StartCoroutine(ProcesarAmenazas());
+    }
+
+    private IEnumerator ProcesarAmenazas()
+    {
+        var piezas = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
+
+        foreach (var pieza in piezas)
+        {
+            if (!(pieza is IFichaAliada)) continue;
+            if (pieza == this) continue;
+            if (!pieza.TryGetComponent<IPieceWithPosition>(out var posicionable)) continue;
+
+            Vector2Int pos = posicionable.GetPosicionActual();
+            bool asesinatoEjecutado = false;
+
+            RevisarAmenazaAPieza(pos, () =>
+            {
+                if (Vector2Int.Distance(posicionActual, pos) <= rangoKillZone)
+                {
+                    StartCoroutine(MatarPiezaDespuesDelay(pieza, pos));
+                    asesinatoEjecutado = true;
+                }
+            });
+
+            if (asesinatoEjecutado)
+            {
+                if (ataquesConcatenados)
+                {
+                    Debug.Log("⏳ Reina Negra pausa tras asesinato.");
+                    yield return new WaitForSeconds(1f);
+                }
+                else
+                {
+                    Debug.Log("🛑 Reina Roja detiene su cacería tras el primer asesinato.");
+                    yield break;
+                }
+            }
+        }
+    }
+
+    public void VerificarAmenazaSobre(Vector2Int posicionPieza)
+    {
+        foreach (var obj in overlaysInstanciados)
+            Destroy(obj);
+        overlaysInstanciados.Clear();
+
+        int dx = posicionPieza.x - posicionActual.x;
+        int dy = posicionPieza.y - posicionActual.y;
+
+        bool esDireccionValida = (dx == 0 || dy == 0 || Mathf.Abs(dx) == Mathf.Abs(dy));
+        if (!esDireccionValida)
+        {
+            ultimaPosicionAmenaza = new Vector2Int(-99, -99);
+            return;
+        }
+
+        Vector2Int direccion = new Vector2Int(
+            dx == 0 ? 0 : (dx > 0 ? 1 : -1),
+            dy == 0 ? 0 : (dy > 0 ? 1 : -1)
+        );
+
+        Vector2Int paso = posicionActual;
+        int pasosContados = 0;
+        List<Vector2Int> lineaDeAtaque = new List<Vector2Int>();
+
+        while (pasosContados <= rangoRangeZone && paso != posicionPieza)
+        {
+            if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
+                break;
+
+            lineaDeAtaque.Add(paso);
+            paso += direccion;
+            pasosContados++;
+        }
+
+        if (paso == posicionPieza)
+        {
+            lineaDeAtaque.Add(posicionPieza);
+
+            Debug.Log($"♛ Pintando línea de prefabs hacia pieza en {posicionPieza}");
+
+            foreach (Vector2Int coord in lineaDeAtaque)
+            {
+                GameObject overlay = Instantiate(prefabRojo, dangerOverlayParent);
+                overlay.GetComponent<RectTransform>().anchoredPosition =
+                    BoardManagerGlobal.Instance.GetTileAnchoredPosition(coord);
+                overlaysInstanciados.Add(overlay);
+            }
+
+            ultimaPosicionAmenaza = posicionPieza;
+        }
+        else
+        {
+            ultimaPosicionAmenaza = new Vector2Int(-99, -99);
+        }
+    }
+    public void MostrarRango()
+    {
+    MostrarRangoDeAtaque(); // usa Tiles
+    }
+    public void OcultarRango()
+    {
+    OcultarRangoDeAtaque(); 
     }
 }

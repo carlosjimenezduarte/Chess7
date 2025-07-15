@@ -187,8 +187,7 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable
 
         if (TryGetComponent<MovableTileObject>(out var movable))
         {
-            movable.tileCoords = posicionReal;
-            transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(posicionReal);
+            movable.ActivarEnTablero(posicionReal);            
         }
 
         activadoEnJuego = true;

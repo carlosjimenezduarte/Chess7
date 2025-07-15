@@ -9,6 +9,10 @@ using UnityEngine;
 public class MovableTileObject : MonoBehaviour
 {
     public Vector2Int tileCoords;
+    public bool activoEnTablero = false;
+
+    private bool EsDentroTablero(Vector2Int p)
+    => p.x >= 0 && p.x <= 7 && p.y >= 0 && p.y <= 7;
 
     public void MoverA(Vector2Int nuevaPos)
     {
@@ -44,19 +48,28 @@ public class MovableTileObject : MonoBehaviour
     {
         if (obj == this) continue;
 
-        // Si este otro objeto es un objeto recoleccionable
-        if (obj.TryGetComponent<IObjetoRecoleccionable>(out var recolectable))
+        // 🚀 SOLO chequea si está activo en el tablero
+        if (!obj.activoEnTablero) continue;
+
+        bool esRecoleccionable = obj.TryGetComponent<IObjetoRecoleccionable>(out var recolectable);
+        bool esFicha = obj.TryGetComponent<IFicha>(out var ficha);
+
+        if ((esRecoleccionable || esFicha) && obj.tileCoords == coords)
         {
-            if (obj.tileCoords == coords)
-            {
-                Debug.Log($"🚫 La casilla {coords} está ocupada por otro objeto recoleccionable: {obj.gameObject.name}");
-                return true;
-            }
+            Debug.Log($"🚫 La casilla {coords} está ocupada por {obj.gameObject.name}");
+            return true;
         }
     }
-
-    // ✅ No encontró conflicto con otro objeto recoleccionable
     return false;
     }
+
+    public void ActivarEnTablero(Vector2Int nuevaPos)
+    {
+        tileCoords = nuevaPos;
+        transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(nuevaPos);
+        activoEnTablero = true;
+        Debug.Log($"✅ {gameObject.name} activado en tablero en {tileCoords}");
+    }
+
 
 }

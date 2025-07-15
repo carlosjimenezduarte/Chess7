@@ -26,22 +26,35 @@ public class Expansion : MonoBehaviour, ITileEffect
             .ToList();
 
         foreach (var obj in todos)
-        {
+            {
+            // ⛔ Ignora el activador (Rey o Peón que activó la expansión) y la propia casilla origen
             if (EsIgnorable(obj, activador)) continue;
+
+            // ⛔ Ignora directamente todo lo que está fuera del tablero (ej: en Futuros Inciertos o Dimensión Divina)
+            if (!EsDentroTablero(obj.tileCoords))
+            {
+                Debug.Log($"🛡 {obj.name} está fuera del tablero en {obj.tileCoords}, ignorado por Expansion.");
+                continue;
+            }
+
+            // ⛔ Ignora recolectables no activos (pociones que aún no han aparecido)
             if (!EstaVisibleYRecolectable(obj)) continue;
 
+            // Calcula la dirección de empuje y casilla destino
             Vector2Int dir = CalcularDireccion(obj.tileCoords - tileCoords);
             Vector2Int destino = obj.tileCoords + dir;
 
+            // Si el destino está fuera del tablero, no mueve
             if (!EsDentroTablero(destino))
             {
                 Debug.Log($"🚫 {obj.name} no puede salir hacia {destino}.");
                 continue;
             }
 
+            // ✅ Mueve el objeto al destino calculado
             Debug.Log($"💥 {obj.name} de {obj.tileCoords} a {destino}.");
             obj.MoverA(destino);
-        }
+            }
     }
 
     private bool EsIgnorable(MovableTileObject obj, MonoBehaviour activador)

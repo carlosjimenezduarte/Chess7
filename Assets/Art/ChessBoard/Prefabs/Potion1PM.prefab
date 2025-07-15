@@ -37,7 +37,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -201, y: -56.8}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 135, y: 135}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2655164885068134501
@@ -90,7 +90,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74e5e04f83e472a4281766b56f53ad24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileCoords: {x: 1, y: 2}
+  tileCoords: {x: 4, y: 3}
 --- !u!114 &-2422536028475717728
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,9 +103,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f658708aa60ec84983741946d6b625b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileCoords: {x: 1, y: 2}
-  turnoAparece: 1
-  visibleDesdeInicio: 1
+  turnoAparece: 3
+  posicionReal: {x: 4, y: 3}
+  tileCoordsFuturosInciertos: {x: 101, y: 101}
+  tileCoords: {x: 101, y: 101}
+  visibleDesdeInicio: 0
 --- !u!114 &1195796207621731603
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -118,4 +120,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33d1fb08166c8ac48b559443f7486744, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileCoords: {x: 0, y: 0}
+  tileCoords: {x: 4, y: 3}
