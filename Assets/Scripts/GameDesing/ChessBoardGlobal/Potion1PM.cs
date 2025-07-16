@@ -4,114 +4,138 @@ using System.Linq;
 
 public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable
 {
-    [Header("Turno y posición planificada")]
+    [Header("Configuración general")]
+    public bool vieneDelFuturo = false;
+
+    [Header("Turno y posiciones")]
     public int turnoAparece = 1;
     public Vector2Int posicionReal = new Vector2Int(0, 0);
-
-    [Header("Posición en Futuros Inciertos")]
     public Vector2Int tileCoordsFuturosInciertos = new Vector2Int(100, 100);
 
-    [Header("Estado actual en el juego")]
-    public Vector2Int tileCoords;
-    public bool visibleDesdeInicio = false;
-
+    private Vector2Int tileCoords;
     private bool activadoEnJuego = false;
+
     private Image image;
     private PiecePositioner piecePositioner;
+    private MovableTileObject movable;
 
     private void Awake()
+{
+    image = GetComponent<Image>();
+    piecePositioner = GetComponent<PiecePositioner>();
+    movable = GetComponent<MovableTileObject>();
+
+    if (piecePositioner == null)
+        Debug.LogWarning($"⚠️ {name} no tiene PiecePositioner.");
+    if (movable == null)
+        Debug.LogWarning($"⚠️ {name} no tiene MovableTileObject.");
+
+    if (vieneDelFuturo)
     {
-        image = GetComponent<Image>();
-        piecePositioner = GetComponent<PiecePositioner>();
-
-        // Siempre inicia escondida en Futuros Inciertos
-        tileCoords = tileCoordsFuturosInciertos;
-        if (piecePositioner != null)
-            piecePositioner.tileCoords = tileCoordsFuturosInciertos;
-
+        ColocarEn(tileCoordsFuturosInciertos);
+        if (movable != null) movable.activoEnTablero = false;
         image.enabled = false;
+        activadoEnJuego = false;
     }
-
-    private void Start()
+    else
     {
-        // Caso para debug o niveles muy simples que tienen la poción activa desde el inicio
-        if (visibleDesdeInicio && turnoAparece <= 1)
-        {
-            Debug.Log($"🌟 Poción planea aparecer ya mismo en {posicionReal}");
-            if (PuedeAparecerEn(posicionReal))
-            {
-                TeletransportarAlTablero();
-            }
-            else
-            {
-                Debug.Log($"❌ Poción en {posicionReal} NO pudo aparecer y se va a la Dimensión Divina.");
-                ExiliarADimensionDivina();
-            }
-        }
+        // ⚡ ahora deja al prefab en su posición, sin reubicar con posicionReal
+        tileCoords = piecePositioner != null ? piecePositioner.tileCoords : tileCoords;
+        if (movable != null) movable.activoEnTablero = true;
+        image.enabled = true;
+        activadoEnJuego = true;
+        Debug.Log($"✅ {name} inicializado en tablero en {tileCoords}.");
     }
+}
+
 
     private void Update()
     {
-        if (piecePositioner != null)
-            tileCoords = piecePositioner.tileCoords;
-
         if (!activadoEnJuego) return;
-
         VerificarAutoChequeoGeneral();
+    }
+
+    private void ColocarEn(Vector2Int coords)
+    {
+        tileCoords = coords;
+        if (piecePositioner != null)
+            piecePositioner.tileCoords = coords;
+        if (movable != null)
+            movable.tileCoords = coords;
+
+        if (BoardManagerGlobal.Instance != null)
+            transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(coords);
+
+        Debug.Log($"🧩 {name} colocado en {coords}");
     }
 
     public void VerificarTurnoActual(int turnoActual)
     {
         if (!activadoEnJuego && turnoActual >= turnoAparece)
         {
-            Debug.Log($"⏳ Turno {turnoActual}. Poción programada para aparecer en {posicionReal} desde Futuros Inciertos ({tileCoordsFuturosInciertos}).");
+            Debug.Log($"⏳ Turno {turnoActual}. {name} programado para aparecer en {posicionReal}.");
 
-            // Antes de aparecer, limpia la casilla si hay una poción rezagada
-            var objetos = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-                .Where(obj => obj is IObjetoRecoleccionable && obj != this);
-
-            foreach (var obj in objetos)
-            {
-                Vector2Int pos = Vector2Int.zero;
-                if (obj.TryGetComponent<PiecePositioner>(out var posr))
-                    pos = posr.tileCoords;
-                else if (obj is IPieceWithPosition pieza)
-                    pos = pieza.GetPosicionActual();
-
-                if (pos == posicionReal)
-                {
-                    Debug.Log($"💥 Poción en turno {turnoActual} reemplaza a {obj.name} que estaba en {pos}.");
-                    if (obj.TryGetComponent<Potion1PM>(out var otraPocion))
-                        otraPocion.ExiliarADimensionDivina();
-                    else
-                        obj.gameObject.SetActive(false);
-                }
-            }
-
-            // Verifica si hay una ficha (rey o peón)
-            var rey = FindFirstObjectByType<KingController>();
-            if (rey != null && posicionReal == rey.GetPosicionActual())
-            {
-                Debug.Log($"⚡ Poción aparece en {posicionReal} justo sobre el Rey. Otorga bonus inmediato.");
-                RecogerPocion(rey);
-                return;
-            }
-
-            var peones = FindObjectsByType<PawnController>(FindObjectsSortMode.None);
-            foreach (var peon in peones)
-            {
-                if (posicionReal == peon.GetPosicionActual())
-                {
-                    Debug.Log($"⚡ Poción aparece en {posicionReal} justo sobre el Peón. Bonus silencioso.");
-                    peon.GanarPuntoMovimientoSilencioso(1);
-                    Destroy(gameObject);
-                    return;
-                }
-            }
-
-            // Si nada lo impide, ahora sí se materializa
             TeletransportarAlTablero();
         }
+    }
+
+    private void TeletransportarAlTablero()
+{
+    if (PuedeAparecerEn(posicionReal))
+    {
+        ColocarEn(posicionReal);
+        if (movable != null) movable.ActivarEnTablero(posicionReal);
+        activadoEnJuego = true;
+        image.enabled = true;
+        Debug.Log($"✅ {name} se materializó en {posicionReal}.");
+    }
+    else
+    {
+        ExiliarADimensionDivina();
+    }
+}
+
+    public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey)
+    {
+        if (tileCoords == posicionRey)
+        {
+            Debug.Log($"🧪 {name} detecta al Rey encima. Se activa.");
+            rey.GanarPuntoMovimiento(1);
+            Destroy(gameObject);
+        }
+    }
+
+    public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
+    {
+        if (tileCoords == posicionPeon)
+        {
+            Debug.Log($"🤫 {name} detecta Peón encima. Bonus silencioso.");
+            peon.GanarPuntoMovimientoSilencioso(1);
+            Destroy(gameObject);
+        }
+    }
+
+    public void VerificarAutoChequeoGeneral()
+    {
+        var rey = FindFirstObjectByType<KingController>();
+        if (rey != null)
+            RevisarSiReyLlegó(rey.GetPosicionActual(), rey);
+
+        var peones = FindObjectsByType<PawnController>(FindObjectsSortMode.None);
+        foreach (var peon in peones)
+            RevisarSiPeonLlegó(peon.GetPosicionActual(), peon);
+    }
+
+    public void ExiliarADimensionDivina()
+    {
+        Vector2Int coordsDivinos = DimensionDivina.ObtenerProximaPosicion();
+        ColocarEn(coordsDivinos);
+
+        if (movable != null)
+            movable.activoEnTablero = false;
+
+        gameObject.SetActive(false);
+        Debug.Log($"🚀 {name} exiliado a Dimensión Divina en {coordsDivinos}.");
     }
 
     private bool PuedeAparecerEn(Vector2Int coords)
@@ -125,128 +149,43 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable
         int turnoOtro = 0;
         bool estaActivo = false;
 
+        // obtiene su posición actual
         if (obj.TryGetComponent<PiecePositioner>(out var posr))
             pos = posr.tileCoords;
         else if (obj is IPieceWithPosition pieza)
             pos = pieza.GetPosicionActual();
 
-        if (obj.TryGetComponent<Potion1PM>(out var otraPocion))
+        // obtiene sus datos si es un objeto recoleccionable con turno
+        if (obj.TryGetComponent<Potion1PM>(out var otro))
         {
-            turnoOtro = otraPocion.turnoAparece;
-            estaActivo = otraPocion.activadoEnJuego;
+            turnoOtro = otro.turnoAparece;
+            estaActivo = otro.IsVisible();
         }
 
+        // Si hay algo allí
         if (pos == coords)
         {
             if (estaActivo || turnoOtro <= turnoAparece)
             {
-                Debug.Log($"💥 Poción destruye a {obj.name} que estaba en {coords} (turno {turnoOtro}).");
-                if (otraPocion != null)
-                    otraPocion.ExiliarADimensionDivina();
+                Debug.Log($"💥 {name} destruye a {obj.name} en {coords}");
+                if (otro != null)
+                    otro.ExiliarADimensionDivina();
                 else
                     obj.gameObject.SetActive(false);
             }
             else
             {
-                Debug.Log($"🕊 Poción NO aparece en {coords} porque hay futura más temprana (turno {turnoOtro}).");
+                Debug.Log($"🕊 {name} NO puede aparecer en {coords} por futura más temprana (turno {turnoOtro})");
                 return false;
             }
         }
     }
-
-    // Además chequea si hay Rey o Peón encima
-    var rey = FindFirstObjectByType<KingController>();
-    if (rey != null && coords == rey.GetPosicionActual())
-    {
-        Debug.Log($"⚡ Poción aparece en {coords} encima del Rey. Se activa inmediatamente.");
-        RecogerPocion(rey);
-        return false;
-    }
-
-    var peones = FindObjectsByType<PawnController>(FindObjectsSortMode.None);
-    foreach (var peon in peones)
-    {
-        if (coords == peon.GetPosicionActual())
-        {
-            Debug.Log($"⚡ Poción aparece en {coords} encima del Peón. Se activa silenciosamente.");
-            peon.GanarPuntoMovimientoSilencioso(1);
-            Destroy(gameObject);
-            return false;
-        }
-    }
-
     return true;
     }
 
-
-    private void TeletransportarAlTablero()
-    {
-        tileCoords = posicionReal;
-        if (piecePositioner != null)
-            piecePositioner.tileCoords = posicionReal;
-
-        if (TryGetComponent<MovableTileObject>(out var movable))
-        {
-            movable.ActivarEnTablero(posicionReal);            
-        }
-
-        activadoEnJuego = true;
-        image.enabled = true;
-
-        Debug.Log($"✅ Poción se materializa en {tileCoords} (Turno {turnoAparece}).");
-    }
-
-    private void ExiliarADimensionDivina()
-    {
-        tileCoords = DimensionDivina.ObtenerProximaPosicion();
-        if (piecePositioner != null)
-            piecePositioner.tileCoords = tileCoords;
-
-        if (TryGetComponent<MovableTileObject>(out var movable))
-        {
-            movable.tileCoords = tileCoords;
-            transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(tileCoords);
-        }
-
-        gameObject.SetActive(false);
-        Debug.Log($"🚀 {gameObject.name} enviado a Dimensión Divina en {tileCoords}.");
-    }
-
-    private void RecogerPocion(KingController rey)
-    {
-        Debug.Log($"🧪 El Rey recoge la poción en {tileCoords} (+1 PM).");
-        rey.GanarPuntoMovimiento(1);
-        Destroy(gameObject);
-    }
-
-    public void VerificarAutoChequeoGeneral()
-    {
-        var rey = FindFirstObjectByType<KingController>();
-        if (rey != null && tileCoords == rey.GetPosicionActual())
-        {
-            Debug.Log($"🧲 Poción en {tileCoords} detecta al Rey encima. Se activa.");
-            RecogerPocion(rey);
-            return;
-        }
-
-        var peones = FindObjectsByType<PawnController>(FindObjectsSortMode.None);
-        foreach (var peon in peones)
-        {
-            if (tileCoords == peon.GetPosicionActual())
-            {
-                Debug.Log($"🤫 Poción en {tileCoords} detecta Peón encima. Bonus silencioso.");
-                peon.GanarPuntoMovimientoSilencioso(1);
-                Destroy(gameObject);
-                return;
-            }
-        }
-    }
 
     public bool IsVisible() => activadoEnJuego;
 
     public bool EstaRealmenteEnTablero()
         => tileCoords.x >= 0 && tileCoords.y >= 0 && tileCoords.x <= 7 && tileCoords.y <= 7;
-
-    public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey) => VerificarAutoChequeoGeneral();
-    public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon) => VerificarAutoChequeoGeneral();
 }

@@ -243,6 +243,9 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
                 }
             }
         }
+
+        // 🔥 Ahora revisa recoleccionables en su misma casilla
+        RevisarObjetosRecoleccionablesEnCasilla();
     }
 
     public void VerificarAmenazaSobre(Vector2Int posicionPieza)
@@ -303,10 +306,39 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
     }
     public void MostrarRango()
     {
-    MostrarRangoDeAtaque(); // usa Tiles
+        MostrarRangoDeAtaque(); // usa Tiles
     }
     public void OcultarRango()
     {
-    OcultarRangoDeAtaque(); 
+        OcultarRangoDeAtaque();
     }
+    
+    private void RevisarObjetosRecoleccionablesEnCasilla()
+{
+    var objetos = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+        .Where(obj => obj is IObjetoRecoleccionable);
+
+    foreach (var obj in objetos)
+    {
+        Vector2Int pos = Vector2Int.zero;
+        if (obj.TryGetComponent<PiecePositioner>(out var posr))
+            pos = posr.tileCoords;
+        else if (obj is IPieceWithPosition pieza)
+            pos = pieza.GetPosicionActual();
+
+        if (pos == posicionActual)
+        {
+            Debug.Log($"💥 Reina destruye el objeto recoleccionable {obj.name} en {pos}.");
+
+            // Lo manda explícitamente a Dimensión Divina si tiene ese método
+            if (obj.TryGetComponent<Potion1PM>(out var pocion))
+            {
+                pocion.ExiliarADimensionDivina();
+            }
+
+            // Destruye el GameObject para asegurar limpieza
+            Destroy(obj.gameObject);
+        }
+    }
+}
 }

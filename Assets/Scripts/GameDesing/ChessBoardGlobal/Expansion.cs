@@ -67,7 +67,7 @@ public class Expansion : MonoBehaviour, ITileEffect
     {
         // Si es pocima (u otro recolectable) y aún no está activada, la ignoramos
         var pocion = obj.GetComponent<Potion1PM>();
-        if (pocion != null && !pocion.IsVisible()) return false;
+     //   if (pocion != null && !pocion.IsVisible()) return false;
 
         // Aquí podrías agregar lógica para otros recolectables similares
 

@@ -80,5 +80,9 @@ public class BoardManagerGlobal : MonoBehaviour
 
         Debug.LogWarning($"No se encontró tile cercano a posición {worldPos}");
         return Vector2Int.zero;
+
     }
+    
+    public static Vector2Int FuturoIncierto = new Vector2Int(100, 100);
+    public static Vector2Int DimensionDivina = new Vector2Int(-1, -9999);
 }
