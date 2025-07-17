@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CollectibleUP : MonoBehaviour, ITileEffect
+public class CollectibleUP : MonoBehaviour
 {
     public Vector2Int tileCoords;
     public int turnoAparece = 1;

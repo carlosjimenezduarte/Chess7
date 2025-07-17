@@ -42,26 +42,30 @@ public class MovableTileObject : MonoBehaviour
     }
 
     private bool EstaCasillaOcupada(Vector2Int coords)
+{
+    var objetosEnTile = BoardManagerGlobal.Instance.ObtenerObjetosEn(coords);
+
+    foreach (var obj in objetosEnTile)
     {
-    var otros = FindObjectsByType<MovableTileObject>(FindObjectsSortMode.None);
-    foreach (var obj in otros)
-    {
-        if (obj == this) continue;
+        if ((object)obj == this) continue; // ✅ cast explícito a Object para comparación de referencia
 
-        // 🚀 SOLO chequea si está activo en el tablero
-        if (!obj.activoEnTablero) continue;
+        bool esRecoleccionable = obj is IObjetoRecoleccionable;
+        bool esFicha = obj is IFicha;
 
-        bool esRecoleccionable = obj.TryGetComponent<IObjetoRecoleccionable>(out var recolectable);
-        bool esFicha = obj.TryGetComponent<IFicha>(out var ficha);
+        if (obj is MovableTileObject mov && !mov.activoEnTablero)
+            continue;
 
-        if ((esRecoleccionable || esFicha) && obj.tileCoords == coords)
+        if ((esRecoleccionable || esFicha))
         {
-            Debug.Log($"🚫 La casilla {coords} está ocupada por {obj.gameObject.name}");
+            Debug.Log($"🚫 La casilla {coords} está ocupada por {((MonoBehaviour)obj).gameObject.name} (Recoleccionable:{esRecoleccionable}, Ficha:{esFicha})");
             return true;
         }
     }
+
     return false;
-    }
+}
+
+
 
     public void ActivarEnTablero(Vector2Int nuevaPos)
     {

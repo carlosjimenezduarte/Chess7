@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AP : MonoBehaviour, ITileEffect, IPieceWithPosition
+public class AP : MonoBehaviour, IPieceWithPosition
 {
     [Header("Coordenadas y aparición")]
     public Vector2Int tileCoords;

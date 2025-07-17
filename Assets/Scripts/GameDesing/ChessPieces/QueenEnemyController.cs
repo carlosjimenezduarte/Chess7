@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEffect, IPieceWithPosition, IFicha, IFichaEnemiga
 {
@@ -44,6 +43,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         if (TryGetComponent<PiecePositioner>(out var piecePositioner))
             piecePositioner.tileCoords = nuevaPos;
 
+        BoardManagerGlobal.Instance?.RegistrarMovimiento(this, nuevaPos);
         Debug.Log($"♛ Reina actualizó su posición lógica a {nuevaPos}");
     }
 
@@ -92,6 +92,17 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         {
             if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
                 break;
+
+            // ✅ NUEVO: la Reina barre su trayectoria destruyendo objetos recoleccionables
+            foreach (var obj in BoardManagerGlobal.Instance.ObtenerObjetosEn(paso))
+            {
+                if (obj is IObjetoRecoleccionable)
+                {
+                    Debug.Log($"💥 Reina destruye {obj} en su trayectoria por {paso}");
+                    if (obj is Potion1PM pocion) pocion.ExiliarADimensionDivina();
+                    Destroy(((MonoBehaviour)obj).gameObject);
+                }
+            }
 
             paso += direccion;
             pasosContados++;
@@ -199,7 +210,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
     public void VerificarTurnoActual(int turnoActual)
     {
-        RevisarAmenazasEnZona(); // ✅ no coroutine doble
+        RevisarAmenazasEnZona();
     }
 
     public void RevisarAmenazasEnZona()
@@ -209,43 +220,78 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
     private IEnumerator ProcesarAmenazas()
     {
-        var piezas = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
+        // ✅ NUEVO: recorre solo su rango en el tablero, con ayuda del árbitro
+        Vector2Int[] direcciones = {
+            new Vector2Int(1,0), new Vector2Int(-1,0),
+            new Vector2Int(0,1), new Vector2Int(0,-1),
+            new Vector2Int(1,1), new Vector2Int(-1,1),
+            new Vector2Int(1,-1), new Vector2Int(-1,-1)
+        };
 
-        foreach (var pieza in piezas)
+        foreach (var dir in direcciones)
         {
-            if (!(pieza is IFichaAliada)) continue;
-            if (pieza == this) continue;
-            if (!pieza.TryGetComponent<IPieceWithPosition>(out var posicionable)) continue;
+            Vector2Int paso = posicionActual + dir;
+            int pasosContados = 1;
 
-            Vector2Int pos = posicionable.GetPosicionActual();
-            bool asesinatoEjecutado = false;
-
-            RevisarAmenazaAPieza(pos, () =>
+            while (pasosContados <= rangoRangeZone)
             {
-                if (Vector2Int.Distance(posicionActual, pos) <= rangoKillZone)
-                {
-                    StartCoroutine(MatarPiezaDespuesDelay(pieza, pos));
-                    asesinatoEjecutado = true;
-                }
-            });
+                if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
+                    break;
 
-            if (asesinatoEjecutado)
-            {
-                if (ataquesConcatenados)
+                foreach (var pieza in BoardManagerGlobal.Instance.ObtenerObjetosEn(paso))
                 {
-                    Debug.Log("⏳ Reina Negra pausa tras asesinato.");
-                    yield return new WaitForSeconds(1f);
+                    if (pieza is IFichaAliada && pieza != this)
+                    {
+                        Vector2Int pos = pieza.GetPosicionActual();
+                        bool asesinatoEjecutado = false;
+
+                        RevisarAmenazaAPieza(pos, () =>
+                        {
+                            if (Vector2Int.Distance(posicionActual, pos) <= rangoKillZone)
+                            {
+                                StartCoroutine(MatarPiezaDespuesDelay(((MonoBehaviour)pieza), pos));
+                                asesinatoEjecutado = true;
+                            }
+                        });
+
+                        if (asesinatoEjecutado)
+                        {
+                            if (ataquesConcatenados)
+                            {
+                                Debug.Log("⏳ Reina Negra pausa tras asesinato.");
+                                yield return new WaitForSeconds(1f);
+                            }
+                            else
+                            {
+                                Debug.Log("🛑 Reina Roja detiene su cacería tras el primer asesinato.");
+                                yield break;
+                            }
+                        }
+                    }
                 }
-                else
-                {
-                    Debug.Log("🛑 Reina Roja detiene su cacería tras el primer asesinato.");
-                    yield break;
-                }
+
+                paso += dir;
+                pasosContados++;
             }
         }
 
-        // 🔥 Ahora revisa recoleccionables en su misma casilla
         RevisarObjetosRecoleccionablesEnCasilla();
+    }
+
+    private void RevisarObjetosRecoleccionablesEnCasilla()
+    {
+        // ✅ Ahora revisa con el árbitro silencioso
+        foreach (var objeto in BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual))
+        {
+            if (objeto is IObjetoRecoleccionable)
+            {
+                Debug.Log($"💥 Reina destruye objeto {objeto} en {posicionActual}");
+                if (objeto is Potion1PM pocion)
+                    pocion.ExiliarADimensionDivina();
+
+                Destroy(((MonoBehaviour)objeto).gameObject);
+            }
+        }
     }
 
     public void VerificarAmenazaSobre(Vector2Int posicionPieza)
@@ -304,40 +350,30 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
             ultimaPosicionAmenaza = new Vector2Int(-99, -99);
         }
     }
+
     public void MostrarRango()
     {
-        MostrarRangoDeAtaque(); // usa Tiles
+        MostrarRangoDeAtaque();
     }
+
     public void OcultarRango()
     {
         OcultarRangoDeAtaque();
     }
-    
-    private void RevisarObjetosRecoleccionablesEnCasilla()
-{
-    var objetos = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-        .Where(obj => obj is IObjetoRecoleccionable);
 
-    foreach (var obj in objetos)
+    public void RevisarSiFichaLlegó(Vector2Int posicionFicha, IFicha ficha)
     {
-        Vector2Int pos = Vector2Int.zero;
-        if (obj.TryGetComponent<PiecePositioner>(out var posr))
-            pos = posr.tileCoords;
-        else if (obj is IPieceWithPosition pieza)
-            pos = pieza.GetPosicionActual();
+    if (posicionFicha != posicionActual) return;
 
-        if (pos == posicionActual)
+    foreach (var objeto in BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual))
+    {
+        if (objeto is IObjetoRecoleccionable)
         {
-            Debug.Log($"💥 Reina destruye el objeto recoleccionable {obj.name} en {pos}.");
-
-            // Lo manda explícitamente a Dimensión Divina si tiene ese método
-            if (obj.TryGetComponent<Potion1PM>(out var pocion))
-            {
+            Debug.Log($"♛ Reina destruye objeto {objeto} porque ficha {ficha} lo trajo encima");
+            if (objeto is Potion1PM pocion)
                 pocion.ExiliarADimensionDivina();
-            }
 
-            // Destruye el GameObject para asegurar limpieza
-            Destroy(obj.gameObject);
+            Destroy(((MonoBehaviour)objeto).gameObject);
         }
     }
 }

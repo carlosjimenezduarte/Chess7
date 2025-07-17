@@ -81,13 +81,29 @@ public class ChessGameManager : MonoBehaviour
         rey.ActivarJuego();
         Invoke(nameof(MostrarRangoInicialRey), 0.02f);
 
-        var peones = FindObjectsByType<PawnController>(FindObjectsSortMode.None);
-        foreach (var peon in peones)
+    var aliadas = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+    .OfType<IFichaAliada>();
+
+    foreach (var ficha in aliadas)
+    {
+    ficha.ActivarJuego();
+
+    if (ficha is IPieceWithPosition pieza)
+    {
+        var tile = BoardManagerGlobal.Instance.GetTileAt(pieza.GetPosicionActual());
+        if (tile != null)
         {
-            peon.ActivarJuego();
-            peon.OcultarMovimientos();
-            peon.mostrandoMovimientos = false;
+            tile.HighlightMove(false); // Opcional: oculta movimientos al inicio
         }
+    }
+
+    if (ficha is MonoBehaviour mb)
+    {
+        var mostrarFlag = mb.GetType().GetField("mostrandoMovimientos");
+        if (mostrarFlag != null)
+            mostrarFlag.SetValue(mb, false);
+    }
+    }
 
         ActualizarHUD();
         NotificarEfectosTurno();

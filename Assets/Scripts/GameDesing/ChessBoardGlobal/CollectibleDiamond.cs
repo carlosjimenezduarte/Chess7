@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CollectibleDiamond : MonoBehaviour, ITileEffect
+public class CollectibleDiamond : MonoBehaviour
 {
     public Vector2Int tileCoords;
     public int turnoAparece = 1;

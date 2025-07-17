@@ -30,7 +30,20 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
     public void SetPosicionActual(Vector2Int nuevaPos)
     {
-        posicionActual = nuevaPos;
+    posicionActual = nuevaPos;
+
+    // ✅ Informamos al BoardManagerGlobal del nuevo posicionamiento
+    BoardManagerGlobal.Instance?.RegistrarMovimiento(this, nuevaPos);
+
+    // ✅ También actualizamos el MovableTileObject
+    var movible = GetComponent<MovableTileObject>();
+    if (movible != null)
+        movible.tileCoords = nuevaPos;
+
+    // ✅ También actualizamos el PiecePositioner
+    var posicionador = GetComponent<PiecePositioner>();
+    if (posicionador != null)
+        posicionador.tileCoords = nuevaPos;
     }
 
     public Vector2Int GetPosicionActual()
@@ -67,11 +80,11 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
             tile.HighlightMove(distancia <= rango);
         }
 
-        // 🔥 Ahora revisa diagonales inmediatas para posibles ataques
+        // ✅ OPTIMIZADO: ahora revisa diagonales inmediatas con el BoardManagerGlobal
         Vector2Int[] diagonales = new Vector2Int[]
         {
-        new Vector2Int(1,1), new Vector2Int(-1,1),
-        new Vector2Int(1,-1), new Vector2Int(-1,-1)
+            new Vector2Int(1,1), new Vector2Int(-1,1),
+            new Vector2Int(1,-1), new Vector2Int(-1,-1)
         };
 
         foreach (var delta in diagonales)
@@ -79,11 +92,8 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
             Vector2Int diagonal = posicionActual + delta;
             if (diagonal.x < 0 || diagonal.y < 0 || diagonal.x > 7 || diagonal.y > 7) continue;
 
-            var objetivo = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-                .FirstOrDefault(obj =>
-                    obj is IFichaEnemiga &&
-                    obj.TryGetComponent<IPieceWithPosition>(out var pos) &&
-                    pos.GetPosicionActual() == diagonal);
+            var objetivo = BoardManagerGlobal.Instance.ObtenerObjetosEn(diagonal)
+                .FirstOrDefault(obj => obj is IFichaEnemiga);
 
             if (objetivo != null)
             {
@@ -91,7 +101,7 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
                 if (tile != null)
                 {
                     tile.HighlightEnemyAttack(true); // fucsia fuerte
-                    Debug.Log($"🔪 Peón puede atacar en diagonal a {objetivo.name} en {diagonal}");
+                    Debug.Log($"🔪 Peón puede atacar en diagonal a {objetivo} en {diagonal}");
                 }
             }
         }
@@ -136,39 +146,33 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         int distancia = Mathf.Abs(posicionActual.x - nuevaPos.x) + Mathf.Abs(posicionActual.y - nuevaPos.y);
         int rango = Mathf.Max(1, puntosMovimientoActual);
 
-        // 🚀 PRIMERO: revisar si es un ataque diagonal inmediato
+        // ✅ OPTIMIZADO: ahora usa BoardManagerGlobal para revisar enemigos en diagonal
         if (Mathf.Abs(nuevaPos.x - posicionActual.x) == 1 && Mathf.Abs(nuevaPos.y - posicionActual.y) == 1)
         {
-            var fichaEnDiagonal = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-                .Where(obj => obj is IFichaEnemiga)
-                .FirstOrDefault(obj =>
-                {
-                    if (!obj.TryGetComponent<IPieceWithPosition>(out var pos)) return false;
-                    return pos.GetPosicionActual() == nuevaPos;
-                });
+            var fichaEnDiagonal = BoardManagerGlobal.Instance.ObtenerObjetosEn(nuevaPos)
+                .FirstOrDefault(obj => obj is IFichaEnemiga);
 
             if (fichaEnDiagonal != null)
             {
-                Debug.Log($"💥 Peón salta en diagonal para eliminar a {fichaEnDiagonal.name} en {nuevaPos}");
+                Debug.Log($"💥 Peón salta en diagonal para eliminar a {fichaEnDiagonal} en {nuevaPos}");
 
                 SetPosicionActual(nuevaPos);
                 transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(nuevaPos);
 
                 if (fichaEnDiagonal is IPieceWithPosition enemigo)
                     enemigo.SetPosicionActual(new Vector2Int(-1, -1));
-                Destroy(fichaEnDiagonal.gameObject);
+                Destroy(((MonoBehaviour)fichaEnDiagonal).gameObject);
 
                 rey.puntosAccionActual -= 1;
 
                 MostrarMovimientoPosible();
                 FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
 
-                RevisarAmenazasGlobal(); // 🔥 ahora revisa todas las fichas enemigas (no solo reinas)
+                RevisarAmenazasGlobal();
                 return;
             }
         }
 
-        // 🚫 Movimiento Manhattan normal
         if (distancia > rango)
         {
             Debug.Log($"🚫 Movimiento no permitido: distancia {distancia} excede el rango {rango} PM del Peón.");
@@ -196,8 +200,12 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
             SetPosicionActual(paso);
             Debug.Log($"🚶 El Peón pasa por {paso}");
 
-            foreach (ITileEffect efecto in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ITileEffect>())
-                efecto.RevisarSiPeonLlegó(paso, this);
+            // ✅ OPTIMIZADO: usa BoardManagerGlobal para encontrar ITileEffect en el paso
+            foreach (var objeto in BoardManagerGlobal.Instance.ObtenerObjetosEn(paso))
+            {
+                if (objeto is ITileEffect efecto)
+                    efecto.RevisarSiPeonLlegó(paso, this);
+            }
         }
 
         transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(nuevaPos);
@@ -212,7 +220,7 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
         FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
 
-        RevisarAmenazasGlobal(); // 🔥 importante: después del movimiento completo
+        RevisarAmenazasGlobal();
 
         if (posicionActual == new Vector2Int(7, 7))
         {
@@ -225,8 +233,34 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         }
     }
 
+    public void RevisarObjetosEnCasilla()
+    {
+        Debug.Log($"♟️ Peón en {posicionActual} revisa objetos en la casilla.");
+        // ✅ OPTIMIZADO: ahora busca objetos directamente en el BoardManagerGlobal
+        foreach (var objeto in BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual))
+        {
+             Debug.Log($"📦 Encontrado objeto: {objeto.GetType().Name} ({((MonoBehaviour)objeto).name})");
 
+            if (objeto is ITileEffect efecto)
+            {
+                Debug.Log($"♙ Peón en {posicionActual} absorbe efecto {efecto}.");
+                efecto.RevisarSiPeonLlegó(posicionActual, this);
+                MostrarMovimientoPosible();
+            }
+        }
+    }
 
+    private void RevisarAmenazasGlobal()
+    {
+        // 🔥 Por ahora sigue recorriendo todo (pues aquí sí queremos revisar todas las fichas enemigas del mapa)
+        var fichasEnemigas = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+            .OfType<IFichaEnemiga>();
+
+        foreach (var ficha in fichasEnemigas)
+        {
+            ficha.RevisarAmenazasEnZona();
+        }
+    }
 
     public void ReiniciarTurno()
     {
@@ -258,45 +292,6 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
     }
 
-    private void RevisarObjetosEnCasilla()
-    {
-        var objetos = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-            .Where(obj => obj is IObjetoRecoleccionable);
-
-        foreach (var obj in objetos)
-        {
-            // Primero localiza su posición
-            Vector2Int pos = Vector2Int.zero;
-            if (obj.TryGetComponent<PiecePositioner>(out var posr))
-                pos = posr.tileCoords;
-            else if (obj is IPieceWithPosition pieza)
-                pos = pieza.GetPosicionActual();
-
-            // Si está en la misma casilla
-            if (pos == posicionActual)
-            {
-                Debug.Log($"♙ Peón en {posicionActual} absorbe objeto {obj.name}.");
-
-                // Intenta "activar" su efecto de forma genérica
-                if (obj.TryGetComponent<ITileEffect>(out var efecto))
-                {
-                    efecto.RevisarSiPeonLlegó(posicionActual, this);
-                    MostrarMovimientoPosible();
-                }
-            }
-        }
-    }
-    private void RevisarAmenazasGlobal()
-    {
-        var fichasEnemigas = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-            .OfType<IFichaEnemiga>();
-
-        foreach (var ficha in fichasEnemigas)
-        {
-            ficha.RevisarAmenazasEnZona();
-        }
-    }
-
     public void MostrarRango()
     {
         MostrarMovimientoPosible();
@@ -308,6 +303,4 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         OcultarMovimientos();
         mostrandoMovimientos = false;
     }
-
-
 }

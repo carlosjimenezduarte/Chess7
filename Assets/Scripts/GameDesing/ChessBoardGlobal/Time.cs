@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
-public class PotionAddTime : MonoBehaviour, ITileEffect
+public class PotionAddTime : MonoBehaviour
 {
     public Vector2Int tileCoords;
     public int turnoAparece = 1;

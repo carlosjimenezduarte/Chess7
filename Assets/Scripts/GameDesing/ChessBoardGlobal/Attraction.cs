@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Attraction : MonoBehaviour, ITileEffect
+public class Attraction : MonoBehaviour
 {
     public Vector2Int tileCoords;
 

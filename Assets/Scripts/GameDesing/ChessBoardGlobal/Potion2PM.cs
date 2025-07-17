@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Potion2PM : MonoBehaviour, ITileEffect
+public class Potion2PM : MonoBehaviour
 {
     public Vector2Int tileCoords;
     public int turnoAparece = 1;

@@ -4,6 +4,7 @@ public interface IFichaAliada : IFicha
 
     void MostrarRango();
     void OcultarRango();
+    void ActivarJuego();
 
     
 }

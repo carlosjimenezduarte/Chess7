@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 
-public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable
+public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPieceWithPosition
 {
     [Header("Configuración general")]
     public bool vieneDelFuturo = false;
@@ -20,34 +20,32 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable
     private MovableTileObject movable;
 
     private void Awake()
-{
-    image = GetComponent<Image>();
-    piecePositioner = GetComponent<PiecePositioner>();
-    movable = GetComponent<MovableTileObject>();
-
-    if (piecePositioner == null)
-        Debug.LogWarning($"⚠️ {name} no tiene PiecePositioner.");
-    if (movable == null)
-        Debug.LogWarning($"⚠️ {name} no tiene MovableTileObject.");
-
-    if (vieneDelFuturo)
     {
-        ColocarEn(tileCoordsFuturosInciertos);
-        if (movable != null) movable.activoEnTablero = false;
-        image.enabled = false;
-        activadoEnJuego = false;
-    }
-    else
-    {
-        // ⚡ ahora deja al prefab en su posición, sin reubicar con posicionReal
-        tileCoords = piecePositioner != null ? piecePositioner.tileCoords : tileCoords;
-        if (movable != null) movable.activoEnTablero = true;
-        image.enabled = true;
-        activadoEnJuego = true;
-        Debug.Log($"✅ {name} inicializado en tablero en {tileCoords}.");
-    }
-}
+        image = GetComponent<Image>();
+        piecePositioner = GetComponent<PiecePositioner>();
+        movable = GetComponent<MovableTileObject>();
 
+        if (piecePositioner == null)
+            Debug.LogWarning($"⚠️ {name} no tiene PiecePositioner.");
+        if (movable == null)
+            Debug.LogWarning($"⚠️ {name} no tiene MovableTileObject.");
+
+        if (vieneDelFuturo)
+        {
+            ColocarEn(tileCoordsFuturosInciertos);
+            if (movable != null) movable.activoEnTablero = false;
+            image.enabled = false;
+            activadoEnJuego = false;
+        }
+        else
+        {
+            tileCoords = piecePositioner != null ? piecePositioner.tileCoords : tileCoords;
+            if (movable != null) movable.activoEnTablero = true;
+            image.enabled = true;
+            activadoEnJuego = true;
+            Debug.Log($"✅ {name} inicializado en tablero en {tileCoords}.");
+        }
+    }
 
     private void Update()
     {
@@ -66,6 +64,7 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable
         if (BoardManagerGlobal.Instance != null)
             transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(coords);
 
+        BoardManagerGlobal.Instance?.RegistrarMovimiento(this, coords);
         Debug.Log($"🧩 {name} colocado en {coords}");
     }
 
@@ -74,26 +73,25 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable
         if (!activadoEnJuego && turnoActual >= turnoAparece)
         {
             Debug.Log($"⏳ Turno {turnoActual}. {name} programado para aparecer en {posicionReal}.");
-
             TeletransportarAlTablero();
         }
     }
 
     private void TeletransportarAlTablero()
-{
-    if (PuedeAparecerEn(posicionReal))
     {
-        ColocarEn(posicionReal);
-        if (movable != null) movable.ActivarEnTablero(posicionReal);
-        activadoEnJuego = true;
-        image.enabled = true;
-        Debug.Log($"✅ {name} se materializó en {posicionReal}.");
+        if (PuedeAparecerEn(posicionReal))
+        {
+            ColocarEn(posicionReal);
+            if (movable != null) movable.ActivarEnTablero(posicionReal);
+            activadoEnJuego = true;
+            image.enabled = true;
+            Debug.Log($"✅ {name} se materializó en {posicionReal}.");
+        }
+        else
+        {
+            ExiliarADimensionDivina();
+        }
     }
-    else
-    {
-        ExiliarADimensionDivina();
-    }
-}
 
     public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey)
     {
@@ -140,52 +138,63 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable
 
     private bool PuedeAparecerEn(Vector2Int coords)
     {
-    var objetos = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-        .Where(obj => obj is IObjetoRecoleccionable && obj != this);
+        var objetos = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+            .Where(obj => obj is IObjetoRecoleccionable && obj != this);
 
-    foreach (var obj in objetos)
-    {
-        Vector2Int pos = Vector2Int.zero;
-        int turnoOtro = 0;
-        bool estaActivo = false;
-
-        // obtiene su posición actual
-        if (obj.TryGetComponent<PiecePositioner>(out var posr))
-            pos = posr.tileCoords;
-        else if (obj is IPieceWithPosition pieza)
-            pos = pieza.GetPosicionActual();
-
-        // obtiene sus datos si es un objeto recoleccionable con turno
-        if (obj.TryGetComponent<Potion1PM>(out var otro))
+        foreach (var obj in objetos)
         {
-            turnoOtro = otro.turnoAparece;
-            estaActivo = otro.IsVisible();
-        }
+            Vector2Int pos = Vector2Int.zero;
+            int turnoOtro = 0;
+            bool estaActivo = false;
 
-        // Si hay algo allí
-        if (pos == coords)
-        {
-            if (estaActivo || turnoOtro <= turnoAparece)
+            if (obj.TryGetComponent<PiecePositioner>(out var posr))
+                pos = posr.tileCoords;
+            else if (obj is IPieceWithPosition pieza)
+                pos = pieza.GetPosicionActual();
+
+            if (obj.TryGetComponent<Potion1PM>(out var otro))
             {
-                Debug.Log($"💥 {name} destruye a {obj.name} en {coords}");
-                if (otro != null)
-                    otro.ExiliarADimensionDivina();
+                turnoOtro = otro.turnoAparece;
+                estaActivo = otro.IsVisible();
+            }
+
+            if (pos == coords)
+            {
+                if (estaActivo || turnoOtro <= turnoAparece)
+                {
+                    Debug.Log($"💥 {name} destruye a {obj.name} en {coords}");
+                    if (otro != null)
+                        otro.ExiliarADimensionDivina();
+                    else
+                        obj.gameObject.SetActive(false);
+                }
                 else
-                    obj.gameObject.SetActive(false);
-            }
-            else
-            {
-                Debug.Log($"🕊 {name} NO puede aparecer en {coords} por futura más temprana (turno {turnoOtro})");
-                return false;
+                {
+                    Debug.Log($"🕊 {name} NO puede aparecer en {coords} por futura más temprana (turno {turnoOtro})");
+                    return false;
+                }
             }
         }
-    }
-    return true;
+        return true;
     }
 
+    public void SetPosicionActual(Vector2Int nuevaPos)
+    {
+        tileCoords = nuevaPos;
+    }
+
+    public Vector2Int GetPosicionActual()
+    {
+        return tileCoords;
+    }
 
     public bool IsVisible() => activadoEnJuego;
 
     public bool EstaRealmenteEnTablero()
         => tileCoords.x >= 0 && tileCoords.y >= 0 && tileCoords.x <= 7 && tileCoords.y <= 7;
+
+        public void RevisarSiFichaLlegó(Vector2Int posicionFicha, IFicha ficha)
+{
+    // Este objeto no reacciona a fichas enemigas directamente.
+}
 }

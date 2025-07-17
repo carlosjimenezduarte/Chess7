@@ -35,6 +35,9 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
     public void SetPosicionActual(Vector2Int nuevaPos)
     {
         posicionActual = nuevaPos;
+
+         // ✅ Informamos al BoardManagerGlobal del nuevo posicionamiento
+        BoardManagerGlobal.Instance?.RegistrarMovimiento(this, nuevaPos);
     }
 
     public Vector2Int GetPosicionActual()

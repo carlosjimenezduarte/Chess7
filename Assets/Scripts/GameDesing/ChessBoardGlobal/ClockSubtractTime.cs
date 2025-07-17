@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
-public class ClockSubtractTime : MonoBehaviour, ITileEffect
+public class ClockSubtractTime : MonoBehaviour
 {
     public Vector2Int tileCoords;
     public int turnoAparece = 1;
