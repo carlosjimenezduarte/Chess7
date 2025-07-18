@@ -28,13 +28,14 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         if (piecePositioner != null)
         {
             posicionActual = piecePositioner.tileCoords;
-            Debug.Log($"♛ Reina inició en {posicionActual}");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ Reina inició en {posicionActual}");
         }
         else
         {
-            Debug.LogWarning("⚠️ No hay PiecePositioner en la Reina. Usando (0,0).");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("⚠️ No hay PiecePositioner en la Reina. Usando (0,0).");
             posicionActual = new Vector2Int(0, 0);
         }
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
     public void SetPosicionActual(Vector2Int nuevaPos)
@@ -44,17 +45,19 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
             piecePositioner.tileCoords = nuevaPos;
 
         BoardManagerGlobal.Instance?.RegistrarMovimiento(this, nuevaPos);
-        Debug.Log($"♛ Reina actualizó su posición lógica a {nuevaPos}");
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ Reina actualizó su posición lógica a {nuevaPos}");
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
-    public Vector2Int GetPosicionActual() => posicionActual;
+     public Vector2Int GetPosicionActual() => posicionActual;
 
     public void OnPointerClick(PointerEventData eventData)
     {
         var manager = FindFirstObjectByType<ChessGameManager>();
         if (manager == null || !manager.IsJuegoActivo())
         {
-            Debug.Log("♛ No se puede mostrar rango: juego no activo.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ No se puede mostrar rango: juego no activo.");
+            BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
             return;
         }
 
@@ -62,14 +65,15 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
         if (mostrandoRango)
         {
-            Debug.Log("♛ Mostrando rango de ataque (Tiles)");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Mostrando rango de ataque (Tiles)");
             MostrarRangoDeAtaque();
         }
         else
         {
-            Debug.Log("♛ Ocultando rango de ataque (Tiles)");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Ocultando rango de ataque (Tiles)");
             OcultarRangoDeAtaque();
         }
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
     private void RevisarAmenazaAPieza(Vector2Int posicionPieza, System.Action efectoSobrePieza)
@@ -115,7 +119,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         }
     }
 
-    public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey)
+   public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey)
     {
         RevisarAmenazaAPieza(posicionRey, () =>
         {
@@ -126,8 +130,10 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
                 rey.GanarPuntoMovimiento(-2);
                 rey.puntosAccionActual -= 2;
                 rey.turnosRestantes -= 1;
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina aplicó penalización al Rey por estar en zona de amenaza");
             }
         });
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
     public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
@@ -140,8 +146,10 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
             {
                 peon.GanarPuntoMovimiento(-2);
                 FindFirstObjectByType<KingController>().puntosAccionActual -= 2;
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina aplicó penalización al Peón por estar en zona de amenaza");
             }
         });
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
     private IEnumerator MatarPiezaDespuesDelay(MonoBehaviour pieza, Vector2Int posicion)
@@ -240,7 +248,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
                 foreach (var pieza in BoardManagerGlobal.Instance.ObtenerObjetosEn(paso))
                 {
-                    if (pieza is IFichaAliada && pieza != this)
+                    if (pieza is IFichaAliada && pieza != (object)this)
                     {
                         Vector2Int pos = pieza.GetPosicionActual();
                         bool asesinatoEjecutado = false;
@@ -363,18 +371,20 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
     public void RevisarSiFichaLlegó(Vector2Int posicionFicha, IFicha ficha)
     {
-    if (posicionFicha != posicionActual) return;
+        if (posicionFicha != posicionActual) return;
 
-    foreach (var objeto in BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual))
-    {
-        if (objeto is IObjetoRecoleccionable)
+        foreach (var objeto in BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual))
         {
-            Debug.Log($"♛ Reina destruye objeto {objeto} porque ficha {ficha} lo trajo encima");
-            if (objeto is Potion1PM pocion)
-                pocion.ExiliarADimensionDivina();
+            if (objeto is IObjetoRecoleccionable)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ Reina destruye objeto {objeto} porque ficha {ficha} lo trajo encima");
+                if (objeto is Potion1PM pocion)
+                    pocion.ExiliarADimensionDivina();
 
-            Destroy(((MonoBehaviour)objeto).gameObject);
+                Destroy(((MonoBehaviour)objeto).gameObject);
+            }
         }
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
-}
+
 }

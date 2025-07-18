@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using System.Reflection;
 
 public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPieceWithPosition
 {
@@ -14,6 +15,7 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPi
 
     private Vector2Int tileCoords;
     private bool activadoEnJuego = false;
+    private bool desactivado = false;
 
     private Image image;
     private PiecePositioner piecePositioner;
@@ -93,6 +95,24 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPi
         }
     }
 
+    public void VerificarAutoChequeoGeneral()
+    {
+        if (desactivado || !activadoEnJuego) return;
+
+        var rey = FindFirstObjectByType<KingController>();
+        if (rey != null)
+            RevisarSiReyLlegó(rey.GetPosicionActual(), rey);
+
+        var fichasAliadas = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+            .OfType<IFichaAliada>();
+
+        foreach (var ficha in fichasAliadas)
+        {
+            if (ficha is KingController) continue;
+            RevisarSiFichaAliadaLlegó(ficha.GetPosicionActual(), ficha);
+        }
+    }
+
     public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey)
     {
         if (tileCoords == posicionRey)
@@ -103,25 +123,26 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPi
         }
     }
 
-    public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
+    public void RevisarSiFichaAliadaLlegó(Vector2Int posicionFicha, IFichaAliada ficha)
     {
-        if (tileCoords == posicionPeon)
+        if (tileCoords != posicionFicha || desactivado) return;
+        if (ficha is KingController) return;
+
+        desactivado = true;
+        Debug.Log($"🧪 {name} detecta ficha aliada ({ficha.GetType().Name}) encima. Bonus aplicado.");
+
+        // Si tiene el método GanarPuntoMovimientoSilencioso lo invoca
+        MethodInfo metodo = ficha.GetType().GetMethod("GanarPuntoMovimientoSilencioso");
+        if (metodo != null)
         {
-            Debug.Log($"🤫 {name} detecta Peón encima. Bonus silencioso.");
-            peon.GanarPuntoMovimientoSilencioso(1);
-            Destroy(gameObject);
+            metodo.Invoke(ficha, new object[] { 1 });
         }
-    }
+        else
+        {
+            Debug.LogWarning($"⚠️ {ficha.GetType().Name} no implementa GanarPuntoMovimientoSilencioso.");
+        }
 
-    public void VerificarAutoChequeoGeneral()
-    {
-        var rey = FindFirstObjectByType<KingController>();
-        if (rey != null)
-            RevisarSiReyLlegó(rey.GetPosicionActual(), rey);
-
-        var peones = FindObjectsByType<PawnController>(FindObjectsSortMode.None);
-        foreach (var peon in peones)
-            RevisarSiPeonLlegó(peon.GetPosicionActual(), peon);
+        Destroy(gameObject);
     }
 
     public void ExiliarADimensionDivina()
@@ -193,8 +214,13 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPi
     public bool EstaRealmenteEnTablero()
         => tileCoords.x >= 0 && tileCoords.y >= 0 && tileCoords.x <= 7 && tileCoords.y <= 7;
 
-        public void RevisarSiFichaLlegó(Vector2Int posicionFicha, IFicha ficha)
-{
-    // Este objeto no reacciona a fichas enemigas directamente.
-}
+    public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
+    {
+        RevisarSiFichaAliadaLlegó(posicionPeon, peon);
+    }
+
+    public void RevisarSiFichaLlegó(Vector2Int posicionFicha, IFicha ficha)
+    {
+        // Este objeto no reacciona a fichas enemigas directamente.
+    }
 }

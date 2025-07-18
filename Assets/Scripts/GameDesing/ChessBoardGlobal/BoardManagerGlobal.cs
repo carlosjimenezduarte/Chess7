@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 public class BoardManagerGlobal : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class BoardManagerGlobal : MonoBehaviour
     private Dictionary<Vector2Int, List<IPieceWithPosition>> tableroOcupacion
         = new Dictionary<Vector2Int, List<IPieceWithPosition>>();
 
+    private List<string> mensajesInternos = new List<string>();
+
     private void Awake()
     {
         Instance = this;
@@ -21,8 +24,6 @@ public class BoardManagerGlobal : MonoBehaviour
             tableroOcupacion[tile.tileCoords] = new List<IPieceWithPosition>();
             Debug.Log($"📋 Tile inicializado en {tile.tileCoords}");
         }
-
-
     }
 
     private void Start()
@@ -30,7 +31,6 @@ public class BoardManagerGlobal : MonoBehaviour
         InicializarRegistroDeFichas();
     }
 
-    // ✅ Registrar o mover una ficha
     public void RegistrarMovimiento(IPieceWithPosition pieza, Vector2Int nuevaPos)
     {
         foreach (var lista in tableroOcupacion.Values)
@@ -43,16 +43,14 @@ public class BoardManagerGlobal : MonoBehaviour
         Debug.Log($"📌 {pieza} registrado en {nuevaPos}");
     }
 
-    // ✅ Obtener fichas en una casilla
-    public List<IPieceWithPosition> ObtenerObjetosEn(Vector2Int pos)
+   public List<IPieceWithPosition> ObtenerObjetosEn(Vector2Int pos)
     {
-        if (tableroOcupacion.TryGetValue(pos, out var lista))
-            return lista;
+    if (tableroOcupacion.TryGetValue(pos, out var lista))
+        return lista.Where(obj => obj != null && ((MonoBehaviour)obj) != null).ToList();
 
-        return new List<IPieceWithPosition>();
+    return new List<IPieceWithPosition>();
     }
 
-    // ✅ Ver si hay ficha o recolectable en casilla (opcionalmente ignora alguna)
     public bool EstaCasillaOcupada(Vector2Int pos, IPieceWithPosition ignorar = null)
     {
         var objetos = ObtenerObjetosEn(pos);
@@ -133,12 +131,10 @@ public class BoardManagerGlobal : MonoBehaviour
     public static Vector2Int FuturoIncierto = new Vector2Int(100, 100);
     public static Vector2Int DimensionDivina = new Vector2Int(-1, -9999);
 
-    /// 🔍 Devuelve todos los objetos Movables dentro del tablero, ordenados desde un origen
     public List<MovableTileObject> GetObjetosMoviblesOrdenadosDesde(Vector2Int origen)
     {
         var todos = FindObjectsByType<MovableTileObject>(FindObjectsSortMode.None);
 
-        // Solo los que estén activos en tablero y dentro de límites válidos
         var movibles = new List<MovableTileObject>();
 
         foreach (var obj in todos)
@@ -158,42 +154,116 @@ public class BoardManagerGlobal : MonoBehaviour
             movibles.Add(obj);
         }
 
-        // Ordenamos de más lejos a más cerca desde el origen
         movibles.Sort((a, b) =>
             Vector2Int.Distance(b.tileCoords, origen).CompareTo(Vector2Int.Distance(a.tileCoords, origen)));
 
         return movibles;
     }
-    
+
     private void InicializarRegistroDeFichas()
-{
-    Debug.Log("📜 Iniciando registro global de fichas...");
-
-    var componentes = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
-
-    var fichas = componentes.OfType<IFicha>();
-    foreach (var ficha in fichas)
     {
-        var pieza = ficha as MonoBehaviour;
-        var posicion = pieza.GetComponent<MovableTileObject>()?.tileCoords ?? new Vector2Int(-1, -1);
+        Debug.Log("📜 Iniciando registro global de fichas...");
 
-        if (posicion.x >= 0)
+        var componentes = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
+
+        var fichas = componentes.OfType<IFicha>();
+        foreach (var ficha in fichas)
         {
-            if (ficha is IPieceWithPosition piezaConPos)
+            var pieza = ficha as MonoBehaviour;
+            var posicion = pieza.GetComponent<MovableTileObject>()?.tileCoords ?? new Vector2Int(-1, -1);
+
+            if (posicion.x >= 0)
             {
-                Debug.Log($"📍 Registrando ficha inicial: {pieza.name} en {posicion}");
-                RegistrarMovimiento(piezaConPos, posicion);
+                if (ficha is IPieceWithPosition piezaConPos)
+                {
+                    Debug.Log($"📍 Registrando ficha inicial: {pieza.name} en {posicion}");
+                    RegistrarMovimiento(piezaConPos, posicion);
+                }
+                else
+                {
+                    Debug.LogWarning($"⚠️ {pieza.name} no implementa IPieceWithPosition. No registrada.");
+                }
             }
             else
             {
-                Debug.LogWarning($"⚠️ {pieza.name} no implementa IPieceWithPosition. No registrada.");
+                Debug.LogWarning($"⚠️ {pieza.name} no tiene coordenadas válidas. No registrada.");
             }
         }
-        else
-        {
-            Debug.LogWarning($"⚠️ {pieza.name} no tiene coordenadas válidas. No registrada.");
-        }
     }
+
+    // ✅ Recolección de mensajes internos para el Árbitro Silencioso
+    public void AgregarMensajeInterno(string mensaje)
+    {
+        mensajesInternos.Add(mensaje);
+    }
+
+    public void ReportarEstadoActualDelTablero()
+    {
+        StringBuilder reporte = new StringBuilder();
+
+        reporte.AppendLine("🧠 [Árbitro Silencioso] Estado actual del tablero:");
+
+        // 📝 Mensajes personalizados antes del reporte de casillas
+        if (mensajesInternos.Count > 0)
+        {
+            reporte.AppendLine("📝 Mensajes recientes:");
+            foreach (var mensaje in mensajesInternos)
+                reporte.AppendLine("   " + mensaje);
+            reporte.AppendLine();
+        }
+
+        mensajesInternos.Clear(); // Limpiar después de imprimir
+
+        foreach (var par in tableroOcupacion)
+        {
+            Vector2Int coords = par.Key;
+            var lista = par.Value;
+
+            if (lista.Count == 0)
+            {
+                reporte.AppendLine($"📭 Casilla {coords}: vacía.");
+                continue;
+            }
+
+            reporte.AppendLine($"📍 Casilla {coords}: contiene {lista.Count} objeto(s).");
+
+            foreach (var obj in lista)
+            {
+                if (obj == null || ((MonoBehaviour)obj) == null) continue;
+
+                string nombre = ((MonoBehaviour)obj).name;
+                string tipo = obj.GetType().Name;
+
+                string interfaces = "";
+                if (obj is IFicha) interfaces += "IFicha ";
+                if (obj is IFichaAliada) interfaces += "IFichaAliada ";
+                if (obj is IFichaEnemiga) interfaces += "IFichaEnemiga ";
+                if (obj is ITileEffect) interfaces += "ITileEffect ";
+                if (obj is IObjetoRecoleccionable) interfaces += "IObjetoRecoleccionable ";
+
+                Vector2Int posicionReportada = obj.GetPosicionActual();
+                bool activo = obj is MovableTileObject mto ? mto.activoEnTablero : true;
+
+                reporte.AppendLine($"   🔹 {nombre} ({tipo}) -> Pos: {posicionReportada}, Interfaces: [{interfaces}], Activo: {activo}");
+            }
+        }
+
+        reporte.AppendLine("✅ Fin del reporte del Árbitro Silencioso.\n");
+
+        Debug.Log(reporte.ToString());
+    }
+    public void FinalizarTurno()
+{
+    // Aquí puedes agregar otras tareas del fin de turno si las hay
+    VerificarEfectosTemporales();
 }
 
+private void VerificarEfectosTemporales()
+{
+    foreach (var obj in FindObjectsByType<Potion1PM>(FindObjectsSortMode.None))
+    {
+        if (obj == null) continue;
+        obj.VerificarAutoChequeoGeneral();
+    }
+}
 }

@@ -22,21 +22,19 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         if (piecePositioner != null)
         {
             posicionActual = piecePositioner.tileCoords;
-            Debug.Log($"♔ Rey inició en {posicionActual}");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♔ Rey inició en {posicionActual}");
         }
         else
         {
-            Debug.LogWarning("⚠️ No hay PiecePositioner en el Rey. Usando (0,0).");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("⚠️ No hay PiecePositioner en el Rey. Usando (0,0).");
             posicionActual = new Vector2Int(0, 0);
         }
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
-    // 👑 interfaz
     public void SetPosicionActual(Vector2Int nuevaPos)
     {
         posicionActual = nuevaPos;
-
-         // ✅ Informamos al BoardManagerGlobal del nuevo posicionamiento
         BoardManagerGlobal.Instance?.RegistrarMovimiento(this, nuevaPos);
     }
 
@@ -50,19 +48,19 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         juegoActivo = true;
         MostrarMovimientoPosible();
         mostrandoMovimientos = true;
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
     public void MostrarMovimientoPosible()
     {
         if (!juegoActivo) return;
 
-        Debug.Log($"Mostrando casillas alcanzables con {puntosMovimientoActual} PM.");
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔍 Mostrando casillas alcanzables con {puntosMovimientoActual} PM del Rey.");
 
         foreach (Tile tile in BoardManagerGlobal.Instance.tiles)
         {
             int distancia = Mathf.Abs(tile.tileCoords.x - posicionActual.x) + Mathf.Abs(tile.tileCoords.y - posicionActual.y);
-            bool puedeAlcanzar = distancia <= puntosMovimientoActual;
-            tile.HighlightMove(puedeAlcanzar);
+            tile.HighlightMove(distancia <= puntosMovimientoActual);
         }
     }
 
@@ -78,29 +76,25 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         bool esNuevaSeleccion = gameManager.fichaSeleccionadaActual != this;
         gameManager.fichaSeleccionadaActual = this;
 
-        // Oculta rangos del Rey si existe
         var rey = FindFirstObjectByType<KingController>();
         if (rey != null && rey != this)
             rey.OcultarMovimientos();
 
-        // Si es la primera vez que se selecciona esta ficha,
-        // fuerza la visualización del rango automáticamente
         if (esNuevaSeleccion || !mostrandoMovimientos)
         {
             mostrandoMovimientos = true;
             MostrarMovimientoPosible();
-            Debug.Log("🟢 Mostrando previsualización automática del Rey.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("🟢 Mostrando previsualización automática del Rey.");
         }
         else
         {
             mostrandoMovimientos = false;
             OcultarMovimientos();
-            Debug.Log("🔴 Ocultando previsualización del Rey.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("🔴 Ocultando previsualización del Rey.");
         }
 
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
-
-
 
     public void MoverA(Vector2Int nuevaPos)
     {
@@ -110,23 +104,19 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
         if (distancia <= puntosMovimientoActual)
         {
-            Debug.Log($"Moviendo al Rey desde {posicionActual} a {nuevaPos}, consumiendo {distancia} PM.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♔ Moviendo al Rey desde {posicionActual} a {nuevaPos}, consumiendo {distancia} PM.");
 
             Vector2Int paso = posicionActual;
 
-            // 🔥 Recorre casilla por casilla
             while (paso != nuevaPos)
             {
                 if (paso.x < nuevaPos.x) paso.x++;
                 else if (paso.x > nuevaPos.x) paso.x--;
-
                 if (paso.y < nuevaPos.y) paso.y++;
                 else if (paso.y > nuevaPos.y) paso.y--;
 
-                // 🚀 Actualiza posición lógica en cada paso
                 SetPosicionActual(paso);
-
-                Debug.Log($"🚶 El Rey pasa por {paso}");
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🚶 El Rey pasa por {paso}");
 
                 foreach (ITileEffect efecto in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ITileEffect>())
                 {
@@ -140,17 +130,15 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
             MostrarMovimientoPosible();
             mostrandoMovimientos = true;
 
-            // ⚔ actualiza amenaza de la Reina
             var reina = FindFirstObjectByType<QueenEnemyController>();
             if (reina != null)
                 reina.VerificarAmenazaSobre(posicionActual);
 
             FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
 
-            // 🏁 Meta
             if (posicionActual == new Vector2Int(7, 7))
             {
-                Debug.Log("🚀 El Rey llegó a la meta (H8). Calculando bonus.");
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("🚀 El Rey llegó a la meta (H8). Calculando bonus.");
 
                 int bonus = turnosRestantes * 50;
                 PlayerScore.Instance.AddScore(bonus);
@@ -166,10 +154,9 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
                 FindFirstObjectByType<ChessGameManager>()?.DetenerJuego();
             }
 
-            // 💀 Derrota
             if (turnosRestantes <= 0)
             {
-                Debug.Log("💀 El Rey sin vidas.");
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("💀 El Rey sin vidas.");
 
                 LevelResultUI.Instance.ShowResults(
                     LevelProgress.Instance.keysCollected,
@@ -184,47 +171,49 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         }
         else
         {
-            Debug.Log("🚫 Movimiento no permitido, no hay suficientes PM. Soy el Rey");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("🚫 Movimiento no permitido, no hay suficientes PM. Soy el Rey");
         }
+
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
     public void ReiniciarTurno()
     {
         puntosMovimientoActual = puntosMovimientoMax;
         puntosAccionActual = puntosAccionMax;
-        Debug.Log($"Nuevo turno: {puntosMovimientoActual} PM, {puntosAccionActual} PA.");
-
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♔ Nuevo turno del Rey: {puntosMovimientoActual} PM, {puntosAccionActual} PA.");
         MostrarMovimientoPosible();
         mostrandoMovimientos = true;
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
-
 
     public void GanarPuntoMovimiento(int cantidad)
     {
         puntosMovimientoActual += cantidad;
-        Debug.Log($"El Rey gana +{cantidad} PM. Total: {puntosMovimientoActual}.");
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"👑 El Rey gana +{cantidad} PM. Total: {puntosMovimientoActual}.");
         MostrarMovimientoPosible();
         mostrandoMovimientos = true;
         FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
     public void GanarVida(int cantidad)
     {
         turnosRestantes += cantidad;
-        Debug.Log($"❤️ El Rey gana +{cantidad} vida(s). Ahora tiene {turnosRestantes}.");
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"❤️ El Rey gana +{cantidad} vida(s). Ahora tiene {turnosRestantes}.");
         FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
-
 
     public void RestarTurno()
     {
         turnosRestantes--;
-        Debug.Log($"Turnos restantes: {turnosRestantes}");
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"⏳ Turnos restantes: {turnosRestantes}");
         FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
 
         if (turnosRestantes <= 0)
         {
-            Debug.Log("💀 Sin vidas tras pasar turno.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("💀 Sin vidas tras pasar turno.");
 
             LevelResultUI.Instance.ShowResults(
                 LevelProgress.Instance.keysCollected,
@@ -235,23 +224,26 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
             juegoActivo = false;
             FindFirstObjectByType<ChessGameManager>()?.DetenerJuego();
         }
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
+
     public void DesactivarJuego()
     {
         juegoActivo = false;
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
-    
+
     public void MostrarRango()
     {
-    MostrarMovimientoPosible();
-    mostrandoMovimientos = true;
+        MostrarMovimientoPosible();
+        mostrandoMovimientos = true;
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
-public void OcultarRango()
+    public void OcultarRango()
     {
-    OcultarMovimientos();
-    mostrandoMovimientos = false;
+        OcultarMovimientos();
+        mostrandoMovimientos = false;
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
-
-    
 }
