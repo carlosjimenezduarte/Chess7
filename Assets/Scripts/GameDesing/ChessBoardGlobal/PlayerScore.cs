@@ -28,7 +28,7 @@ public class PlayerScore : MonoBehaviour
         ActualizarHUD();
     }
 
-    public void AddScore(int puntos)
+    public void AgregarPuntaje(int puntos)
     {
         totalScore += puntos;
         Debug.Log($"💰 Score actualizado: +{puntos} pts -> Total: {totalScore}");

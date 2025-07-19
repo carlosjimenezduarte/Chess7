@@ -164,35 +164,43 @@ public class BoardManagerGlobal : MonoBehaviour
     }
 
     private void InicializarRegistroDeFichas()
+{
+    AgregarMensajeInterno("📜 Iniciando registro global de fichas...");
+
+    var componentes = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
+    var fichas = componentes.OfType<IFicha>();
+
+    foreach (var ficha in fichas)
     {
-        AgregarMensajeInterno("📜 Iniciando registro global de fichas...");
+        var pieza = ficha as MonoBehaviour;
 
-        var componentes = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
-
-        var fichas = componentes.OfType<IFicha>();
-        foreach (var ficha in fichas)
+        // 🔒 Filtrado especial para fichas inamovibles que no deben registrarse
+        if (pieza.GetComponent<IFichaInmovil>() != null)
         {
-            var pieza = ficha as MonoBehaviour;
-            var posicion = pieza.GetComponent<MovableTileObject>()?.tileCoords ?? new Vector2Int(-1, -1);
+            AgregarMensajeInterno($"⛔ {pieza.name} es IFichaInmovil. No se registrará.");
+            continue;
+        }
 
-            if (posicion.x >= 0)
+        var posicion = pieza.GetComponent<MovableTileObject>()?.tileCoords ?? new Vector2Int(-1, -1);
+
+        if (posicion.x >= 0)
+        {
+            if (ficha is IPieceWithPosition piezaConPos)
             {
-                if (ficha is IPieceWithPosition piezaConPos)
-                {
-                    AgregarMensajeInterno($"📍 Registrando ficha inicial: {pieza.name} en {posicion}");
-                    RegistrarMovimiento(piezaConPos, posicion);
-                }
-                else
-                {
-                    Debug.LogWarning($"⚠️ {pieza.name} no implementa IPieceWithPosition. No registrada.");
-                }
+                AgregarMensajeInterno($"📍 Registrando ficha inicial: {pieza.name} en {posicion}");
+                RegistrarMovimiento(piezaConPos, posicion);
             }
             else
             {
-                Debug.LogWarning($"⚠️ {pieza.name} no tiene coordenadas válidas. No registrada.");
+                Debug.LogWarning($"⚠️ {pieza.name} no implementa IPieceWithPosition. No registrada.");
             }
         }
+        else
+        {
+            Debug.LogWarning($"⚠️ {pieza.name} no tiene coordenadas válidas. No registrada.");
+        }
     }
+}
 
     // ✅ Recolección de mensajes internos para el Árbitro Silencioso
     public void AgregarMensajeInterno(string mensaje)
@@ -272,12 +280,40 @@ public class BoardManagerGlobal : MonoBehaviour
     VerificarEfectosTemporales();
 }
 
-private void VerificarEfectosTemporales()
-{
-    foreach (var obj in FindObjectsByType<Potion1PM>(FindObjectsSortMode.None))
+    private void VerificarEfectosTemporales()
     {
-        if (obj == null) continue;
-        obj.VerificarAutoChequeoGeneral();
+        foreach (var obj in FindObjectsByType<Potion1PM>(FindObjectsSortMode.None))
+        {
+            if (obj == null) continue;
+            obj.VerificarAutoChequeoGeneral();
+        }
     }
-}
+    public void ReportarFichaInamovible(IPieceWithPosition pieza)
+    {
+    if (pieza == null || ((MonoBehaviour)pieza) == null) return;
+
+    string nombre = ((MonoBehaviour)pieza).name;
+    string tipo = pieza.GetType().Name;
+
+    string interfaces = "";
+    if (pieza is IFicha) interfaces += "IFicha ";
+    if (pieza is IFichaAliada) interfaces += "IFichaAliada ";
+    if (pieza is IFichaEnemiga) interfaces += "IFichaEnemiga ";
+    if (pieza is ITileEffect) interfaces += "ITileEffect ";
+    if (pieza is IObjetoRecoleccionable) interfaces += "IObjetoRecoleccionable ";
+    if (pieza is IFichaInmovil) interfaces += "IFichaInmovil ";
+
+    Vector2Int posicion = pieza.GetPosicionActual();
+    bool activo = true;
+    string estatus = "🪨 Inamovible";
+
+    if (pieza is MovableTileObject mto)
+    {
+        activo = mto.activoEnTablero;
+    }
+
+    string reporte = $"🪨 Reporte manual: {nombre} ({tipo}) -> Pos: {posicion}, Interfaces: [{interfaces}], Activo: {activo}, {estatus}";
+    AgregarMensajeInterno(reporte);
+    }
+
 }

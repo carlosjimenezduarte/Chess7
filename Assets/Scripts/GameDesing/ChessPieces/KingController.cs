@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Linq;
 
-public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPosition, IFicha
+public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPosition, IFicha, IFichaAliada
 {
     public int puntosMovimientoMax = 3;
     public int puntosAccionMax = 5;
@@ -151,7 +151,7 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
                 BoardManagerGlobal.Instance.AgregarMensajeInterno("🚀 El Rey llegó a la meta (H8). Calculando bonus.");
 
                 int bonus = turnosRestantes * 50;
-                PlayerScore.Instance.AddScore(bonus);
+                PlayerScore.Instance.AgregarPuntaje(bonus);
 
                 LevelResultUI.Instance.ShowResults(
                     LevelProgress.Instance.keysCollected,

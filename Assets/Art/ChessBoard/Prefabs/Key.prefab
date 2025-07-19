@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 7053040407064278351}
   - component: {fileID: 9105316809569616360}
   - component: {fileID: 1284807161734428293}
-  - component: {fileID: 8347715365504694851}
+  - component: {fileID: 2716071666952620224}
   m_Layer: 5
-  m_Name: CollectibleKey
+  m_Name: Key
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -89,8 +89,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74e5e04f83e472a4281766b56f53ad24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileCoords: {x: 4, y: 2}
---- !u!114 &8347715365504694851
+  tileCoords: {x: 0, y: 0}
+--- !u!114 &2716071666952620224
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -99,9 +99,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 19317582425152702}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d9cb8599748a304bb2717c8739cf222, type: 3}
+  m_Script: {fileID: 11500000, guid: 33d1fb08166c8ac48b559443f7486744, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileCoords: {x: 4, y: 2}
-  turnoAparece: 1
-  visibleDesdeInicio: 1
+  tileCoords: {x: 0, y: 0}
+  activoEnTablero: 1
+  esInamovible: 0

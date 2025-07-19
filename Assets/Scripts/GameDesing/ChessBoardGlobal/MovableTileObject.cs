@@ -1,22 +1,14 @@
 using UnityEngine;
-
-/// <summary>
-/// Script universal para objetos con TileCoords que pueden moverse.
-/// Actualiza su propia lógica, el PiecePositioner si existe,
-/// y también IPieceWithPosition si lo implementa.
-/// Ahora verifica si la casilla destino está ocupada antes de moverse.
-/// </summary>
-
+using System.Linq;
 
 public class MovableTileObject : MonoBehaviour
 {
     public Vector2Int tileCoords;
     public bool activoEnTablero = false;
-
     public bool esInamovible = false;
 
     private bool EsDentroTablero(Vector2Int p)
-    => p.x >= 0 && p.x <= 7 && p.y >= 0 && p.y <= 7;
+        => p.x >= 0 && p.x <= 7 && p.y >= 0 && p.y <= 7;
 
     public void MoverA(Vector2Int nuevaPos)
     {
@@ -49,8 +41,10 @@ public class MovableTileObject : MonoBehaviour
         }
 
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧭 {gameObject.name} movido global a {nuevaPos}");
-    }
 
+        // 👇 Intentar recolección automática si aterriza sobre ficha aliada
+        IntentarRecolectarSiEsPosible(nuevaPos);
+    }
 
     private bool EstaCasillaOcupada(Vector2Int coords)
     {
@@ -58,7 +52,7 @@ public class MovableTileObject : MonoBehaviour
 
         foreach (var obj in objetosEnTile)
         {
-            if ((object)obj == this) continue; // ✅ cast explícito a Object para comparación de referencia
+            if ((object)obj == this) continue;
 
             bool esRecoleccionable = obj is IObjetoRecoleccionable;
             bool esFicha = obj is IFicha;
@@ -76,8 +70,6 @@ public class MovableTileObject : MonoBehaviour
         return false;
     }
 
-
-
     public void ActivarEnTablero(Vector2Int nuevaPos)
     {
         tileCoords = nuevaPos;
@@ -85,11 +77,21 @@ public class MovableTileObject : MonoBehaviour
         activoEnTablero = true;
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"✅ {gameObject.name} activado en tablero en {tileCoords}");
     }
-    
+
     public bool EsInamovible()
     {
-    return esInamovible;
+        return esInamovible;
     }
 
+    private void IntentarRecolectarSiEsPosible(Vector2Int destino)
+    {
+    var receptor = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino)
+        .FirstOrDefault(obj => obj is IFichaAliada);
 
+    if (receptor is IFichaAliada fichaAliada && this is IObjetoRecoleccionable recolectable && this is ITileEffect efecto)
+    {
+        efecto.RevisarSiFichaLlegó(destino, fichaAliada);
+    }
+    }
+    
 }

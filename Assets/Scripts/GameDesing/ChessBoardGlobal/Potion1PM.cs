@@ -181,6 +181,11 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPi
 
             if (pos == coords)
             {
+                if (obj is IObjetoRecoleccionableEspecial)
+                {
+                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"🚫 {name} no puede reemplazar a {obj.name} porque es Especial.");
+                    return false;
+                }
                 if (estaActivo || turnoOtro <= turnoAparece)
                 {
                     BoardManagerGlobal.Instance.AgregarMensajeInterno($"💥 {name} destruye a {obj.name} en {coords}");
@@ -226,6 +231,7 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPi
 
     public bool EsInamovible()
     {
-    return esInamovible;
+        return esInamovible;
     }
+    
 }
