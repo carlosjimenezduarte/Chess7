@@ -1,24 +1,32 @@
+// ObjetoRecoleccionableBaseEditor.cs
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(Potion1PM))]
-public class ObjetoRecoleccionableEditor : Editor
+public abstract class ObjetoRecoleccionableBaseEditor<T> : Editor where T : MonoBehaviour
 {
     public override void OnInspectorGUI()
     {
-        Potion1PM objeto = (Potion1PM)target;
+        T objeto = (T)target;
         var piecePositioner = objeto.GetComponent<PiecePositioner>();
         var movable = objeto.GetComponent<MovableTileObject>();
 
+        var vieneDelFuturoProp = serializedObject.FindProperty("vieneDelFuturo");
+        var turnoApareceProp = serializedObject.FindProperty("turnoAparece");
+        var tileCoordsFuturosInciertosProp = serializedObject.FindProperty("tileCoordsFuturosInciertos");
+        var posicionRealProp = serializedObject.FindProperty("posicionReal");
+
         EditorGUILayout.LabelField("⭐ Configuración de Objeto Recolectable", EditorStyles.boldLabel);
 
-        objeto.vieneDelFuturo = EditorGUILayout.Toggle("¿Viene del Futuro?", objeto.vieneDelFuturo);
+        EditorGUILayout.PropertyField(vieneDelFuturoProp, new GUIContent("¿Viene del Futuro?"));
+        serializedObject.ApplyModifiedProperties();
 
-        if (objeto.vieneDelFuturo)
+        bool vieneDelFuturo = vieneDelFuturoProp.boolValue;
+
+        if (vieneDelFuturo)
         {
-            objeto.turnoAparece = EditorGUILayout.IntField("Turno Aparece", objeto.turnoAparece);
-            objeto.tileCoordsFuturosInciertos = EditorGUILayout.Vector2IntField("Posición Futuros Inciertos", objeto.tileCoordsFuturosInciertos);
-            objeto.posicionReal = EditorGUILayout.Vector2IntField("Posición Real al aparecer", objeto.posicionReal);
+            EditorGUILayout.PropertyField(turnoApareceProp, new GUIContent("Turno Aparece"));
+            EditorGUILayout.PropertyField(tileCoordsFuturosInciertosProp, new GUIContent("Posición Futuros Inciertos"));
+            EditorGUILayout.PropertyField(posicionRealProp, new GUIContent("Posición Real al aparecer"));
 
             if (movable != null)
             {

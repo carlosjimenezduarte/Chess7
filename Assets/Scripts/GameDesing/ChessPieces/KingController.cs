@@ -7,6 +7,8 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
     public int puntosMovimientoMax = 3;
     public int puntosAccionMax = 5;
 
+    public bool esInamovible = false;
+
     [HideInInspector]
     public int puntosMovimientoActual;
     public int puntosAccionActual = 5;
@@ -35,7 +37,15 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
     public void SetPosicionActual(Vector2Int nuevaPos)
     {
         posicionActual = nuevaPos;
+
+        var movible = GetComponent<MovableTileObject>();
+        if (movible != null) movible.tileCoords = nuevaPos;
+
+        var posicionador = GetComponent<PiecePositioner>();
+        if (posicionador != null) posicionador.tileCoords = nuevaPos;
+
         BoardManagerGlobal.Instance?.RegistrarMovimiento(this, nuevaPos);
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♔ Rey actualizado a {nuevaPos}.");
     }
 
     public Vector2Int GetPosicionActual()
@@ -55,7 +65,7 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
     {
         if (!juegoActivo) return;
 
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔍 Mostrando casillas alcanzables con {puntosMovimientoActual} PM del Rey.");
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"👣 Alcance personal del Rey: {puntosMovimientoActual} PM.");
 
         foreach (Tile tile in BoardManagerGlobal.Instance.tiles)
         {
@@ -181,7 +191,9 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
     {
         puntosMovimientoActual = puntosMovimientoMax;
         puntosAccionActual = puntosAccionMax;
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♔ Nuevo turno del Rey: {puntosMovimientoActual} PM, {puntosAccionActual} PA.");
+        BoardManagerGlobal.Instance.AgregarMensajeInterno(
+        $"♔ Nuevo turno del Rey → 🧭 PM personales: {puntosMovimientoActual}, 🎖️ PA estratégicos: {puntosAccionActual}."
+    );
         MostrarMovimientoPosible();
         mostrandoMovimientos = true;
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
@@ -190,7 +202,7 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
     public void GanarPuntoMovimiento(int cantidad)
     {
         puntosMovimientoActual += cantidad;
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"👑 El Rey gana +{cantidad} PM. Total: {puntosMovimientoActual}.");
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧭 El Rey gana {cantidad:+#;-#} PM personales. Total: {puntosMovimientoActual}.");
         MostrarMovimientoPosible();
         mostrandoMovimientos = true;
         FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
@@ -208,12 +220,12 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
     public void RestarTurno()
     {
         turnosRestantes--;
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"⏳ Turnos restantes: {turnosRestantes}");
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"⏳ El Rey pierde 1 vida. Turnos restantes: {turnosRestantes}");
         FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
 
         if (turnosRestantes <= 0)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("💀 Sin vidas tras pasar turno.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("💀 El Rey ha agotado todos sus turnos.");
 
             LevelResultUI.Instance.ShowResults(
                 LevelProgress.Instance.keysCollected,
@@ -245,5 +257,9 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         OcultarMovimientos();
         mostrandoMovimientos = false;
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    }
+    public bool EsInamovible()
+    {
+    return esInamovible;
     }
 }

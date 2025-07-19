@@ -19,6 +19,6 @@ public class AlignDangerOverlaysToChessBoard : MonoBehaviour
     myRect.sizeDelta = chessBoardRect.sizeDelta;
     myRect.anchoredPosition = chessBoardRect.anchoredPosition;
 
-    Debug.Log($"✅ DangerOverlays alineado: Pos {myRect.anchoredPosition}, Size {myRect.sizeDelta}, Pivot {myRect.pivot}");
+    BoardManagerGlobal.Instance.AgregarMensajeInterno($"✅ DangerOverlays alineado: Pos {myRect.anchoredPosition}, Size {myRect.sizeDelta}, Pivot {myRect.pivot}");
     }
 }

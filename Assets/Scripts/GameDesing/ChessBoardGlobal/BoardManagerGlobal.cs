@@ -7,6 +7,9 @@ public class BoardManagerGlobal : MonoBehaviour
 {
     public static BoardManagerGlobal Instance;
 
+    public int Ancho => 8;
+    public int Alto => 8;
+
     [Header("Lista de todas las casillas del tablero")]
     public List<Tile> tiles = new List<Tile>();
 
@@ -22,7 +25,7 @@ public class BoardManagerGlobal : MonoBehaviour
         foreach (Tile tile in tiles)
         {
             tableroOcupacion[tile.tileCoords] = new List<IPieceWithPosition>();
-            Debug.Log($"📋 Tile inicializado en {tile.tileCoords}");
+            AgregarMensajeInterno($"📋 Tile inicializado en {tile.tileCoords}");
         }
     }
 
@@ -40,7 +43,7 @@ public class BoardManagerGlobal : MonoBehaviour
             tableroOcupacion[nuevaPos] = new List<IPieceWithPosition>();
 
         tableroOcupacion[nuevaPos].Add(pieza);
-        Debug.Log($"📌 {pieza} registrado en {nuevaPos}");
+        AgregarMensajeInterno($"📌 {pieza} registrado en {nuevaPos}");
     }
 
    public List<IPieceWithPosition> ObtenerObjetosEn(Vector2Int pos)
@@ -63,7 +66,7 @@ public class BoardManagerGlobal : MonoBehaviour
 
             if (esFicha || esRecolectable)
             {
-                Debug.Log($"🚫 Casilla {pos} ocupada por {obj}");
+                AgregarMensajeInterno($"🚫 Casilla {pos} ocupada por {obj}");
                 return true;
             }
         }
@@ -81,7 +84,7 @@ public class BoardManagerGlobal : MonoBehaviour
                 return tile.transform.localPosition;
         }
 
-        Debug.LogWarning($"No se encontró tile en {tileCoords}");
+        AgregarMensajeInterno($"No se encontró tile en {tileCoords}");
         return Vector3.zero;
     }
 
@@ -141,13 +144,13 @@ public class BoardManagerGlobal : MonoBehaviour
         {
             if (!obj.activoEnTablero)
             {
-                Debug.Log($"🕳 {obj.name} ignorado (no activo en tablero).");
+                AgregarMensajeInterno($"🕳 {obj.name} ignorado (no activo en tablero).");
                 continue;
             }
 
             if (obj.tileCoords.x < 0 || obj.tileCoords.x > 7 || obj.tileCoords.y < 0 || obj.tileCoords.y > 7)
             {
-                Debug.Log($"🌌 {obj.name} ignorado (fuera del tablero en {obj.tileCoords}).");
+                AgregarMensajeInterno($"🌌 {obj.name} ignorado (fuera del tablero en {obj.tileCoords}).");
                 continue;
             }
 
@@ -162,7 +165,7 @@ public class BoardManagerGlobal : MonoBehaviour
 
     private void InicializarRegistroDeFichas()
     {
-        Debug.Log("📜 Iniciando registro global de fichas...");
+        AgregarMensajeInterno("📜 Iniciando registro global de fichas...");
 
         var componentes = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
 
@@ -176,7 +179,7 @@ public class BoardManagerGlobal : MonoBehaviour
             {
                 if (ficha is IPieceWithPosition piezaConPos)
                 {
-                    Debug.Log($"📍 Registrando ficha inicial: {pieza.name} en {posicion}");
+                    AgregarMensajeInterno($"📍 Registrando ficha inicial: {pieza.name} en {posicion}");
                     RegistrarMovimiento(piezaConPos, posicion);
                 }
                 else
@@ -242,9 +245,20 @@ public class BoardManagerGlobal : MonoBehaviour
                 if (obj is IObjetoRecoleccionable) interfaces += "IObjetoRecoleccionable ";
 
                 Vector2Int posicionReportada = obj.GetPosicionActual();
-                bool activo = obj is MovableTileObject mto ? mto.activoEnTablero : true;
+                bool activo = true;
+                string estatus = "";
 
-                reporte.AppendLine($"   🔹 {nombre} ({tipo}) -> Pos: {posicionReportada}, Interfaces: [{interfaces}], Activo: {activo}");
+                if (obj is MovableTileObject mto)
+                {
+                    activo = mto.activoEnTablero;
+                    if (mto.esInamovible)
+                        estatus = "🪨 Inamovible";
+                    else
+                        estatus = "Movible";
+                }
+
+                reporte.AppendLine($"   🔹 {nombre} ({tipo}) -> Pos: {posicionReportada}, Interfaces: [{interfaces}], Activo: {activo}, {estatus}");
+
             }
         }
 

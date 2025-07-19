@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Linq;
 using System.Reflection;
 
-public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPieceWithPosition
+public class PotionPA : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPieceWithPosition
 {
     [Header("Configuración general")]
     public bool vieneDelFuturo = false;
@@ -11,10 +11,11 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPi
     [Header("Turno y posiciones")]
     public int turnoAparece = 1;
     public Vector2Int posicionReal = new Vector2Int(0, 0);
+
+    public bool esInamovible = false;
     public Vector2Int tileCoordsFuturosInciertos = new Vector2Int(100, 100);
 
     private Vector2Int tileCoords;
-    public bool esInamovible = false;
     private bool activadoEnJuego = false;
     private bool desactivado = false;
 
@@ -118,8 +119,9 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPi
     {
         if (tileCoords == posicionRey)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧪 {name} detecta al Rey encima. Se activa.");
-            rey.GanarPuntoMovimiento(1);
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔷 {name} detecta al Rey encima. +1 PA aplicado.");
+            rey.puntosAccionActual += 1;
+            FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
             Destroy(gameObject);
         }
     }
@@ -130,16 +132,13 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPi
         if (ficha is KingController) return;
 
         desactivado = true;
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧪 {name} detecta ficha aliada ({ficha.GetType().Name}) encima. Bonus de rango aplicado.");
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔷 {name} recogido por {ficha.GetType().Name}. +1 PA otorgado al Rey.");
 
-        MethodInfo metodo = ficha.GetType().GetMethod("AumentarRangoMovimiento");
-        if (metodo != null)
+        var rey = FindFirstObjectByType<KingController>();
+        if (rey != null)
         {
-            metodo.Invoke(ficha, new object[] { 1 });
-        }
-        else
-        {
-            Debug.LogWarning($"⚠️ {ficha.GetType().Name} no implementa AumentarRangoMovimiento.");
+            rey.puntosAccionActual += 1;
+            FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
         }
 
         Destroy(gameObject);
@@ -173,7 +172,7 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPi
             else if (obj is IPieceWithPosition pieza)
                 pos = pieza.GetPosicionActual();
 
-            if (obj.TryGetComponent<Potion1PM>(out var otro))
+            if (obj.TryGetComponent<PotionPA>(out var otro))
             {
                 turnoOtro = otro.turnoAparece;
                 estaActivo = otro.IsVisible();
@@ -221,7 +220,7 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPi
 
     public void RevisarSiFichaLlegó(Vector2Int posicionFicha, IFicha ficha)
     {
-        // Este objeto no reacciona a fichas enemigas directamente.
+        // No reacciona a fichas enemigas directamente.
     }
 
     public bool EsInamovible()

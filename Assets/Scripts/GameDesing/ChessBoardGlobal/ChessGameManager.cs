@@ -127,13 +127,13 @@ public class ChessGameManager : MonoBehaviour
         rey.RestarTurno();
 
         // Si el peón está seleccionado, reinicia su rango
-        if (fichaSeleccionadaActual is PawnController peon)
+        if (fichaSeleccionadaActual is IFichaAliada fichaAliada)
         {
-            peon.ReiniciarTurno();
+            fichaAliada.MostrarRango();
         }
-        else if (fichaSeleccionadaActual is KingController reySeleccionado)
+            else if (fichaSeleccionadaActual is KingController reySeleccionado)
         {
-            reySeleccionado.ReiniciarTurno();
+             
         }
 
         NotificarEfectosTurno();

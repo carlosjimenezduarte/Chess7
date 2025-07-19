@@ -7,4 +7,6 @@ public interface IFichaAliada : IFicha
     void OcultarRango();
     void ActivarJuego();
     Vector2Int GetPosicionActual();
+
+    
 }

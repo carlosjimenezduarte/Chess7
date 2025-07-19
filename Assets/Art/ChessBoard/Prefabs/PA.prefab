@@ -11,12 +11,11 @@ GameObject:
   - component: {fileID: 7719651988363042774}
   - component: {fileID: 830419048449849635}
   - component: {fileID: 7737644970982878031}
-  - component: {fileID: 1794941772360732688}
   - component: {fileID: 4105215859909727495}
-  - component: {fileID: 7979836074835660483}
   - component: {fileID: 4389294754189347182}
+  - component: {fileID: 7979836074835660483}
   m_Layer: 5
-  m_Name: AP
+  m_Name: PA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -79,19 +78,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &1794941772360732688
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3634590439416098797}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9f2595a268938046a6b76e08e215c89, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tileCoords: {x: 1, y: 0}
 --- !u!114 &4105215859909727495
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -104,20 +90,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74e5e04f83e472a4281766b56f53ad24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileCoords: {x: 1, y: 0}
---- !u!114 &7979836074835660483
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3634590439416098797}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33d1fb08166c8ac48b559443f7486744, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tileCoords: {x: 1, y: 0}
+  tileCoords: {x: 2, y: 2}
 --- !u!114 &4389294754189347182
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -130,6 +103,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fefd8254b9b79944804106ab8d46b4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileCoords: {x: 1, y: 0}
+  vieneDelFuturo: 0
   turnoAparece: 1
-  visibleDesdeInicio: 0
+  posicionReal: {x: 0, y: 0}
+  tileCoordsFuturosInciertos: {x: 100, y: 100}
+--- !u!114 &7979836074835660483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3634590439416098797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33d1fb08166c8ac48b559443f7486744, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileCoords: {x: 2, y: 2}
+  activoEnTablero: 1

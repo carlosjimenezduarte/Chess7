@@ -7,6 +7,8 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 {
     [Header("Alcances tipo Reina")]
     public int rangoKillZone = 3;
+
+    public bool esInamovible = false;
     public int rangoRangeZone = 5;
     public bool ataquesConcatenados = false;
 
@@ -49,7 +51,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
-     public Vector2Int GetPosicionActual() => posicionActual;
+    public Vector2Int GetPosicionActual() => posicionActual;
 
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -102,7 +104,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
             {
                 if (obj is IObjetoRecoleccionable)
                 {
-                    Debug.Log($"💥 Reina destruye {obj} en su trayectoria por {paso}");
+                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"💥 Reina destruye {obj} en su trayectoria por {paso}");
                     if (obj is Potion1PM pocion) pocion.ExiliarADimensionDivina();
                     Destroy(((MonoBehaviour)obj).gameObject);
                 }
@@ -114,12 +116,12 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
         if (paso == posicionPieza)
         {
-            Debug.Log($"💀 Pieza alcanzada en {posicionPieza}");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"💀 Pieza alcanzada en {posicionPieza}");
             efectoSobrePieza.Invoke();
         }
     }
 
-   public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey)
+    public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey)
     {
         RevisarAmenazaAPieza(posicionRey, () =>
         {
@@ -144,8 +146,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
                 StartCoroutine(MatarPiezaDespuesDelay(peon, posicionPeon));
             else
             {
-                peon.GanarPuntoMovimiento(-2);
-                FindFirstObjectByType<KingController>().puntosAccionActual -= 2;
+                peon.AumentarRangoMovimiento(-2);
                 BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina aplicó penalización al Peón por estar en zona de amenaza");
             }
         });
@@ -171,7 +172,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
         Destroy(pieza.gameObject);
 
-        Debug.Log($"💀 {pieza.name} ejecutado por la Reina en {posicion}");
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"💀 {pieza.name} ejecutado por la Reina en {posicion}");
 
         yield return new WaitForSeconds(1f);
     }
@@ -266,12 +267,12 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
                         {
                             if (ataquesConcatenados)
                             {
-                                Debug.Log("⏳ Reina Negra pausa tras asesinato.");
+                                BoardManagerGlobal.Instance.AgregarMensajeInterno("⏳ Reina Negra pausa tras asesinato.");
                                 yield return new WaitForSeconds(1f);
                             }
                             else
                             {
-                                Debug.Log("🛑 Reina Roja detiene su cacería tras el primer asesinato.");
+                                BoardManagerGlobal.Instance.AgregarMensajeInterno("🛑 Reina Roja detiene su cacería tras el primer asesinato.");
                                 yield break;
                             }
                         }
@@ -293,7 +294,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         {
             if (objeto is IObjetoRecoleccionable)
             {
-                Debug.Log($"💥 Reina destruye objeto {objeto} en {posicionActual}");
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"💥 Reina destruye objeto {objeto} en {posicionActual}");
                 if (objeto is Potion1PM pocion)
                     pocion.ExiliarADimensionDivina();
 
@@ -341,7 +342,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         {
             lineaDeAtaque.Add(posicionPieza);
 
-            Debug.Log($"♛ Pintando línea de prefabs hacia pieza en {posicionPieza}");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ Pintando línea de prefabs hacia pieza en {posicionPieza}");
 
             foreach (Vector2Int coord in lineaDeAtaque)
             {
@@ -385,6 +386,11 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
             }
         }
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    }
+    
+    public bool EsInamovible()
+    {
+    return esInamovible;
     }
 
 }
