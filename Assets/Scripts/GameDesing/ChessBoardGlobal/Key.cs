@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Key : MonoBehaviour, ITileEffect, IObjetoRecoleccionableEspecial, IPieceWithPosition
+public class Key : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRecoleccionableEspecial, IPieceWithPosition
 {
     public Vector2Int tileCoords;
     public bool esInamovible = false;

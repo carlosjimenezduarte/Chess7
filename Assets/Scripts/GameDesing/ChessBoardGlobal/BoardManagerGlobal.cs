@@ -164,7 +164,7 @@ public class BoardManagerGlobal : MonoBehaviour
     }
 
     private void InicializarRegistroDeFichas()
-{
+    {
     AgregarMensajeInterno("📜 Iniciando registro global de fichas...");
 
     var componentes = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
@@ -174,10 +174,10 @@ public class BoardManagerGlobal : MonoBehaviour
     {
         var pieza = ficha as MonoBehaviour;
 
-        // 🔒 Filtrado especial para fichas inamovibles que no deben registrarse
-        if (pieza.GetComponent<IFichaInmovil>() != null)
+        // 🎯 Filtrado específico: ignorar solo objetos especiales como Expansion
+        if (pieza is Expansion)
         {
-            AgregarMensajeInterno($"⛔ {pieza.name} es IFichaInmovil. No se registrará.");
+            AgregarMensajeInterno($"⛔ {pieza.name} es un Expansion. No se registrará como ficha.");
             continue;
         }
 
@@ -200,7 +200,7 @@ public class BoardManagerGlobal : MonoBehaviour
             Debug.LogWarning($"⚠️ {pieza.name} no tiene coordenadas válidas. No registrada.");
         }
     }
-}
+    }
 
     // ✅ Recolección de mensajes internos para el Árbitro Silencioso
     public void AgregarMensajeInterno(string mensaje)

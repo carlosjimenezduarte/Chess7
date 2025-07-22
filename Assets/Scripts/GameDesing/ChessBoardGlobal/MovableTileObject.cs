@@ -48,27 +48,61 @@ public class MovableTileObject : MonoBehaviour
 
     private bool EstaCasillaOcupada(Vector2Int coords)
     {
-        var objetosEnTile = BoardManagerGlobal.Instance.ObtenerObjetosEn(coords);
+    var objetosEnTile = BoardManagerGlobal.Instance.ObtenerObjetosEn(coords);
 
-        foreach (var obj in objetosEnTile)
+    foreach (var obj in objetosEnTile)
+    {
+        if ((object)obj == this) continue;
+
+        if (obj is MovableTileObject mov && !mov.activoEnTablero)
+            continue;
+
+        string nombre = ((MonoBehaviour)obj).gameObject.name;
+
+        // 🎁 Caso especial: recolectable siendo empujado hacia ficha aliada
+        if (this is IObjetoRecoleccionable recolectable && obj is IFichaAliada fichaAliada)
         {
-            if ((object)obj == this) continue;
-
-            bool esRecoleccionable = obj is IObjetoRecoleccionable;
-            bool esFicha = obj is IFicha;
-
-            if (obj is MovableTileObject mov && !mov.activoEnTablero)
-                continue;
-
-            if ((esRecoleccionable || esFicha))
+            if (recolectable is ITileEffect efecto)
             {
-                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🚫 La casilla {coords} está ocupada por {((MonoBehaviour)obj).gameObject.name} (Recoleccionable:{esRecoleccionable}, Ficha:{esFicha})");
-                return true;
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🎁 {gameObject.name} será recolectado por ficha aliada {nombre} en {coords}.");
+                efecto.RevisarSiFichaLlegó(coords, fichaAliada);
+                return false; // No se bloquea el paso, se activa recolección
             }
         }
 
-        return false;
+        // 🔒 Objetos especiales no se destruyen ni absorben
+        if (obj is IObjetoRecoleccionableEspecial)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔒 {nombre} es un objeto especial en {coords}. No puede ser reemplazado.");
+            return true;
+        }
+
+        // 💥 Recolectables comunes destruidos por enemigos
+        if (obj is IObjetoRecoleccionable && this is IFichaEnemiga)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"💥 {gameObject.name} destruirá {nombre} (recolectable común) en {coords}.");
+            Destroy(((MonoBehaviour)obj).gameObject);
+            return false; // Puede pasar luego de destruir
+        }
+
+        // 🛡️ Bloqueos sólidos: fichas enemigas o inamovibles
+        if (obj is IFichaEnemiga || obj is IFichaInmovil)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛡️ {nombre} bloquea el paso en {coords} (FichaEnemiga o Inmovil).");
+            return true;
+        }
+
+        // 🚫 Cualquier otra cosa, bloquea
+        bool esFicha = obj is IFicha;
+        bool esRecolectable = obj is IObjetoRecoleccionable;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🚫 La casilla {coords} está ocupada por {nombre} (Ficha:{esFicha}, Recolectable:{esRecolectable}).");
+        return true;
     }
+
+    return false;
+    }
+
+
 
     public void ActivarEnTablero(Vector2Int nuevaPos)
     {
@@ -84,14 +118,36 @@ public class MovableTileObject : MonoBehaviour
     }
 
     private void IntentarRecolectarSiEsPosible(Vector2Int destino)
-    {
+{
     var receptor = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino)
         .FirstOrDefault(obj => obj is IFichaAliada);
 
-    if (receptor is IFichaAliada fichaAliada && this is IObjetoRecoleccionable recolectable && this is ITileEffect efecto)
+    if (receptor is IFichaAliada fichaAliada)
     {
-        efecto.RevisarSiFichaLlegó(destino, fichaAliada);
+        if (this is IObjetoRecoleccionable && this is ITileEffect efecto)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                $"🎁 {gameObject.name} intenta ser recolectado por {((MonoBehaviour)receptor).name} en {destino}."
+            );
+
+            efecto.RevisarSiFichaLlegó(destino, fichaAliada);
+
+            // Confirmar destrucción del objeto
+            if (this == null || ((MonoBehaviour)this).gameObject == null)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"✅ {gameObject.name} fue destruido tras la recolección.");
+            }
+            else
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"⚠️ {gameObject.name} sigue activo tras intentar ser recolectado. Verificar lógica interna.");
+            }
+        }
+        else
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🚫 {gameObject.name} no es recolectable o no tiene efecto asociado.");
+        }
     }
-    }
+}
+
     
 }

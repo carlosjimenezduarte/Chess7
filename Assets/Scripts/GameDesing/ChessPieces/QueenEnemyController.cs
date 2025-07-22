@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEffect, IPieceWithPosition, IFicha, IFichaEnemiga
 {
@@ -194,21 +195,32 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
         foreach (var dir in direcciones)
         {
-            for (int i = 1; i <= rangoRangeZone; i++)
+        for (int i = 1; i <= rangoRangeZone; i++)
+        {
+            Vector2Int coord = posicionActual + dir * i;
+            if (coord.x < 0 || coord.y < 0 || coord.x > 7 || coord.y > 7)
+                break;
+
+            // ⚠️ Revisión: si hay un Wall, se interrumpe
+            var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(coord);
+            bool hayWall = objetos.Any(obj => obj is IFichaInmovil);
+
+            if (hayWall)
             {
-                Vector2Int coord = posicionActual + dir * i;
-                if (coord.x < 0 || coord.y < 0 || coord.x > 7 || coord.y > 7)
-                    break;
-
-                Tile tile = BoardManagerGlobal.Instance.GetTileAt(coord);
-                if (tile == null) break;
-
-                if (i <= rangoKillZone)
-                    tile.HighlightEnemyKillZone(true);
-                else
-                    tile.HighlightEnemyRangeZone(true);
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧱 Rango de la Reina interrumpido por Wall en {coord}");
+                break;
             }
+
+            Tile tile = BoardManagerGlobal.Instance.GetTileAt(coord);
+            if (tile == null) break;
+
+            if (i <= rangoKillZone)
+                tile.HighlightEnemyKillZone(true);
+            else
+                tile.HighlightEnemyRangeZone(true);
         }
+        }
+
     }
 
     public void OcultarRangoDeAtaque()
