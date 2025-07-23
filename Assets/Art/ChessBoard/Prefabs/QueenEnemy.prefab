@@ -37,7 +37,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1712, y: -357}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 135, y: 135}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1441439063614496512
@@ -104,6 +104,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileCoords: {x: 7, y: 0}
+  activoEnTablero: 0
+  esInamovible: 0
 --- !u!114 &4650850034516945706
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,6 +119,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rangoKillZone: 3
+  esInamovible: 0
   rangoRangeZone: 5
+  ataquesConcatenados: 0
   prefabRojo: {fileID: 51733214830382906, guid: b59b6963cf55d634a9c36534e05eed4e, type: 3}
   dangerOverlayParent: {fileID: 0}

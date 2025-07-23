@@ -106,7 +106,7 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
-    public void MoverA(Vector2Int nuevaPos)
+     public void MoverA(Vector2Int nuevaPos)
     {
         if (!juegoActivo) return;
 
@@ -186,6 +186,7 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
+
 
     public void ReiniciarTurno()
     {

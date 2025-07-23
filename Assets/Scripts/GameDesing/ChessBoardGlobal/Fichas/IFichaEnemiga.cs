@@ -5,4 +5,6 @@ public interface IFichaEnemiga
     void MostrarRango();
     void OcultarRango();
     Vector2Int GetPosicionActual();
+    
+    
 }
