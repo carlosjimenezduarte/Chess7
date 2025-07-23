@@ -86,46 +86,44 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
     private void RevisarAmenazaAPieza(Vector2Int posicionPieza, System.Action efectoSobrePieza)
     {
-        int dx = posicionPieza.x - posicionActual.x;
-        int dy = posicionPieza.y - posicionActual.y;
+    int dx = posicionPieza.x - posicionActual.x;
+    int dy = posicionPieza.y - posicionActual.y;
 
-        bool esDireccionValida = (dx == 0 || dy == 0 || Mathf.Abs(dx) == Mathf.Abs(dy));
-        if (!esDireccionValida) return;
+    bool esDireccionValida = (dx == 0 || dy == 0 || Mathf.Abs(dx) == Mathf.Abs(dy));
+    if (!esDireccionValida) return;
 
-        Vector2Int direccion = new Vector2Int(
-            dx == 0 ? 0 : (dx > 0 ? 1 : -1),
-            dy == 0 ? 0 : (dy > 0 ? 1 : -1)
-        );
+    Vector2Int direccion = new Vector2Int(
+        dx == 0 ? 0 : (dx > 0 ? 1 : -1),
+        dy == 0 ? 0 : (dy > 0 ? 1 : -1)
+    );
 
-        Vector2Int paso = posicionActual + direccion;
-        int pasosContados = 1;
+    Vector2Int paso = posicionActual + direccion;
+    int pasosContados = 1;
 
-        while (pasosContados <= rangoRangeZone && paso != posicionPieza)
+    while (pasosContados <= rangoRangeZone && paso != posicionPieza)
+    {
+        if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
+            break;
+
+        // 🔒 Nuevo: si hay una ficha en el camino, se cancela la amenaza
+        var bloqueos = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso, incluirRecolectables: false);
+        if (bloqueos.Any(obj => obj is IFicha))
         {
-            if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
-                break;
-
-            // ✅ NUEVO: la Reina barre su trayectoria destruyendo objetos recoleccionables
-            foreach (var obj in BoardManagerGlobal.Instance.ObtenerObjetosEn(paso))
-            {
-                if (obj is IObjetoRecoleccionable)
-                {
-                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"💥 Reina destruye {obj} en su trayectoria por {paso}");
-                    if (obj is Potion1PM pocion) pocion.ExiliarADimensionDivina();
-                    Destroy(((MonoBehaviour)obj).gameObject);
-                }
-            }
-
-            paso += direccion;
-            pasosContados++;
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"⛔ Camino bloqueado por ficha en {paso}. No se ejecuta amenaza sobre {posicionPieza}");
+            return;
         }
 
-        if (paso == posicionPieza)
-        {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"💀 Pieza alcanzada en {posicionPieza}");
-            efectoSobrePieza.Invoke();
-        }
+        paso += direccion;
+        pasosContados++;
     }
+
+    if (paso == posicionPieza)
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"💀 Pieza alcanzada en {posicionPieza}");
+        efectoSobrePieza.Invoke();
+    }
+    }
+
 
     public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey)
     {
@@ -263,7 +261,16 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
                 if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
                     break;
 
-                foreach (var pieza in BoardManagerGlobal.Instance.ObtenerObjetosEn(paso))
+                var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
+                bool hayObstaculo = objetos.Any(obj => obj is IFicha && obj != (object)this);
+
+                if (hayObstaculo)
+                {
+                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛑 Reina interrumpe su escaneo por obstáculo en {paso}");
+                    break;
+                }
+
+                foreach (var pieza in objetos)
                 {
                     if (pieza is IFichaAliada && pieza != (object)this)
                     {
@@ -294,12 +301,10 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
                         }
                     }
                 }
-
                 paso += dir;
                 pasosContados++;
-            }
+        }            
         }
-
         RevisarObjetosRecoleccionablesEnCasilla();
     }
 
