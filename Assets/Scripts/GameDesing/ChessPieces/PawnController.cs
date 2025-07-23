@@ -5,8 +5,10 @@ using System.Linq;
 public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPosition, IFicha, IFichaAliada
 {
     [Header("Rango de Movimiento")]
-    private int rangoMovimientoBase = 1; // Siempre será 1
-    private int rangoMovimientoExtra = 0; // Bonus temporal por pociones
+    private int rangoMovimientoBase = 1;
+    private int rangoMovimientoExtra = 0;
+    private int rangoAtaque = 1; // 🔺 NUEVO: Rango fijo de ataque en diagonal
+
     public bool esInamovible = false;
     public int RangoMovimientoActual => rangoMovimientoBase + rangoMovimientoExtra;
 
@@ -47,48 +49,82 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
     }
 
     public void MostrarMovimientoPosible()
+{
+    if (!juegoActivo) return;
+
+    var rey = FindFirstObjectByType<KingController>();
+    if (rey == null || rey.puntosAccionActual <= 0)
     {
-        if (!juegoActivo) return;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("⚠️ Rey sin PA, Peón no puede moverse.");
+        OcultarMovimientos();
+        mostrandoMovimientos = false;
+        return;
+    }
 
-        var rey = FindFirstObjectByType<KingController>();
-        if (rey == null || rey.puntosAccionActual <= 0)
+    BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔍 Mostrando rango de movimiento del Peón: {RangoMovimientoActual} casillas.");
+
+    foreach (Tile tile in BoardManagerGlobal.Instance.tiles)
+    {
+        int distancia = Mathf.Abs(tile.tileCoords.x - posicionActual.x) + Mathf.Abs(tile.tileCoords.y - posicionActual.y);
+        tile.HighlightMove(distancia <= RangoMovimientoActual);
+    }
+
+    // 💥 Mostrar ataques en las diagonales dentro del rango de ataque
+    Vector2Int[] diagonales = new Vector2Int[]
+    {
+        new Vector2Int(1,1), new Vector2Int(-1,1),
+        new Vector2Int(1,-1), new Vector2Int(-1,-1)
+    };
+
+    BoardManagerGlobal.Instance.AgregarMensajeInterno("🧪 Iniciando revisión de casillas diagonales para posibles ataques del Peón...");
+
+    foreach (var delta in diagonales)
+    {
+        Vector2Int diagonal = posicionActual + delta;
+
+        if (diagonal.x < 0 || diagonal.y < 0 || diagonal.x > 7 || diagonal.y > 7)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("⚠️ Rey sin PA, Peón no puede moverse.");
-            OcultarMovimientos();
-            mostrandoMovimientos = false;
-            return;
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"⛔ Casilla {diagonal} fuera del tablero. Se ignora.");
+            continue;
         }
 
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔍 Mostrando rango de movimiento del Peón: {RangoMovimientoActual} casillas.");
-
-        foreach (Tile tile in BoardManagerGlobal.Instance.tiles)
+        // ✅ Validación explícita de movimiento diagonal de una casilla
+        if (!(Mathf.Abs(delta.x) == 1 && Mathf.Abs(delta.y) == 1))
         {
-            int distancia = Mathf.Abs(tile.tileCoords.x - posicionActual.x) + Mathf.Abs(tile.tileCoords.y - posicionActual.y);
-            tile.HighlightMove(distancia <= RangoMovimientoActual);
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🚫 Movimiento {delta} no es diagonal. Se ignora.");
+            continue;
         }
 
-        Vector2Int[] diagonales = new Vector2Int[]
+        var objetosEnDiagonal = BoardManagerGlobal.Instance.ObtenerObjetosEn(diagonal).ToList();
+        if (objetosEnDiagonal.Count == 0)
         {
-            new Vector2Int(1,1), new Vector2Int(-1,1),
-            new Vector2Int(1,-1), new Vector2Int(-1,-1)
-        };
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔍 Casilla {diagonal} está vacía. No hay enemigo.");
+            continue;
+        }
 
-        foreach (var delta in diagonales)
+        var objetivo = objetosEnDiagonal.FirstOrDefault(obj => obj is IFichaEnemiga);
+        if (objetivo != null)
         {
-            Vector2Int diagonal = posicionActual + delta;
-            if (diagonal.x < 0 || diagonal.y < 0 || diagonal.x > 7 || diagonal.y > 7) continue;
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"✅ Enemigo encontrado en {diagonal}: {objetivo}");
 
-            var objetivo = BoardManagerGlobal.Instance.ObtenerObjetosEn(diagonal)
-                .FirstOrDefault(obj => obj is IFichaEnemiga);
-
-            if (objetivo != null)
+            Tile tile = BoardManagerGlobal.Instance.GetTileAt(diagonal);
+            if (tile != null)
             {
-                Tile tile = BoardManagerGlobal.Instance.GetTileAt(diagonal);
-                if (tile != null) tile.HighlightEnemyAttack(true);
-                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔪 Peón puede atacar a {objetivo} en {diagonal}.");
+                tile.HighlightEnemyAttack(true);
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🎯 Casilla {diagonal} marcada como zona de ataque (fucsia).");
+            }
+            else
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"⚠️ No se encontró Tile visual en {diagonal} para marcar ataque.");
             }
         }
+        else
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔎 Casilla {diagonal} contiene objetos, pero ninguno es enemigo.");
+        }
     }
+}
+
 
     public void OcultarMovimientos()
     {
@@ -124,88 +160,111 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
     public void MoverA(Vector2Int nuevaPos, KingController rey)
     {
-        if (!juegoActivo) return;
+    if (!juegoActivo) return;
 
-        int distancia = Mathf.Abs(posicionActual.x - nuevaPos.x) + Mathf.Abs(posicionActual.y - nuevaPos.y);
-        if (distancia > RangoMovimientoActual)
-        {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🚫 Movimiento inválido. Distancia {distancia} excede el rango actual {RangoMovimientoActual}.");
-            return;
-        }
+    bool esDiagonal = Mathf.Abs(nuevaPos.x - posicionActual.x) == 1 && Mathf.Abs(nuevaPos.y - posicionActual.y) == 1;
 
-        if (rey.puntosAccionActual <= 0)
-        {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("🚫 Movimiento inválido. Rey sin PA.");
-            return;
-        }
+    // ⚔️ PRIORIDAD: Ataque diagonal
+    if (esDiagonal)
+    {
+    BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧐 Intentando ataque diagonal desde {posicionActual} hacia {nuevaPos}...");
 
-        // 💥 Ataque en diagonal
-        if (Mathf.Abs(nuevaPos.x - posicionActual.x) == 1 && Mathf.Abs(nuevaPos.y - posicionActual.y) == 1)
-        {
-            var fichaEnDiagonal = BoardManagerGlobal.Instance.ObtenerObjetosEn(nuevaPos)
-                .FirstOrDefault(obj => obj is IFichaEnemiga);
+    var fichaEnDiagonal = BoardManagerGlobal.Instance.ObtenerObjetosEn(nuevaPos)
+        .FirstOrDefault(obj => obj is IFichaEnemiga);
 
-            if (fichaEnDiagonal != null)
-            {
-                SetPosicionActual(nuevaPos);
-                transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(nuevaPos);
-                if (fichaEnDiagonal is IPieceWithPosition enemigo)
-                    enemigo.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
-                Destroy(((MonoBehaviour)fichaEnDiagonal).gameObject);
+    if (fichaEnDiagonal != null)
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🎯 Ficha enemiga detectada: {fichaEnDiagonal} en {nuevaPos}");
 
-                rey.puntosAccionActual--;
-                MostrarMovimientoPosible();
-                FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
-                RevisarAmenazasGlobal();
-                return;
-            }
-        }
+        // ✅ Ya es diagonal y rangoAtaque siempre es 1, no se necesita más cálculo
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"📏 Ataque autorizado. Peón está en posición para atacar en diagonal (rango 1).");
 
-        // 🔁 Movimiento paso a paso + interacción con efectos
-        Vector2Int paso = posicionActual;
-        while (paso != nuevaPos)
-        {
-            if (paso.x < nuevaPos.x) paso.x++;
-            else if (paso.x > nuevaPos.x) paso.x--;
-            if (paso.y < nuevaPos.y) paso.y++;
-            else if (paso.y > nuevaPos.y) paso.y--;
-
-            SetPosicionActual(paso);
-            foreach (ITileEffect efecto in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ITileEffect>())
-                efecto.RevisarSiPeonLlegó(paso, this);
-        }
-
-        // ✅ Aquí movemos visualmente
+        SetPosicionActual(nuevaPos);
         transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(nuevaPos);
 
-        // ✅ Descontar RANGO EXTRA si fue usado
-        if (distancia > rangoMovimientoBase)
+        if (fichaEnDiagonal is IPieceWithPosition enemigo)
         {
-            int extraUsado = distancia - rangoMovimientoBase;
-            rangoMovimientoExtra = Mathf.Max(0, rangoMovimientoExtra - extraUsado);
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧪 Rango temporal reducido en {extraUsado}. Rango restante: {RangoMovimientoActual}.");
+            enemigo.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"📌 Enemigo actualizado a posición fuera del tablero.");
         }
 
-        // ✅ Descontar PA
+        Destroy(((MonoBehaviour)fichaEnDiagonal).gameObject);
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"💀 Ficha enemiga destruida en {nuevaPos} por el Peón.");
+
         rey.puntosAccionActual--;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"⚔️ Peón consumió 1 PA del Rey. PA restantes: {rey.puntosAccionActual}");
 
         MostrarMovimientoPosible();
-        RevisarObjetosEnCasilla();
         FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
         RevisarAmenazasGlobal();
-
-        if (posicionActual == new Vector2Int(7, 7))
-        {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("♕ Peón coronado en H8. Bonificaciones aplicadas.");
-            rey.puntosAccionActual += 7;
-            rey.puntosMovimientoActual += 7;
-            rey.GanarVida(3);
-            FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
-            Destroy(gameObject);
-        }
-
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+        return;
     }
+    else
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔍 No se encontró ficha enemiga en {nuevaPos}, ataque cancelado.");
+        return;
+    }
+    }
+
+
+    // 🔁 MOVIMIENTO ORTOGONAL (si no es ataque diagonal)
+    int distancia = Mathf.Abs(posicionActual.x - nuevaPos.x) + Mathf.Abs(posicionActual.y - nuevaPos.y);
+    if (distancia > RangoMovimientoActual)
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🚫 Movimiento inválido. Distancia {distancia} excede el rango actual {RangoMovimientoActual}.");
+        return;
+    }
+
+    if (rey.puntosAccionActual <= 0)
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("🚫 Movimiento inválido. Rey sin PA.");
+        return;
+    }
+
+    Vector2Int paso = posicionActual;
+    while (paso != nuevaPos)
+    {
+        if (paso.x < nuevaPos.x) paso.x++;
+        else if (paso.x > nuevaPos.x) paso.x--;
+        if (paso.y < nuevaPos.y) paso.y++;
+        else if (paso.y > nuevaPos.y) paso.y--;
+
+        SetPosicionActual(paso);
+
+        foreach (ITileEffect efecto in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ITileEffect>())
+            efecto.RevisarSiPeonLlegó(paso, this);
+    }
+
+    transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(nuevaPos);
+
+    if (distancia > rangoMovimientoBase)
+    {
+        int extraUsado = distancia - rangoMovimientoBase;
+        rangoMovimientoExtra = Mathf.Max(0, rangoMovimientoExtra - extraUsado);
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧪 Rango temporal reducido en {extraUsado}. Rango restante: {RangoMovimientoActual}.");
+    }
+
+    rey.puntosAccionActual--;
+
+    MostrarMovimientoPosible();
+    RevisarObjetosEnCasilla();
+    FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
+    RevisarAmenazasGlobal();
+
+    if (posicionActual == new Vector2Int(7, 7))
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("♕ Peón coronado en H8. Bonificaciones aplicadas.");
+        rey.puntosAccionActual += 7;
+        rey.puntosMovimientoActual += 7;
+        rey.GanarVida(3);
+        FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
+        Destroy(gameObject);
+    }
+
+    BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    }
+
 
 
     public void RevisarObjetosEnCasilla()
@@ -234,7 +293,6 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         mostrandoMovimientos = true;
     }
 
-
     public void DesactivarJuego()
     {
         juegoActivo = false;
@@ -254,9 +312,5 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
     }
 
     public bool EstaActivo() => juegoActivo;
-    
-    public bool EsInamovible()
-    {
-    return esInamovible;
-    }
+    public bool EsInamovible() => esInamovible;
 }

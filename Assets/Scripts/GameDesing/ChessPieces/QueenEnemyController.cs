@@ -57,6 +57,8 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
     public void OnPointerClick(PointerEventData eventData)
     {
         var manager = FindFirstObjectByType<ChessGameManager>();
+
+        
         if (manager == null || !manager.IsJuegoActivo())
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ No se puede mostrar rango: juego no activo.");

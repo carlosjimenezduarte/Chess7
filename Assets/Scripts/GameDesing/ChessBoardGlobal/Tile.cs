@@ -34,10 +34,12 @@ public class Tile : MonoBehaviour
         myImage.color = isActive ? new Color(1f, 0.5f, 0.7f, 1f) : Color.white; // rosado
     }
 
-    public void HighlightEnemyAttack(bool isActive)
+    public void HighlightEnemyAttack(bool state)
 {
     if (myImage == null) return;
-    myImage.color = isActive ? new Color(1f, 0.2f, 0.9f, 1f) : Color.white; // fucsia fuerte
+
+    Color colorAtaque = new Color(1f, 0.2f, 0.9f, 1f);
+    myImage.color = state ? colorAtaque : Color.clear;
 }
     public void HighlightSpecific(bool isActive)
     {
@@ -47,6 +49,16 @@ public class Tile : MonoBehaviour
             ? new Color(1f, 0.2f, 0.9f, 1f) // fucsia sólido
             : Color.white;
     }
+    }
+
+    public bool EsCasillaDeAtaque()
+    {
+    if (myImage == null) return false;
+
+    // Este es el color que se usa en HighlightEnemyAttack
+    Color colorAtaque = new Color(1f, 0.2f, 0.9f, 1f);
+
+    return myImage.color.Equals(colorAtaque);
     }
 
     
