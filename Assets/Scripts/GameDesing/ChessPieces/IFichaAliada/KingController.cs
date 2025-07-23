@@ -144,6 +144,22 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
             if (reina != null)
                 reina.VerificarAmenazaSobre(posicionActual);
 
+            var torre = FindFirstObjectByType<RookEnemyController>();
+            if (torre != null)
+                torre.VerificarAmenazaSobre(posicionActual);
+
+            var alfil = FindFirstObjectByType<BishopEnemyController>();
+            if (alfil != null)
+                alfil.VerificarAmenazaSobre(posicionActual);
+
+            var caballo = FindFirstObjectByType<KnightEnemyController>();
+            if (caballo != null)
+                caballo.VerificarAmenazaSobre(posicionActual);
+
+            var peon = FindFirstObjectByType<PawnEnemyController>();
+            if (peon != null)
+                peon.VerificarAmenazaSobre(posicionActual);
+
             FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
 
             if (posicionActual == new Vector2Int(7, 7))

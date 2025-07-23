@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class RookEnemyController : MonoBehaviour, IPointerClickHandler, IPieceWithPosition, IFicha
+public class KnightEnemyController : MonoBehaviour, IPointerClickHandler, IPieceWithPosition, IFicha
 {
     public bool esInamovible = false;
 

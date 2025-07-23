@@ -261,6 +261,25 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
         Destroy(gameObject);
     }
+    var reina = FindFirstObjectByType<QueenEnemyController>();
+    if (reina != null)
+        reina.VerificarAmenazaSobre(posicionActual);
+
+    var torre = FindFirstObjectByType<RookEnemyController>();
+    if (torre != null)
+        torre.VerificarAmenazaSobre(posicionActual);
+
+    var alfil = FindFirstObjectByType<BishopEnemyController>();
+    if (alfil != null)
+        alfil.VerificarAmenazaSobre(posicionActual);
+
+    var caballo = FindFirstObjectByType<KnightEnemyController>();
+    if (caballo != null)
+        caballo.VerificarAmenazaSobre(posicionActual);
+
+    var peon = FindFirstObjectByType<PawnEnemyController>();
+    if (peon != null)
+        peon.VerificarAmenazaSobre(posicionActual);
 
     BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }

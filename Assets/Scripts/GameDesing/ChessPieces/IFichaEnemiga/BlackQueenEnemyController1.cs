@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEffect, IPieceWithPosition, IFicha, IFichaEnemiga
+public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEffect, IPieceWithPosition, IFicha, IFichaEnemiga
 {
     [Header("Alcances tipo Reina")]
     public int rangoKillZone = 3;

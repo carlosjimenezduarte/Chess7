@@ -46,10 +46,15 @@ public class BoardManagerGlobal : MonoBehaviour
         AgregarMensajeInterno($"📌 {pieza} registrado en {nuevaPos}");
     }
 
-   public List<IPieceWithPosition> ObtenerObjetosEn(Vector2Int pos)
+    public List<IPieceWithPosition> ObtenerObjetosEn(Vector2Int pos, bool incluirRecolectables = true)
     {
     if (tableroOcupacion.TryGetValue(pos, out var lista))
-        return lista.Where(obj => obj != null && ((MonoBehaviour)obj) != null).ToList();
+    {
+        return lista
+            .Where(obj => obj != null && ((MonoBehaviour)obj) != null)
+            .Where(obj => incluirRecolectables || !(obj is IObjetoRecoleccionable))
+            .ToList();
+    }
 
     return new List<IPieceWithPosition>();
     }
@@ -168,36 +173,47 @@ public class BoardManagerGlobal : MonoBehaviour
     AgregarMensajeInterno("📜 Iniciando registro global de fichas...");
 
     var componentes = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
-    var fichas = componentes.OfType<IFicha>();
 
-    foreach (var ficha in fichas)
+    // 🔹 Paso 1: Registrar todas las fichas (IFicha)
+    foreach (var ficha in componentes.OfType<IFicha>())
     {
         var pieza = ficha as MonoBehaviour;
 
-        // 🎯 Filtrado específico: ignorar solo objetos especiales como Expansion
         if (pieza is Expansion)
         {
             AgregarMensajeInterno($"⛔ {pieza.name} es un Expansion. No se registrará como ficha.");
             continue;
         }
 
-        var posicion = pieza.GetComponent<MovableTileObject>()?.tileCoords ?? new Vector2Int(-1, -1);
-
-        if (posicion.x >= 0)
+        if (ficha is IPieceWithPosition piezaConPos)
         {
-            if (ficha is IPieceWithPosition piezaConPos)
+            var posicion = piezaConPos.GetPosicionActual();
+            if (posicion.x >= 0)
             {
                 AgregarMensajeInterno($"📍 Registrando ficha inicial: {pieza.name} en {posicion}");
                 RegistrarMovimiento(piezaConPos, posicion);
             }
-            else
-            {
-                Debug.LogWarning($"⚠️ {pieza.name} no implementa IPieceWithPosition. No registrada.");
-            }
         }
         else
         {
-            Debug.LogWarning($"⚠️ {pieza.name} no tiene coordenadas válidas. No registrada.");
+            Debug.LogWarning($"⚠️ {pieza.name} no implementa IPieceWithPosition. No registrada.");
+        }
+    }
+
+    // 🔹 Paso 2: Registrar objetos recoleccionables (especiales y normales)
+    foreach (var objeto in componentes.OfType<IObjetoRecoleccionable>())
+    {
+        if (objeto is MonoBehaviour mono && objeto is IPieceWithPosition objetoConPos)
+        {
+            // Ya fue registrado como ficha (no repetir)
+            if (mono is IFicha) continue;
+
+            var pos = objetoConPos.GetPosicionActual();
+            if (pos.x >= 0)
+            {
+                AgregarMensajeInterno($"📌 {mono.name} ({mono.GetType().Name}) registrado en {pos}");
+                RegistrarMovimiento(objetoConPos, pos);
+            }
         }
     }
     }
