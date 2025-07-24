@@ -37,7 +37,7 @@ public class TileClickHandler : MonoBehaviour, IPointerClickHandler
             }
             else if (gameManager.fichaSeleccionadaActual is KingController rey)
             {
-                rey.MoverA(tileCoords);
+                rey.IntentarAtacar(tileCoords);
                 return;
             }
 
