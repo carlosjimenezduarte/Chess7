@@ -8,10 +8,11 @@ using System.Linq;
 public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEffect, IPieceWithPosition, IFicha, IFichaEnemiga
 {
     [Header("Alcances tipo Reina")]
-    public int rangoKillZone = 3;
+
+    
 
     public bool esInamovible = false;
-    public int rangoRangeZone = 5;
+   
 
     
     public bool ataquesConcatenados = false;
@@ -425,6 +426,20 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
         return esInamovible;
     }
     
-    
+    public int rangoKillZone
+{
+    get => 0;
+    set => Debug.LogWarning("⚠️ El Rey no usa 'rangoAtaque'");
+}
 
+    public int rangoRangeZone 
+{
+    get => 0;
+    set => Debug.LogWarning("⚠️ El Rey no usa 'rangoAtaque'");
+}
+
+    public void ReiniciarTurno()
+    {
+        //
+    }
 }

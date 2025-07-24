@@ -117,28 +117,40 @@ public class ChessGameManager : MonoBehaviour
 
 
     private void PasarTurno()
+{
+    Debug.Log("¡Pasando turno!");
+    tiempoRestante = turnoDuration;
+    turnoActual++;
+
+    // 🔁 Reiniciar fichas aliadas
+    var aliadas = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+        .OfType<IFichaAliada>();
+    foreach (var aliada in aliadas)
     {
-        Debug.Log("¡Pasando turno!");
-        tiempoRestante = turnoDuration;
-        turnoActual++;
-
-        // El Rey siempre reinicia su turno (recarga PM y PA)
-        rey.ReiniciarTurno();
-        rey.RestarTurno();
-
-        // Si el peón está seleccionado, reinicia su rango
-        if (fichaSeleccionadaActual is IFichaAliada fichaAliada)
-        {
-            fichaAliada.MostrarRango();
-        }
-            else if (fichaSeleccionadaActual is KingController reySeleccionado)
-        {
-             
-        }
-
-        NotificarEfectosTurno();
-        ActualizarHUD();
+        aliada.ReiniciarTurno();
     }
+
+    // 🔁 Reiniciar fichas enemigas
+    var enemigas = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+        .OfType<IFichaEnemiga>();
+    foreach (var enemiga in enemigas)
+    {
+        enemiga.ReiniciarTurno();
+    }
+
+    // ♔ El Rey también reinicia su turno
+    rey.ReiniciarTurno();
+    rey.RestarTurno();
+
+    // 🔄 Rango visible si una ficha sigue seleccionada
+    if (fichaSeleccionadaActual is IFichaAliada fichaAliada)
+    {
+        fichaAliada.MostrarRango();
+    }
+
+    NotificarEfectosTurno();
+    ActualizarHUD();
+}
 
     private void NotificarEfectosTurno()
     {

@@ -5,8 +5,8 @@ using System.Linq;
 public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPosition, IFicha, IFichaAliada
 {
     public int puntosMovimientoMax = 3;
-
-    private int rangoAtaque = 1; // 🔺 Rango de ataque fijo del Rey (igual que el Peón)
+    
+    public int rangoAtaqueKing  = 1; // 🔺 Rango de ataque fijo del Rey (igual que el Peón)
     public int puntosAccionMax = 5;
 
     public bool esInamovible = false;
@@ -242,6 +242,7 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
     {
         puntosMovimientoActual = puntosMovimientoMax;
         puntosAccionActual = puntosAccionMax;
+        rangoAtaqueKing = 1;
         BoardManagerGlobal.Instance.AgregarMensajeInterno(
         $"♔ Nuevo turno del Rey → 🧭 PM personales: {puntosMovimientoActual}, 🎖️ PA estratégicos: {puntosAccionActual}."
     );
@@ -313,65 +314,74 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
     {
         return esInamovible;
     }
-    
+
     public void IntentarAtacar(Vector2Int destino)
-{
-    int distanciaX = Mathf.Abs(destino.x - posicionActual.x);
-    int distanciaY = Mathf.Abs(destino.y - posicionActual.y);
-
-    bool dentroDelRango = distanciaX <= rangoAtaque && distanciaY <= rangoAtaque;
-
-    if (!dentroDelRango)
     {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"❌ Casilla {destino} fuera del rango de ataque del Rey.");
-        return;
+        int distanciaX = Mathf.Abs(destino.x - posicionActual.x);
+        int distanciaY = Mathf.Abs(destino.y - posicionActual.y);
+
+        bool dentroDelRango = distanciaX <= rangoAtaqueKing && distanciaY <= rangoAtaqueKing;
+
+        if (!dentroDelRango)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"❌ Casilla {destino} fuera del rango de ataque del Rey.");
+            return;
+        }
+
+        var objetivo = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino)
+            .FirstOrDefault(obj => obj is IFichaEnemiga);
+
+        if (objetivo == null)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🕊️ No hay enemigo en {destino}. Nada que atacar.");
+            return;
+        }
+
+        if (puntosAccionActual <= 0)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("⚠️ El Rey no tiene PA suficientes para atacar.");
+            return;
+        }
+
+        // 🔥 Eliminar ficha enemiga y marcarla fuera del tablero
+        if (objetivo is IPieceWithPosition enemigo)
+            enemigo.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
+
+        Destroy(((MonoBehaviour)objetivo).gameObject);
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"💀 Rey eliminó al enemigo en {destino}.");
+
+        // 🔄 Actualizar posición lógica y visual del Rey
+        SetPosicionActual(destino);
+        transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(destino);
+
+        // ✨ Activar efectos especiales de casilla
+        foreach (ITileEffect efecto in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ITileEffect>())
+        {
+            efecto.RevisarSiReyLlegó(destino, this);
+        }
+
+        // 📉 Consumir 1 PA
+        puntosAccionActual--;
+
+        // 🔎 Verificar amenazas después del ataque
+        foreach (var ficha in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<IFichaEnemiga>())
+            ficha.RevisarAmenazasEnZona();
+
+        // 🎯 Refrescar HUD y estado del tablero
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"⚔️ Rey atacó y se desplazó a {destino}. PA restantes: {puntosAccionActual}");
+        FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
+        MostrarMovimientoPosible();
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
-
-    var objetivo = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino)
-        .FirstOrDefault(obj => obj is IFichaEnemiga);
-
-    if (objetivo == null)
+    public int rangoMovimientoBase
     {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🕊️ No hay enemigo en {destino}. Nada que atacar.");
-        return;
+        get => 0; // El Rey no usa esta propiedad
+        set { }   // Ignora cualquier intento de modificarla
     }
-
-    if (puntosAccionActual <= 0)
+    public int rangoAtaque
     {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("⚠️ El Rey no tiene PA suficientes para atacar.");
-        return;
+        get => 0; // El Rey no usa esta propiedad
+        set { }   // Ignora cualquier intento de modificarla
     }
-
-    // 🔥 Eliminar ficha enemiga y marcarla fuera del tablero
-    if (objetivo is IPieceWithPosition enemigo)
-        enemigo.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
-
-    Destroy(((MonoBehaviour)objetivo).gameObject);
-    BoardManagerGlobal.Instance.AgregarMensajeInterno($"💀 Rey eliminó al enemigo en {destino}.");
-
-    // 🔄 Actualizar posición lógica y visual del Rey
-    SetPosicionActual(destino);
-    transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(destino);
-
-    // ✨ Activar efectos especiales de casilla
-    foreach (ITileEffect efecto in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ITileEffect>())
-    {
-        efecto.RevisarSiReyLlegó(destino, this);
-    }
-
-    // 📉 Consumir 1 PA
-    puntosAccionActual--;
-
-    // 🔎 Verificar amenazas después del ataque
-    foreach (var ficha in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<IFichaEnemiga>())
-        ficha.RevisarAmenazasEnZona();
-
-    // 🎯 Refrescar HUD y estado del tablero
-    BoardManagerGlobal.Instance.AgregarMensajeInterno($"⚔️ Rey atacó y se desplazó a {destino}. PA restantes: {puntosAccionActual}");
-    FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
-    MostrarMovimientoPosible();
-    BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
-}
-
 
 }

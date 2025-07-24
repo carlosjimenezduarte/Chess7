@@ -7,6 +7,8 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, IPieceWi
 
     public Vector2Int posicionActual;
 
+
+
     public void SetPosicionActual(Vector2Int nuevaPos)
     {
         posicionActual = nuevaPos;
@@ -77,5 +79,23 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, IPieceWi
     {
         return esInamovible;
     }
+
+    public int rangoKillZone
+    {
+        get => 0;
+        set => Debug.LogWarning("⚠️ El Rey no usa 'rangoAtaque'");
+    }
+
+    public int rangoRangeZone
+    {
+        get => 0;
+        set => Debug.LogWarning("⚠️ El Rey no usa 'rangoAtaque'");
+    }
+
+    public void ReiniciarTurno()
+    {
+        //
+    }
+
 
 }

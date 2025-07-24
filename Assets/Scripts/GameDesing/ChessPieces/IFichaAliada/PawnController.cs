@@ -5,9 +5,9 @@ using System.Linq;
 public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPosition, IFicha, IFichaAliada
 {
     [Header("Rango de Movimiento")]
-    private int rangoMovimientoBase = 1;
+    public int rangoMovimientoBase { get; set; } = 1;
     private int rangoMovimientoExtra = 0;
-    private int rangoAtaque = 1; // 🔺 NUEVO: Rango fijo de ataque en diagonal
+    public int rangoAtaque { get; set; } = 1; // 🔺 NUEVO: Rango fijo de ataque en diagonal
 
     public bool esInamovible = false;
     public int RangoMovimientoActual => rangoMovimientoBase + rangoMovimientoExtra;
@@ -329,6 +329,14 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         OcultarMovimientos();
         mostrandoMovimientos = false;
     }
+
+    public void ReiniciarTurno()
+    {
+        rangoMovimientoBase = 1;
+        rangoAtaque = 1; 
+    }
+
+    
 
     public bool EstaActivo() => juegoActivo;
     public bool EsInamovible() => esInamovible;

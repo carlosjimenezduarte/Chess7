@@ -48,15 +48,15 @@ public class BoardManagerGlobal : MonoBehaviour
 
     public List<IPieceWithPosition> ObtenerObjetosEn(Vector2Int pos, bool incluirRecolectables = true)
     {
-    if (tableroOcupacion.TryGetValue(pos, out var lista))
-    {
-        return lista
-            .Where(obj => obj != null && ((MonoBehaviour)obj) != null)
-            .Where(obj => incluirRecolectables || !(obj is IObjetoRecoleccionable))
-            .ToList();
-    }
+        if (tableroOcupacion.TryGetValue(pos, out var lista))
+        {
+            return lista
+                .Where(obj => obj != null && ((MonoBehaviour)obj) != null)
+                .Where(obj => incluirRecolectables || !(obj is IObjetoRecoleccionable))
+                .ToList();
+        }
 
-    return new List<IPieceWithPosition>();
+        return new List<IPieceWithPosition>();
     }
 
     public bool EstaCasillaOcupada(Vector2Int pos, IPieceWithPosition ignorar = null)
@@ -170,52 +170,52 @@ public class BoardManagerGlobal : MonoBehaviour
 
     private void InicializarRegistroDeFichas()
     {
-    AgregarMensajeInterno("📜 Iniciando registro global de fichas...");
+        AgregarMensajeInterno("📜 Iniciando registro global de fichas...");
 
-    var componentes = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
+        var componentes = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
 
-    // 🔹 Paso 1: Registrar todas las fichas (IFicha)
-    foreach (var ficha in componentes.OfType<IFicha>())
-    {
-        var pieza = ficha as MonoBehaviour;
-
-        if (pieza is Expansion)
+        // 🔹 Paso 1: Registrar todas las fichas (IFicha)
+        foreach (var ficha in componentes.OfType<IFicha>())
         {
-            AgregarMensajeInterno($"⛔ {pieza.name} es un Expansion. No se registrará como ficha.");
-            continue;
-        }
+            var pieza = ficha as MonoBehaviour;
 
-        if (ficha is IPieceWithPosition piezaConPos)
-        {
-            var posicion = piezaConPos.GetPosicionActual();
-            if (posicion.x >= 0)
+            if (pieza is Expansion || pieza is Interruption)
             {
-                AgregarMensajeInterno($"📍 Registrando ficha inicial: {pieza.name} en {posicion}");
-                RegistrarMovimiento(piezaConPos, posicion);
+                AgregarMensajeInterno($"⛔ {pieza.name} es un Expansion. No se registrará como ficha.");
+                continue;
+            }
+
+            if (ficha is IPieceWithPosition piezaConPos)
+            {
+                var posicion = piezaConPos.GetPosicionActual();
+                if (posicion.x >= 0)
+                {
+                    AgregarMensajeInterno($"📍 Registrando ficha inicial: {pieza.name} en {posicion}");
+                    RegistrarMovimiento(piezaConPos, posicion);
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"⚠️ {pieza.name} no implementa IPieceWithPosition. No registrada.");
             }
         }
-        else
-        {
-            Debug.LogWarning($"⚠️ {pieza.name} no implementa IPieceWithPosition. No registrada.");
-        }
-    }
 
-    // 🔹 Paso 2: Registrar objetos recoleccionables (especiales y normales)
-    foreach (var objeto in componentes.OfType<IObjetoRecoleccionable>())
-    {
-        if (objeto is MonoBehaviour mono && objeto is IPieceWithPosition objetoConPos)
+        // 🔹 Paso 2: Registrar objetos recoleccionables (especiales y normales)
+        foreach (var objeto in componentes.OfType<IObjetoRecoleccionable>())
         {
-            // Ya fue registrado como ficha (no repetir)
-            if (mono is IFicha) continue;
-
-            var pos = objetoConPos.GetPosicionActual();
-            if (pos.x >= 0)
+            if (objeto is MonoBehaviour mono && objeto is IPieceWithPosition objetoConPos)
             {
-                AgregarMensajeInterno($"📌 {mono.name} ({mono.GetType().Name}) registrado en {pos}");
-                RegistrarMovimiento(objetoConPos, pos);
+                // Ya fue registrado como ficha (no repetir)
+                if (mono is IFicha) continue;
+
+                var pos = objetoConPos.GetPosicionActual();
+                if (pos.x >= 0)
+                {
+                    AgregarMensajeInterno($"📌 {mono.name} ({mono.GetType().Name}) registrado en {pos}");
+                    RegistrarMovimiento(objetoConPos, pos);
+                }
             }
         }
-    }
     }
 
     // ✅ Recolección de mensajes internos para el Árbitro Silencioso
@@ -291,10 +291,10 @@ public class BoardManagerGlobal : MonoBehaviour
         Debug.Log(reporte.ToString());
     }
     public void FinalizarTurno()
-{
-    // Aquí puedes agregar otras tareas del fin de turno si las hay
-    VerificarEfectosTemporales();
-}
+    {
+        // Aquí puedes agregar otras tareas del fin de turno si las hay
+        VerificarEfectosTemporales();
+    }
 
     private void VerificarEfectosTemporales()
     {
@@ -306,30 +306,43 @@ public class BoardManagerGlobal : MonoBehaviour
     }
     public void ReportarFichaInamovible(IPieceWithPosition pieza)
     {
-    if (pieza == null || ((MonoBehaviour)pieza) == null) return;
+        if (pieza == null || ((MonoBehaviour)pieza) == null) return;
 
-    string nombre = ((MonoBehaviour)pieza).name;
-    string tipo = pieza.GetType().Name;
+        string nombre = ((MonoBehaviour)pieza).name;
+        string tipo = pieza.GetType().Name;
 
-    string interfaces = "";
-    if (pieza is IFicha) interfaces += "IFicha ";
-    if (pieza is IFichaAliada) interfaces += "IFichaAliada ";
-    if (pieza is IFichaEnemiga) interfaces += "IFichaEnemiga ";
-    if (pieza is ITileEffect) interfaces += "ITileEffect ";
-    if (pieza is IObjetoRecoleccionable) interfaces += "IObjetoRecoleccionable ";
-    if (pieza is IFichaInmovil) interfaces += "IFichaInmovil ";
+        string interfaces = "";
+        if (pieza is IFicha) interfaces += "IFicha ";
+        if (pieza is IFichaAliada) interfaces += "IFichaAliada ";
+        if (pieza is IFichaEnemiga) interfaces += "IFichaEnemiga ";
+        if (pieza is ITileEffect) interfaces += "ITileEffect ";
+        if (pieza is IObjetoRecoleccionable) interfaces += "IObjetoRecoleccionable ";
+        if (pieza is IFichaInmovil) interfaces += "IFichaInmovil ";
 
-    Vector2Int posicion = pieza.GetPosicionActual();
-    bool activo = true;
-    string estatus = "🪨 Inamovible";
+        Vector2Int posicion = pieza.GetPosicionActual();
+        bool activo = true;
+        string estatus = "🪨 Inamovible";
 
-    if (pieza is MovableTileObject mto)
+        if (pieza is MovableTileObject mto)
+        {
+            activo = mto.activoEnTablero;
+        }
+
+        string reporte = $"🪨 Reporte manual: {nombre} ({tipo}) -> Pos: {posicion}, Interfaces: [{interfaces}], Activo: {activo}, {estatus}";
+        AgregarMensajeInterno(reporte);
+    }
+
+    public int GetTurnoActual()
     {
-        activo = mto.activoEnTablero;
-    }
+        var gm = FindFirstObjectByType<ChessGameManager>();
+        if (gm != null)
+            return (int)gm
+                .GetType()
+                .GetField("turnoActual", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                ?.GetValue(gm);
 
-    string reporte = $"🪨 Reporte manual: {nombre} ({tipo}) -> Pos: {posicion}, Interfaces: [{interfaces}], Activo: {activo}, {estatus}";
-    AgregarMensajeInterno(reporte);
+        return -1; // Si no se encuentra, se devuelve un valor inválido
     }
-
+    
+    
 }
