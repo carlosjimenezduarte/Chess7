@@ -132,6 +132,11 @@ public class MovableTileObject : MonoBehaviour
 
                 efecto.RevisarSiFichaLlegó(destino, fichaAliada);
 
+                if (efecto is Key key)
+                key.RevisarSiFichaAliadaLlegó(destino, fichaAliada);
+                else
+                efecto.RevisarSiFichaLlegó(destino, fichaAliada);
+
                 // Confirmar destrucción del objeto
                 if (this == null || ((MonoBehaviour)this).gameObject == null)
                 {

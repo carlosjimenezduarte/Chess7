@@ -26,7 +26,7 @@ public class Key : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRe
 
     public void RevisarSiFichaAliadaLlegó(Vector2Int posicion, IFichaAliada ficha)
     {
-        if (yaRecolectado || tileCoords != posicion) return;
+        if (yaRecolectado) return;
 
         yaRecolectado = true;
         BoardManagerGlobal.Instance?.AgregarMensajeInterno($"🔑 Llave recolectada por {ficha.GetType().Name} en {posicion}.");
