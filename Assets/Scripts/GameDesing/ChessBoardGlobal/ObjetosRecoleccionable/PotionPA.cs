@@ -146,7 +146,7 @@ public class PotionPA : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPie
 
     public void ExiliarADimensionDivina()
     {
-        Vector2Int coordsDivinos = DimensionDivina.ObtenerProximaPosicion();
+        Vector2Int coordsDivinos = BoardManagerGlobal.ObtenerProximaPosicionDivina();
         ColocarEn(coordsDivinos);
 
         if (movable != null)

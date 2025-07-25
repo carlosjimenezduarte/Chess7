@@ -35,8 +35,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 135, y: 135}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -90,7 +90,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74e5e04f83e472a4281766b56f53ad24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileCoords: {x: 3, y: 3}
+  tileCoords: {x: 0, y: 0}
 --- !u!114 &8791524645445745211
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,7 +103,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33d1fb08166c8ac48b559443f7486744, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileCoords: {x: 3, y: 3}
+  tileCoords: {x: 0, y: 0}
+  activoEnTablero: 0
+  esInamovible: 0
 --- !u!114 &6716028131665348417
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116,4 +118,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc92ff16f53b4c74f8669077dc13d5b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mostrandoMovimientos: 0
+  esInamovible: 0
+  mostrandoMovimientos: 1

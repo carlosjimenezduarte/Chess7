@@ -10,6 +10,10 @@ public class BoardManagerGlobal : MonoBehaviour
     public int Ancho => 8;
     public int Alto => 8;
 
+    private static int offsetFuturoIncierto = 0;
+
+    private static int offsetDimensionDivina = 0;
+
     [Header("Lista de todas las casillas del tablero")]
     public List<Tile> tiles = new List<Tile>();
 
@@ -343,6 +347,46 @@ public class BoardManagerGlobal : MonoBehaviour
 
         return -1; // Si no se encuentra, se devuelve un valor inválido
     }
+
+    public static void EnviarADimensionDivina(GameObject objeto)
+    {
+        Vector2Int posDivina = ObtenerProximaPosicionDivina();
+
+        if (objeto.TryGetComponent<PiecePositioner>(out var piecePositioner))
+        {
+            piecePositioner.tileCoords = posDivina;
+        }
+
+        if (objeto.TryGetComponent<IPieceWithPosition>(out var pieza))
+        {
+            pieza.SetPosicionActual(posDivina);
+        }
+
+        if (objeto.TryGetComponent<UnityEngine.UI.Image>(out var image))
+        {
+            image.enabled = false;
+        }
+
+        // Si tiene un MovableTileObject, también actualiza el world position
+        if (objeto.TryGetComponent<MovableTileObject>(out var movable))
+        {
+            movable.tileCoords = posDivina;
+            objeto.transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(posDivina);
+        }
+
+        Debug.Log($"🌀 {objeto.name} fue exiliado a la Dimensión Divina en {posDivina}");
+    }
+
+    public static Vector2Int ObtenerProximaPosicionFutura()
+    {
+        offsetFuturoIncierto++;
+        return new Vector2Int(100 + offsetFuturoIncierto, 100);
+    }
     
+    public static Vector2Int ObtenerProximaPosicionDivina()
+    {
+    offsetDimensionDivina++;
+    return new Vector2Int(-1, -offsetDimensionDivina);
+    }
     
 }
