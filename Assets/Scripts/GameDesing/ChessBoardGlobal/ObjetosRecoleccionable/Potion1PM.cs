@@ -132,14 +132,16 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPi
         desactivado = true;
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧪 {name} detecta ficha aliada ({ficha.GetType().Name}) encima. Bonus de rango aplicado.");
 
-        MethodInfo metodo = ficha.GetType().GetMethod("AumentarRangoMovimiento");
+        MethodInfo metodo = ficha.GetType().GetMethod("AumentarRangoMovimientoSilencioso")
+                     ?? ficha.GetType().GetMethod("AumentarRangoMovimiento");
+
         if (metodo != null)
         {
             metodo.Invoke(ficha, new object[] { 1 });
         }
         else
         {
-            Debug.LogWarning($"⚠️ {ficha.GetType().Name} no implementa AumentarRangoMovimiento.");
+            Debug.LogWarning($"⚠️ {ficha.GetType().Name} no implementa AumentarRangoMovimiento ni su versión silenciosa.");
         }
 
         Destroy(gameObject);

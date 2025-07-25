@@ -7,7 +7,7 @@ public class BoardManagerGlobal : MonoBehaviour
 {
     public static BoardManagerGlobal Instance;
 
-    
+
     private static int offsetFuturoIncierto = 0;
 
     private static int offsetDimensionDivina = 0;
@@ -141,7 +141,7 @@ public class BoardManagerGlobal : MonoBehaviour
         return Vector2Int.zero;
     }
 
-   
+
     public List<MovableTileObject> GetObjetosMoviblesOrdenadosDesde(Vector2Int origen)
     {
         var todos = FindObjectsByType<MovableTileObject>(FindObjectsSortMode.None);
@@ -182,10 +182,10 @@ public class BoardManagerGlobal : MonoBehaviour
         {
             var pieza = ficha as MonoBehaviour;
 
-            if (pieza is Expansion || pieza is Interruption)
+            if (pieza is Expansion || pieza is Interruption || pieza is PusherUp ) 
             {
-               AgregarMensajeInterno($"⛔ {pieza.name} es un Expansion. No se registrará como ficha.");
-               continue;
+                AgregarMensajeInterno($"⛔ {pieza.name} es un Expansion. No se registrará como ficha.");
+                continue;
             }
 
             if (ficha is IPieceWithPosition piezaConPos)
@@ -381,18 +381,20 @@ public class BoardManagerGlobal : MonoBehaviour
         offsetFuturoIncierto++;
         return new Vector2Int(100 + offsetFuturoIncierto, 100);
     }
-    
+
     public static Vector2Int ObtenerProximaPosicionDivina()
     {
-    offsetDimensionDivina++;
-    return new Vector2Int(-1, -offsetDimensionDivina);
+        offsetDimensionDivina++;
+        return new Vector2Int(-1, -offsetDimensionDivina);
     }
     public List<ITileEffect> GetTileEffectsEn(Vector2Int coords)
     {
-    return ObtenerObjetosEn(coords)
-        .OfType<MonoBehaviour>()
-        .Where(obj => obj is ITileEffect)
-        .Cast<ITileEffect>()
-        .ToList();
+        return ObtenerObjetosEn(coords)
+            .OfType<MonoBehaviour>()
+            .Where(obj => obj is ITileEffect)
+            .Cast<ITileEffect>()
+            .ToList();
     }
+    
+    
 }

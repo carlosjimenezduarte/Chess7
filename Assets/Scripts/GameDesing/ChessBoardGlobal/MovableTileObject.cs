@@ -147,9 +147,5 @@ public class MovableTileObject : MonoBehaviour
                 BoardManagerGlobal.Instance.AgregarMensajeInterno($"🚫 {gameObject.name} no es recolectable o no tiene efecto asociado.");
             }
         }
-    }
-    
-    
-
-    
+    }    
 }

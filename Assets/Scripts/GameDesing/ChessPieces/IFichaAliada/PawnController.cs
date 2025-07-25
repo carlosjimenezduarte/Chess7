@@ -336,6 +336,12 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         rangoAtaque = 1; 
     }
 
+    public void AumentarRangoMovimientoSilencioso(int cantidad)
+    {
+    rangoMovimientoExtra += cantidad;
+    BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Peón ganó +{cantidad} de rango temporal en modo silencioso. Total: {RangoMovimientoActual}.");
+    }
+
     
 
     public bool EstaActivo() => juegoActivo;
