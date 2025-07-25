@@ -37,6 +37,17 @@ public class Expansion : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPie
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
+    public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga)
+    {
+         if (posicion == tileCoords)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♔ Rey llegó a casilla con Expansion en {tileCoords}.");
+            ActivarExpansion(reinaenemiga);
+        }
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+               
+    }
+
     public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
     {
         if (posicionPeon == tileCoords)

@@ -233,5 +233,10 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPi
     {
         return esInamovible;
     }
+
+    public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga)
+    {
+               //RevisarSiReinaEnemigaLlegó(posicion, rey);
+    }
     
 }

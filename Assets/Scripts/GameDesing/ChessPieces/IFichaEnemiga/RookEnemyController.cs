@@ -97,5 +97,10 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, IPieceWi
         //
     }
 
+    public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga)
+    {
+               //RevisarSiReinaEnemigaLlegó(posicion, rey);
+    }
+
 
 }

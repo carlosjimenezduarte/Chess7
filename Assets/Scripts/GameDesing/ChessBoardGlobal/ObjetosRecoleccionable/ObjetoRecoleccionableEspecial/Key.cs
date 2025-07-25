@@ -46,6 +46,11 @@ public class Key : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRe
     public void RevisarSiReyLlegó(Vector2Int posicion, KingController rey) =>
         RevisarSiFichaAliadaLlegó(posicion, rey);
 
+    public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga)
+    {
+               //RevisarSiReinaEnemigaLlegó(posicion, rey);
+    }
+
     public void RevisarSiFichaLlegó(Vector2Int posicion, IFicha ficha)
     {
         if (ficha is IFichaAliada aliada)

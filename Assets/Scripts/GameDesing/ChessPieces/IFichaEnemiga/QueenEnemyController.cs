@@ -49,10 +49,15 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         posicionActual = nuevaPos;
         if (TryGetComponent<PiecePositioner>(out var piecePositioner))
             piecePositioner.tileCoords = nuevaPos;
+        foreach (var efecto in BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual).OfType<ITileEffect>())
+        {
+            efecto.RevisarSiReinaEnemigaLlegó(posicionActual, this);
+        }
 
         BoardManagerGlobal.Instance?.RegistrarMovimiento(this, nuevaPos);
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ Reina actualizó su posición lógica a {nuevaPos}");
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+        
     }
 
     public Vector2Int GetPosicionActual() => posicionActual;
@@ -441,12 +446,28 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
     {
         return esInamovible;
     }
-    
+
     public void ReiniciarTurno()
     {
 
         rangoKillZone = 3;
         rangoRangeZone = 5;
+    }
+    
+    
+    public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga)
+    {
+    if (posicion != posicionActual) return;
+
+    foreach (var objeto in BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual))
+    {
+        if (objeto is ITileEffect efecto)
+        {
+            // Llamada a sí mismo o a otros efectos
+            efecto.RevisarSiReinaEnemigaLlegó(posicion, this);
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ TileEffect activado por llegada de la Reina a {posicion}");
+        }
+    }
     }
     
 

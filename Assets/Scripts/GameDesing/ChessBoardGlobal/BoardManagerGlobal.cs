@@ -7,12 +7,13 @@ public class BoardManagerGlobal : MonoBehaviour
 {
     public static BoardManagerGlobal Instance;
 
-    public int Ancho => 8;
-    public int Alto => 8;
-
+    
     private static int offsetFuturoIncierto = 0;
 
     private static int offsetDimensionDivina = 0;
+    public static Vector2Int FuturoIncierto = new Vector2Int(100, 100);
+    public static Vector2Int DimensionDivina = new Vector2Int(-1, -9999);
+
 
     [Header("Lista de todas las casillas del tablero")]
     public List<Tile> tiles = new List<Tile>();
@@ -140,9 +141,7 @@ public class BoardManagerGlobal : MonoBehaviour
         return Vector2Int.zero;
     }
 
-    public static Vector2Int FuturoIncierto = new Vector2Int(100, 100);
-    public static Vector2Int DimensionDivina = new Vector2Int(-1, -9999);
-
+   
     public List<MovableTileObject> GetObjetosMoviblesOrdenadosDesde(Vector2Int origen)
     {
         var todos = FindObjectsByType<MovableTileObject>(FindObjectsSortMode.None);
@@ -185,8 +184,8 @@ public class BoardManagerGlobal : MonoBehaviour
 
             if (pieza is Expansion || pieza is Interruption)
             {
-                AgregarMensajeInterno($"⛔ {pieza.name} es un Expansion. No se registrará como ficha.");
-                continue;
+               AgregarMensajeInterno($"⛔ {pieza.name} es un Expansion. No se registrará como ficha.");
+               continue;
             }
 
             if (ficha is IPieceWithPosition piezaConPos)
@@ -388,5 +387,12 @@ public class BoardManagerGlobal : MonoBehaviour
     offsetDimensionDivina++;
     return new Vector2Int(-1, -offsetDimensionDivina);
     }
-    
+    public List<ITileEffect> GetTileEffectsEn(Vector2Int coords)
+    {
+    return ObtenerObjetosEn(coords)
+        .OfType<MonoBehaviour>()
+        .Where(obj => obj is ITileEffect)
+        .Cast<ITileEffect>()
+        .ToList();
+    }
 }

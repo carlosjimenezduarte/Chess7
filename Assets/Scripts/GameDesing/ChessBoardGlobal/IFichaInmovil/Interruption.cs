@@ -42,6 +42,11 @@ public class Interruption : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, I
         }
     }
 
+    public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga)
+    {
+               //RevisarSiReinaEnemigaLlegó(posicion, rey);
+    }
+
     public void RevisarSiFichaLlegó(Vector2Int posicionFicha, IFicha ficha)
     {
         if (posicionFicha == tileCoords && turnoActivado != BoardManagerGlobal.Instance.GetTurnoActual())

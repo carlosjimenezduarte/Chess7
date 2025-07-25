@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class PusherUp : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPieceWithPosition
+public class PusherUp : MonoBehaviour, IFicha, IFichaInmovil, IPieceWithPosition
 {
     public Vector2Int tileCoords;
     public bool esInamovible = false;
@@ -28,7 +28,7 @@ public class PusherUp : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPiec
         if (posicionRey == tileCoords)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"♔ Rey activó PusherUp en {tileCoords}.");
-            IntentarEmpujar(rey);
+            IntentarEmpujar(rey.gameObject);
         }
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
@@ -38,7 +38,7 @@ public class PusherUp : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPiec
         if (posicionPeon == tileCoords)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"♙ Peón activó PusherUp en {tileCoords}.");
-            IntentarEmpujar(peon);
+            IntentarEmpujar(peon.gameObject);
         }
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
@@ -49,7 +49,7 @@ public class PusherUp : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPiec
         if (posicionFicha == tileCoords)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔼 PusherUp activado por {nombre} en {tileCoords}.");
-            IntentarEmpujar((MonoBehaviour)ficha);
+            IntentarEmpujar(((MonoBehaviour)ficha).gameObject);
         }
         else
         {
@@ -58,17 +58,22 @@ public class PusherUp : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPiec
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
-    private void IntentarEmpujar(MonoBehaviour ficha)
+    private void IntentarEmpujar(GameObject ficha)
     {
-        var fichaMovible = ficha.GetComponent<MovableTileObject>();
-        if (fichaMovible == null)
+        var movible = ficha.GetComponent<MovableTileObject>();
+        if (movible == null)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"⚠️ {ficha.name} no tiene MovableTileObject. No se puede empujar.");
             return;
         }
 
+        if (movible.esInamovible)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🪨 {ficha.name} es inamovible. No será empujado.");
+            return;
+        }
+
         Vector2Int direccion = new Vector2Int(0, 1); // Dirección fija: arriba
-        Vector2Int paso = tileCoords;
         List<Vector2Int> caminoLibre = new List<Vector2Int>();
 
         for (int i = 1; i <= distanciaEmpuje; i++)
@@ -82,16 +87,15 @@ public class PusherUp : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPiec
 
         if (caminoLibre.Count == 0)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🪨 PusherUp no pudo empujar a {ficha.name}. No hay camino libre.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🪨 {ficha.name} no puede ser empujado: sin camino.");
             return;
         }
 
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🎯 {ficha.name} será empujado {caminoLibre.Count} casilla(s) hacia arriba.");
+        Vector2Int destinoFinal = caminoLibre[caminoLibre.Count - 1];
 
-        foreach (var destino in caminoLibre)
-        {
-            fichaMovible.MoverA(destino);
-        }
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🎯 {ficha.name} será empujado desde {tileCoords} hasta {destinoFinal} ({caminoLibre.Count} casillas).");
+
+        movible.MoverA(destinoFinal);
     }
 
     private bool EsDentroTablero(Vector2Int p)
