@@ -1,32 +1,56 @@
-// ObjetoRecoleccionableBaseEditor.cs
 using UnityEditor;
 using UnityEngine;
 
-public abstract class ObjetoRecoleccionableBaseEditor<T> : Editor where T : MonoBehaviour
+[CustomEditor(typeof(MonoBehaviour), true)]
+public class ObjetoRecoleccionableUniversalEditor : Editor
 {
     public override void OnInspectorGUI()
     {
-        T objeto = (T)target;
-        var piecePositioner = objeto.GetComponent<PiecePositioner>();
-        var movable = objeto.GetComponent<MovableTileObject>();
+        DrawDefaultInspector();
 
-        var vieneDelFuturoProp = serializedObject.FindProperty("vieneDelFuturo");
-        var turnoApareceProp = serializedObject.FindProperty("turnoAparece");
-        var tileCoordsFuturosInciertosProp = serializedObject.FindProperty("tileCoordsFuturosInciertos");
-        var posicionRealProp = serializedObject.FindProperty("posicionReal");
+        MonoBehaviour mb = (MonoBehaviour)target;
 
+        // Solo aplica a objetos que implementen IObjetoRecoleccionable
+        if (mb is not IObjetoRecoleccionable objeto)
+            return;
+
+        var piecePositioner = mb.GetComponent<PiecePositioner>();
+        var movable = mb.GetComponent<MovableTileObject>();
+
+        // Casteamos el objeto a su tipo concreto
+        var tipo = mb.GetType();
+        var vieneDelFuturoField = tipo.GetField("vieneDelFuturo");
+        var turnoApareceField = tipo.GetField("turnoAparece");
+        var tileCoordsFuturosField = tipo.GetField("tileCoordsFuturosInciertos");
+        var posicionRealField = tipo.GetField("posicionReal");
+
+        if (vieneDelFuturoField == null || turnoApareceField == null || tileCoordsFuturosField == null || posicionRealField == null)
+        {
+            EditorGUILayout.HelpBox("⚠️ Este objeto no tiene los campos requeridos. Asegúrate de declarar vieneDelFuturo, turnoAparece, tileCoordsFuturosInciertos y posicionReal como públicos o [SerializeField].", MessageType.Warning);
+            return;
+        }
+
+        EditorGUILayout.Space();
         EditorGUILayout.LabelField("⭐ Configuración de Objeto Recolectable", EditorStyles.boldLabel);
 
-        EditorGUILayout.PropertyField(vieneDelFuturoProp, new GUIContent("¿Viene del Futuro?"));
-        serializedObject.ApplyModifiedProperties();
-
-        bool vieneDelFuturo = vieneDelFuturoProp.boolValue;
+        // Mostrar y modificar 'vieneDelFuturo'
+        bool vieneDelFuturo = (bool)vieneDelFuturoField.GetValue(mb);
+        vieneDelFuturo = EditorGUILayout.Toggle("¿Viene del Futuro?", vieneDelFuturo);
+        vieneDelFuturoField.SetValue(mb, vieneDelFuturo);
 
         if (vieneDelFuturo)
         {
-            EditorGUILayout.PropertyField(turnoApareceProp, new GUIContent("Turno Aparece"));
-            EditorGUILayout.PropertyField(tileCoordsFuturosInciertosProp, new GUIContent("Posición Futuros Inciertos"));
-            EditorGUILayout.PropertyField(posicionRealProp, new GUIContent("Posición Real al aparecer"));
+            int turno = (int)turnoApareceField.GetValue(mb);
+            turno = EditorGUILayout.IntField("Turno Aparece", turno);
+            turnoApareceField.SetValue(mb, turno);
+
+            Vector2Int coordsFuturo = (Vector2Int)tileCoordsFuturosField.GetValue(mb);
+            coordsFuturo = EditorGUILayout.Vector2IntField("Posición Futuros Inciertos", coordsFuturo);
+            tileCoordsFuturosField.SetValue(mb, coordsFuturo);
+
+            Vector2Int posReal = (Vector2Int)posicionRealField.GetValue(mb);
+            posReal = EditorGUILayout.Vector2IntField("Posición Real al aparecer", posReal);
+            posicionRealField.SetValue(mb, posReal);
 
             if (movable != null)
             {
@@ -50,6 +74,8 @@ public abstract class ObjetoRecoleccionableBaseEditor<T> : Editor where T : Mono
         }
 
         if (GUI.changed)
-            EditorUtility.SetDirty(objeto);
+        {
+            EditorUtility.SetDirty(mb);
+        }
     }
 }

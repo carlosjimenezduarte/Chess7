@@ -3,7 +3,7 @@ using System.Linq;
 
 public class MovableTileObject : MonoBehaviour
 {
-    public Vector2Int tileCoords;
+    [SerializeField] public Vector2Int tileCoords;
     public bool activoEnTablero = false;
     public bool esInamovible = false;
 
@@ -42,8 +42,6 @@ public class MovableTileObject : MonoBehaviour
 
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧭 {gameObject.name} movido global a {nuevaPos}");
 
-        // 👇 Intentar recolección automática si aterriza sobre ficha aliada
-        IntentarRecolectarSiEsPosible(nuevaPos);
     }
 
     private bool EstaCasillaOcupada(Vector2Int coords)
@@ -117,40 +115,5 @@ public class MovableTileObject : MonoBehaviour
         return esInamovible;
     }
 
-    private void IntentarRecolectarSiEsPosible(Vector2Int destino)
-    {
-        var receptor = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino)
-            .FirstOrDefault(obj => obj is IFichaAliada);
-
-        if (receptor is IFichaAliada fichaAliada)
-        {
-            if (this is IObjetoRecoleccionable && this is ITileEffect efecto)
-            {
-                BoardManagerGlobal.Instance.AgregarMensajeInterno(
-                    $"🎁 {gameObject.name} intenta ser recolectado por {((MonoBehaviour)receptor).name} en {destino}."
-                );
-
-                efecto.RevisarSiFichaLlegó(destino, fichaAliada);
-
-                if (efecto is Key key)
-                key.RevisarSiFichaAliadaLlegó(destino, fichaAliada);
-                else
-                efecto.RevisarSiFichaLlegó(destino, fichaAliada);
-
-                // Confirmar destrucción del objeto
-                if (this == null || ((MonoBehaviour)this).gameObject == null)
-                {
-                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"✅ {gameObject.name} fue destruido tras la recolección.");
-                }
-                else
-                {
-                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"⚠️ {gameObject.name} sigue activo tras intentar ser recolectado. Verificar lógica interna.");
-                }
-            }
-            else
-            {
-                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🚫 {gameObject.name} no es recolectable o no tiene efecto asociado.");
-            }
-        }
-    }    
+      
 }

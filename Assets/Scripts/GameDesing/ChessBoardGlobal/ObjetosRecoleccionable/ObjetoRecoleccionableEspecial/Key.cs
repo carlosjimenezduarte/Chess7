@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
+
 
 public class Key : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRecoleccionableEspecial, IPieceWithPosition
 {
@@ -10,6 +12,12 @@ public class Key : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRe
     private PiecePositioner positioner;
     private MovableTileObject movable;
     private bool yaRecolectado = false;
+
+    private void Update()
+    {
+        if (yaRecolectado) return;
+        VerificarAutoChequeoGeneral();
+    }
 
     private void Awake()
     {
@@ -26,7 +34,7 @@ public class Key : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRe
 
     public void RevisarSiFichaAliadaLlegó(Vector2Int posicion, IFichaAliada ficha)
     {
-        if (yaRecolectado) return;
+        if (yaRecolectado || tileCoords != posicion) return;
 
         yaRecolectado = true;
         BoardManagerGlobal.Instance?.AgregarMensajeInterno($"🔑 Llave recolectada por {ficha.GetType().Name} en {posicion}.");
@@ -72,6 +80,20 @@ public class Key : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRe
         if (positioner != null) positioner.tileCoords = nuevaPos;
         if (movable != null) movable.tileCoords = nuevaPos;
     }
+
+    private void VerificarAutoChequeoGeneral()
+{
+    var fichasAliadas = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+        .OfType<IFichaAliada>();
+
+    foreach (var ficha in fichasAliadas)
+    {
+        if (ficha is KingController rey)
+            RevisarSiReyLlegó(rey.GetPosicionActual(), rey);
+        else
+            RevisarSiFichaAliadaLlegó(ficha.GetPosicionActual(), ficha);
+    }
+}
 
     public Vector2Int GetPosicionActual() => tileCoords;
 

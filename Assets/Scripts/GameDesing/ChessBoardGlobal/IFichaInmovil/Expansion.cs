@@ -93,13 +93,7 @@ public class Expansion : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPie
             {
                 BoardManagerGlobal.Instance.AgregarMensajeInterno($"🌌 {obj.name} está fuera del tablero en {obj.tileCoords}.");
                 continue;
-            }
-
-            if (!EstaVisibleYRecolectable(obj))
-            {
-                BoardManagerGlobal.Instance.AgregarMensajeInterno($"👁️ {obj.name} no es visible o recolectable. No será empujado.");
-                continue;
-            }
+            }           
 
             Vector2Int dir = CalcularDireccion(obj.tileCoords - tileCoords);
             Vector2Int destino = obj.tileCoords + dir;

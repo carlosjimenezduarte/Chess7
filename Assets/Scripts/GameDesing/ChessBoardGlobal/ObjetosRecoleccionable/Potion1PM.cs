@@ -5,13 +5,14 @@ using System.Reflection;
 
 public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPieceWithPosition
 {
+
     [Header("Configuración general")]
-    public bool vieneDelFuturo = false;
+    [SerializeField] public bool vieneDelFuturo = false;
 
     [Header("Turno y posiciones")]
-    public int turnoAparece = 1;
-    public Vector2Int posicionReal = new Vector2Int(0, 0);
-    public Vector2Int tileCoordsFuturosInciertos = new Vector2Int(100, 100);
+    [SerializeField] public int turnoAparece = 1;
+    [SerializeField] public Vector2Int posicionReal = new Vector2Int(0, 0);
+    [SerializeField] public Vector2Int tileCoordsFuturosInciertos = new Vector2Int(100, 100);
 
     private Vector2Int tileCoords;
     public bool esInamovible = false;
