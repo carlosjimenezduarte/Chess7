@@ -38,6 +38,14 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
     public void SetPosicionActual(Vector2Int nuevaPos)
     {
+         #if UNITY_EDITOR
+        if (!Application.isPlaying)
+        {
+            posicionActual = nuevaPos;
+            return;
+        }
+        #endif
+        
         posicionActual = nuevaPos;
 
         var movible = GetComponent<MovableTileObject>();

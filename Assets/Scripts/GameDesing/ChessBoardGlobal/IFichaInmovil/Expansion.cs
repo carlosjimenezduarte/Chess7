@@ -6,7 +6,7 @@ public class Expansion : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPie
 {
     public Vector2Int tileCoords;
 
-    public bool esInamovible = false;
+    private bool esInamovible = false;
 
     private void Start()
     {
