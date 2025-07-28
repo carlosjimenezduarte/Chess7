@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6533439155558620837}
   - component: {fileID: 2243250832241142952}
   - component: {fileID: 6446823783304579078}
+  - component: {fileID: 2062129631136883389}
   m_Layer: 0
   m_Name: KingPiece
   m_TagString: Untagged
@@ -103,9 +104,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   puntosMovimientoMax: 3
+  rangoAtaqueKing: 1
   puntosAccionMax: 5
   esInamovible: 0
   puntosMovimientoActual: 0
   puntosAccionActual: 5
   turnosRestantes: 7
   mostrandoMovimientos: 0
+--- !u!114 &2062129631136883389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 626632825085157816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33d1fb08166c8ac48b559443f7486744, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileCoords: {x: 0, y: 0}
+  activoEnTablero: 0
+  esInamovible: 0

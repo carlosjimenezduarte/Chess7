@@ -99,9 +99,7 @@ public class MovableTileObject : MonoBehaviour
 
         return false;
     }
-
-
-
+    
     public void ActivarEnTablero(Vector2Int nuevaPos)
     {
         tileCoords = nuevaPos;
