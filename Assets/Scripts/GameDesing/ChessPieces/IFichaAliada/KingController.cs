@@ -22,19 +22,35 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
     private void Start()
     {
-        PiecePositioner piecePositioner = GetComponent<PiecePositioner>();
-        if (piecePositioner != null)
-        {
-            posicionActual = piecePositioner.tileCoords;
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♔ Rey inició en {posicionActual}");
-        }
-        else
-        {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("⚠️ No hay PiecePositioner en el Rey. Usando (0,0).");
-            posicionActual = new Vector2Int(0, 0);
-        }
-        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    PiecePositioner piecePositioner = GetComponent<PiecePositioner>();
+    if (piecePositioner != null)
+    {
+        posicionActual = piecePositioner.tileCoords;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♔ Rey inició en {posicionActual}");
     }
+    else
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("⚠️ No hay PiecePositioner en el Rey. Usando (0,0).");
+        posicionActual = new Vector2Int(0, 0);
+    }
+
+    // 🔍 Verificar si el Rey ya fue registrado en el tablero
+    var objetosEnCasilla = BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual);
+    bool yaRegistrado = objetosEnCasilla.Contains(this);
+
+    if (!yaRegistrado)
+    {
+        BoardManagerGlobal.Instance.RegistrarMovimiento(this, posicionActual);
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"✅ ♔ Rey registrado manualmente en {posicionActual}.");
+    }
+    else
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"ℹ️ ♔ Rey ya estaba registrado.");
+    }
+
+    BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    }
+
 
     public void SetPosicionActual(Vector2Int nuevaPos)
     {

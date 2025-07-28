@@ -18,10 +18,25 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
     private void Start()
     {
-        PiecePositioner piecePositioner = GetComponent<PiecePositioner>();
-        posicionActual = piecePositioner != null ? piecePositioner.tileCoords : new Vector2Int(0, 0);
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♙ Peón inició en {posicionActual}.");
-        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    PiecePositioner piecePositioner = GetComponent<PiecePositioner>();
+    posicionActual = piecePositioner != null ? piecePositioner.tileCoords : new Vector2Int(0, 0);
+    BoardManagerGlobal.Instance.AgregarMensajeInterno($"♙ Peón inició en {posicionActual}.");
+
+    // 🔍 Verificar si el Peón ya fue registrado en el tablero
+    var objetosEnCasilla = BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual);
+    bool yaRegistrado = objetosEnCasilla.Contains(this);
+
+    if (!yaRegistrado)
+    {
+        BoardManagerGlobal.Instance.RegistrarMovimiento(this, posicionActual);
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"✅ ♙ Peón registrado manualmente en {posicionActual}.");
+    }
+    else
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"ℹ️ ♙ Peón ya estaba registrado.");
+    }
+
+    BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
     public void SetPosicionActual(Vector2Int nuevaPos)

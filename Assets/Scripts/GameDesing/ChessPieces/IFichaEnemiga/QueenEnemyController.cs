@@ -29,20 +29,36 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
     private Vector2Int ultimaPosicionAmenaza = new Vector2Int(-99, -99);
 
     private void Start()
+{
+    PiecePositioner piecePositioner = GetComponent<PiecePositioner>();
+    if (piecePositioner != null)
     {
-        PiecePositioner piecePositioner = GetComponent<PiecePositioner>();
-        if (piecePositioner != null)
-        {
-            posicionActual = piecePositioner.tileCoords;
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ Reina inició en {posicionActual}");
-        }
-        else
-        {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("⚠️ No hay PiecePositioner en la Reina. Usando (0,0).");
-            posicionActual = new Vector2Int(0, 0);
-        }
-        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+        posicionActual = piecePositioner.tileCoords;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ Reina inició en {posicionActual}");
     }
+    else
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("⚠️ No hay PiecePositioner en la Reina. Usando (0,0).");
+        posicionActual = new Vector2Int(0, 0);
+    }
+
+    // ✅ Registrar manualmente si aún no está registrada
+    var objetosEnCasilla = BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual);
+    bool yaRegistrada = objetosEnCasilla.Contains(this);
+
+    if (!yaRegistrada)
+    {
+        BoardManagerGlobal.Instance.RegistrarMovimiento(this, posicionActual);
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"✅ ♛ Reina registrada manualmente en {posicionActual}.");
+    }
+    else
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"ℹ️ ♛ Reina ya estaba registrada.");
+    }
+
+    BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+}
+
 
     public void SetPosicionActual(Vector2Int nuevaPos)
     {
@@ -203,37 +219,18 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
             if (coord.x < 0 || coord.y < 0 || coord.x > 7 || coord.y > 7)
                 break;
 
-            // ⚠️ Detectar cualquier obstáculo que bloquee la visión
-           var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(coord);
+            var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(coord);
+            
+            // 💡 NUEVO: Bloqueo visual si hay cualquier otra ficha enemiga
+            bool bloqueVisual = objetos.Any(obj =>
+            obj is IFichaEnemiga && (Object)obj != this);
 
-            bool hayObstaculo = objetos.Any(obj =>
+            if (bloqueVisual)
             {
-                var mono = obj as MonoBehaviour;
-                return mono != null && (
-                    mono.GetComponent<IFicha>() != null ||
-                    mono.GetComponent<IObjetoRecoleccionable>() != null
-                );
-            });
-
-            if (hayObstaculo)
-            {
-                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛑 Visión de la Reina bloqueada en {coord} por obstáculo.");
-                
-                // Pintar solo la casilla del obstáculo, si está dentro del rango
-                Tile tileObstaculo = BoardManagerGlobal.Instance.GetTileAt(coord);
-                if (tileObstaculo != null)
-                {
-                    if (i <= rangoKillZone)
-                        tileObstaculo.HighlightEnemyKillZone(true);
-                    else
-                        tileObstaculo.HighlightEnemyRangeZone(true);
-                }
-
-                break; // No seguir más allá
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"👁️ Reina no colorea {coord} (ocupado por otra enemiga)");
+                break; // 🔺 No pinta ni sigue la línea
             }
 
-
-            // Pintar casillas sin obstáculo
             Tile tile = BoardManagerGlobal.Instance.GetTileAt(coord);
             if (tile == null) break;
 
@@ -241,6 +238,16 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
                 tile.HighlightEnemyKillZone(true);
             else
                 tile.HighlightEnemyRangeZone(true);
+
+            // 🛑 Obstáculo que detiene visión (fichas o recolectables)
+            bool hayObstaculo = objetos.Any(obj =>
+                (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable);
+
+            if (hayObstaculo)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛑 Visión bloqueada por {objetos.First()} en {coord}");
+                break;
+            }
         }
     }
 }
@@ -284,7 +291,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
                     break;
 
                 var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
-                bool hayObstaculo = objetos.Any(obj => obj is IFicha && obj != (object)this);
+                bool hayObstaculo = objetos.Any(obj =>(obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable);
 
                 if (hayObstaculo)
                 {
@@ -390,7 +397,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
             }
 
             var objetosEnPaso = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso, incluirRecolectables: false);
-            bool hayObstaculo = objetosEnPaso.Any(obj => obj is IFicha);
+            bool hayObstaculo = objetosEnPaso.Any(obj => (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable);
 
             if (hayObstaculo)
             {
@@ -490,11 +497,10 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         }
         }
     private bool HayObstaculoEntre(Vector2Int origen, Vector2Int destino)
-    {
+{
     int dx = destino.x - origen.x;
     int dy = destino.y - origen.y;
 
-    // Verifica dirección válida (línea recta o diagonal)
     if (!(dx == 0 || dy == 0 || Mathf.Abs(dx) == Mathf.Abs(dy)))
         return false;
 
@@ -510,7 +516,11 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
             break;
 
         var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
-        if (objetos.Any(obj => obj is IFicha || obj is IObjetoRecoleccionable))
+        bool hayObstaculo = objetos.Any(obj =>
+            obj is IFicha && obj is IObjetoRecoleccionable
+        );
+
+        if (hayObstaculo)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔰 Obstáculo detectado en {paso}. Línea bloqueada.");
             return true;
@@ -520,6 +530,6 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
     }
 
     return false;
-    }
+}
 
 }

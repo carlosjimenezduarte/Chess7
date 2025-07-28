@@ -37,6 +37,7 @@ public class BoardManagerGlobal : MonoBehaviour
     private void Start()
     {
         InicializarRegistroDeFichas();
+        
     }
 
     public void RegistrarMovimiento(IPieceWithPosition pieza, Vector2Int nuevaPos)
