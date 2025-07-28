@@ -110,10 +110,12 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
             continue;
         }
 
-        var objetivo = objetosEnDiagonal.FirstOrDefault(obj => obj is IFichaEnemiga);
+        var objetivo = objetosEnDiagonal.FirstOrDefault(obj =>
+        obj is IFichaEnemiga && obj is IPieceWithPosition pwp && pwp.GetPosicionActual() == diagonal);
+
         if (objetivo != null)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"✅ Enemigo encontrado en {diagonal}: {objetivo}");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"✅ Enemigo real encontrado en {diagonal}: {objetivo}");
 
             Tile tile = BoardManagerGlobal.Instance.GetTileAt(diagonal);
             if (tile != null)
@@ -128,8 +130,9 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         }
         else
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔎 Casilla {diagonal} contiene objetos, pero ninguno es enemigo.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔎 Ningún enemigo legítimo presente en {diagonal}. No se marcará.");
         }
+
     }
 }
 

@@ -51,6 +51,49 @@ public class BoardManagerGlobal : MonoBehaviour
         AgregarMensajeInterno($"📌 {pieza} registrado en {nuevaPos}");
     }
 
+    public void EliminarFichaDeCasilla(Vector2Int pos)
+    {
+    if (tableroOcupacion.TryGetValue(pos, out var lista))
+    {
+        int cantidadInicial = lista.Count;
+        lista.RemoveAll(obj => obj is IFicha);
+
+        int cantidadFinal = lista.Count;
+        int eliminados = cantidadInicial - cantidadFinal;
+
+        if (eliminados > 0)
+        {
+            AgregarMensajeInterno($"❌ Se eliminaron {eliminados} fichas de la casilla {pos}.");
+        }
+        else
+        {
+            AgregarMensajeInterno($"ℹ️ No había fichas para eliminar en la casilla {pos}.");
+        }
+    }
+    else
+    {
+        AgregarMensajeInterno($"⚠️ Casilla {pos} no está registrada en el tablero. No se pudo eliminar ficha.");
+    }
+    }
+
+    public void RegistrarFichaEnCasilla(Vector2Int pos, IPieceWithPosition ficha)
+    {
+    if (!tableroOcupacion.ContainsKey(pos))
+    {
+        tableroOcupacion[pos] = new List<IPieceWithPosition>();
+    }
+
+    if (!tableroOcupacion[pos].Contains(ficha))
+    {
+        tableroOcupacion[pos].Add(ficha);
+        AgregarMensajeInterno($"📌 Ficha {ficha} registrada forzadamente en {pos}.");
+    }
+    else
+    {
+        AgregarMensajeInterno($"ℹ️ Ficha {ficha} ya estaba registrada en {pos}.");
+    }
+    }
+
     public List<IPieceWithPosition> ObtenerObjetosEn(Vector2Int pos, bool incluirRecolectables = true)
     {
         if (tableroOcupacion.TryGetValue(pos, out var lista))
@@ -182,7 +225,7 @@ public class BoardManagerGlobal : MonoBehaviour
         {
             var pieza = ficha as MonoBehaviour;
 
-            if (pieza is Expansion || pieza is Interruption || pieza is PusherUp ) 
+            if (pieza is Expansion || pieza is Interruption) 
             {
                 AgregarMensajeInterno($"⛔ {pieza.name} es un Expansion. No se registrará como ficha.");
                 continue;

@@ -115,5 +115,5 @@ public class MovableTileObject : MonoBehaviour
         return esInamovible;
     }
 
-      
+   
 }

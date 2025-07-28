@@ -18,7 +18,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
     [Header("Prefab para zonas peligrosas")]
     public GameObject prefabRojo;
-
+ 
     [Header("Padre para overlays")]
     public Transform dangerOverlayParent;
 

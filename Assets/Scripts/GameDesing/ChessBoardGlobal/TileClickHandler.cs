@@ -25,24 +25,36 @@ public class TileClickHandler : MonoBehaviour, IPointerClickHandler
     // ✅ Nuevo: Si hay una ficha aliada seleccionada, y esta casilla está marcada como ataque...
     if (gameManager.fichaSeleccionadaActual is IFichaAliada fichaActiva)
     {
-        Tile tile = BoardManagerGlobal.Instance.GetTileAt(tileCoords);
-        if (tile != null && tile.EsCasillaDeAtaque())
+    Tile tile = BoardManagerGlobal.Instance.GetTileAt(tileCoords);
+    if (tile != null && tile.EsCasillaDeAtaque())
+    {
+        Vector2Int origen = fichaActiva.GetPosicionActual();
+        int dx = Mathf.Abs(origen.x - tileCoords.x);
+        int dy = Mathf.Abs(origen.y - tileCoords.y);
+
+        const int rangoMax = 1; // Ataques cuerpo a cuerpo
+
+        if (dx > rangoMax || dy > rangoMax)
         {
-            Debug.Log($"⚔️ Casilla {tileCoords} reconocida como zona de ataque para {gameManager.fichaSeleccionadaActual.name}");
-
-            if (gameManager.fichaSeleccionadaActual is PawnController peon)
-            {
-                peon.MoverA(tileCoords, gameManager.rey);
-                return;
-            }
-            else if (gameManager.fichaSeleccionadaActual is KingController rey)
-            {
-                rey.IntentarAtacar(tileCoords);
-                return;
-            }
-
-            // Si agregas más fichas aliadas que pueden atacar, extiende aquí...
+            Debug.Log($"❌ Casilla {tileCoords} está marcada como ataque, pero está fuera del rango real desde {origen}.");
+            return;
         }
+
+        Debug.Log($"⚔️ Casilla {tileCoords} reconocida como zona de ataque para {gameManager.fichaSeleccionadaActual.name}");
+
+        if (gameManager.fichaSeleccionadaActual is PawnController peon)
+        {
+            peon.MoverA(tileCoords, gameManager.rey);
+            return;
+        }
+        else if (gameManager.fichaSeleccionadaActual is KingController rey)
+        {
+            rey.IntentarAtacar(tileCoords);
+            return;
+        }
+
+        // Si agregas más fichas aliadas que pueden atacar, extiende aquí...
+    }
     }
 
     foreach (var pieza in piezas)

@@ -103,14 +103,22 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
             if (objetosEnDestino.Count == 0)
                 continue;
 
-            var objetivo = objetosEnDestino.FirstOrDefault(obj => obj is IFichaEnemiga);
-            if (objetivo != null)
+            var enemigo = objetosEnDestino.FirstOrDefault(obj =>
+                obj is IFichaEnemiga && obj is IPieceWithPosition pwp && pwp.GetPosicionActual() == destino);
+
+            if (enemigo != null)
             {
-                Tile tile = BoardManagerGlobal.Instance.GetTileAt(destino);
-                if (tile != null)
+                int distanciaX = Mathf.Abs(destino.x - posicionActual.x);
+                int distanciaY = Mathf.Abs(destino.y - posicionActual.y);
+
+                if (distanciaX <= rangoAtaqueKing && distanciaY <= rangoAtaqueKing)
                 {
-                    tile.HighlightEnemyAttack(true);
-                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"🎯 Casilla {destino} marcada como ataque posible del Rey.");
+                    Tile tile = BoardManagerGlobal.Instance.GetTileAt(destino);
+                    if (tile != null)
+                    {
+                        tile.HighlightEnemyAttack(true);
+                        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🎯 Casilla {destino} marcada como ataque posible del Rey.");
+                    }
                 }
             }
         }
@@ -353,7 +361,15 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
         // 🔥 Eliminar ficha enemiga y marcarla fuera del tablero
         if (objetivo is IPieceWithPosition enemigo)
+        {
+            if (enemigo.GetPosicionActual() != destino)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"❌ El enemigo {objetivo} no está realmente en {destino}, está en {enemigo.GetPosicionActual()}. No se ejecuta el ataque.");
+                return;
+            }
+
             enemigo.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
+        }
 
         Destroy(((MonoBehaviour)objetivo).gameObject);
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"💀 Rey eliminó al enemigo en {destino}.");
