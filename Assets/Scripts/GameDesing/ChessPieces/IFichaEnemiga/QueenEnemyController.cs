@@ -291,48 +291,55 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
                     break;
 
                 var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
-                bool hayObstaculo = objetos.Any(obj =>(obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable);
 
-                if (hayObstaculo)
+                bool hayObstaculo = objetos.Any(obj =>
+                    (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable);
+
+                // 🔒 Se evalúan asesinatos SOLO si no hay obstáculo. 
+                if (!hayObstaculo)
+                {
+                    foreach (var pieza in objetos)
+                    {
+                        if (pieza is IFichaAliada && pieza != (object)this)
+                        {
+                            Vector2Int pos = pieza.GetPosicionActual();
+                            bool asesinatoEjecutado = false;
+
+                            RevisarAmenazaAPieza(pos, () =>
+                            {
+                                if (Vector2Int.Distance(posicionActual, pos) <= rangoKillZone)
+                                {
+                                    StartCoroutine(MatarPiezaDespuesDelay((MonoBehaviour)pieza, pos));
+                                    asesinatoEjecutado = true;
+                                }
+                            });
+
+                            if (asesinatoEjecutado)
+                            {
+                                if (ataquesConcatenados)
+                                {
+                                    BoardManagerGlobal.Instance.AgregarMensajeInterno("⏳ Reina Negra pausa tras asesinato.");
+                                    yield return new WaitForSeconds(1f);
+                                }
+                                else
+                                {
+                                    BoardManagerGlobal.Instance.AgregarMensajeInterno("🛑 Reina Roja detiene su cacería tras el primer asesinato.");
+                                    yield break;
+                                }
+                            }
+                        }
+                    }
+                }
+                else
                 {
                     BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛑 Reina interrumpe su escaneo por obstáculo en {paso}");
                     break;
                 }
 
-                foreach (var pieza in objetos)
-                {
-                    if (pieza is IFichaAliada && pieza != (object)this)
-                    {
-                        Vector2Int pos = pieza.GetPosicionActual();
-                        bool asesinatoEjecutado = false;
-
-                        RevisarAmenazaAPieza(pos, () =>
-                        {
-                            if (Vector2Int.Distance(posicionActual, pos) <= rangoKillZone)
-                            {
-                                StartCoroutine(MatarPiezaDespuesDelay(((MonoBehaviour)pieza), pos));
-                                asesinatoEjecutado = true;
-                            }
-                        });
-
-                        if (asesinatoEjecutado)
-                        {
-                            if (ataquesConcatenados)
-                            {
-                                BoardManagerGlobal.Instance.AgregarMensajeInterno("⏳ Reina Negra pausa tras asesinato.");
-                                yield return new WaitForSeconds(1f);
-                            }
-                            else
-                            {
-                                BoardManagerGlobal.Instance.AgregarMensajeInterno("🛑 Reina Roja detiene su cacería tras el primer asesinato.");
-                                yield break;
-                            }
-                        }
-                    }
-                }
                 paso += dir;
                 pasosContados++;
             }
+
         }
         RevisarObjetosRecoleccionablesEnCasilla();
     }
