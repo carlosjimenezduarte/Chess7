@@ -18,7 +18,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
     [Header("Prefab para zonas peligrosas")]
     public GameObject prefabRojo;
- 
+
     [Header("Padre para overlays")]
     public Transform dangerOverlayParent;
 
@@ -29,47 +29,47 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
     private Vector2Int ultimaPosicionAmenaza = new Vector2Int(-99, -99);
 
     private void Start()
-{
-    PiecePositioner piecePositioner = GetComponent<PiecePositioner>();
-    if (piecePositioner != null)
     {
-        posicionActual = piecePositioner.tileCoords;
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ Reina inició en {posicionActual}");
-    }
-    else
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("⚠️ No hay PiecePositioner en la Reina. Usando (0,0).");
-        posicionActual = new Vector2Int(0, 0);
-    }
+        PiecePositioner piecePositioner = GetComponent<PiecePositioner>();
+        if (piecePositioner != null)
+        {
+            posicionActual = piecePositioner.tileCoords;
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ Reina inició en {posicionActual}");
+        }
+        else
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("⚠️ No hay PiecePositioner en la Reina. Usando (0,0).");
+            posicionActual = new Vector2Int(0, 0);
+        }
 
-    // ✅ Registrar manualmente si aún no está registrada
-    var objetosEnCasilla = BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual);
-    bool yaRegistrada = objetosEnCasilla.Contains(this);
+        // ✅ Registrar manualmente si aún no está registrada
+        var objetosEnCasilla = BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual);
+        bool yaRegistrada = objetosEnCasilla.Contains(this);
 
-    if (!yaRegistrada)
-    {
-        BoardManagerGlobal.Instance.RegistrarMovimiento(this, posicionActual);
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"✅ ♛ Reina registrada manualmente en {posicionActual}.");
-    }
-    else
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"ℹ️ ♛ Reina ya estaba registrada.");
-    }
+        if (!yaRegistrada)
+        {
+            BoardManagerGlobal.Instance.RegistrarMovimiento(this, posicionActual);
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"✅ ♛ Reina registrada manualmente en {posicionActual}.");
+        }
+        else
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"ℹ️ ♛ Reina ya estaba registrada.");
+        }
 
-    BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
-}
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    }
 
 
     public void SetPosicionActual(Vector2Int nuevaPos)
     {
-         #if UNITY_EDITOR
+#if UNITY_EDITOR
         if (!Application.isPlaying)
         {
             posicionActual = nuevaPos;
             return;
         }
-        #endif
-        
+#endif
+
         posicionActual = nuevaPos;
         if (TryGetComponent<PiecePositioner>(out var piecePositioner))
             piecePositioner.tileCoords = nuevaPos;
@@ -81,7 +81,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         BoardManagerGlobal.Instance?.RegistrarMovimiento(this, nuevaPos);
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ Reina actualizó su posición lógica a {nuevaPos}");
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
-        
+
     }
 
     public Vector2Int GetPosicionActual() => posicionActual;
@@ -115,28 +115,28 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
     private void RevisarAmenazaAPieza(Vector2Int posicionPieza, System.Action efectoSobrePieza)
     {
-    int dx = posicionPieza.x - posicionActual.x;
-    int dy = posicionPieza.y - posicionActual.y;
+        int dx = posicionPieza.x - posicionActual.x;
+        int dy = posicionPieza.y - posicionActual.y;
 
-    bool esDireccionValida = (dx == 0 || dy == 0 || Mathf.Abs(dx) == Mathf.Abs(dy));
-    if (!esDireccionValida) return;
+        bool esDireccionValida = (dx == 0 || dy == 0 || Mathf.Abs(dx) == Mathf.Abs(dy));
+        if (!esDireccionValida) return;
 
-    // 🛑 NUEVO: cancelamos amenaza si hay obstáculo entre Reina y la ficha
-    if (HayObstaculoEntre(posicionActual, posicionPieza))
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛡️ Amenaza bloqueada por obstáculo entre Reina {posicionActual} y pieza {posicionPieza}");
-        return;
-    }
+        // 🛑 NUEVO: cancelamos amenaza si hay obstáculo entre Reina y la ficha
+        if (HayObstaculoEntre(posicionActual, posicionPieza))
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛡️ Amenaza bloqueada por obstáculo entre Reina {posicionActual} y pieza {posicionPieza}");
+            return;
+        }
 
-    // Si no hay obstáculo, aplicamos efecto
-    if (Vector2Int.Distance(posicionActual, posicionPieza) <= rangoKillZone)
-    {
-        efectoSobrePieza.Invoke();
-    }
-    else
-    {
-        efectoSobrePieza.Invoke();
-    }
+        // Si no hay obstáculo, aplicamos efecto
+        if (Vector2Int.Distance(posicionActual, posicionPieza) <= rangoKillZone)
+        {
+            efectoSobrePieza.Invoke();
+        }
+        else
+        {
+            efectoSobrePieza.Invoke();
+        }
     }
 
 
@@ -197,60 +197,60 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
     }
 
     public void MostrarRangoDeAtaque()
-{
-    OcultarRangoDeAtaque();
+    {
+        OcultarRangoDeAtaque();
 
-    Tile tileCentral = BoardManagerGlobal.Instance.GetTileAt(posicionActual);
-    if (tileCentral != null)
-        tileCentral.HighlightEnemyKillZone(true); // Casilla de la Reina
+        Tile tileCentral = BoardManagerGlobal.Instance.GetTileAt(posicionActual);
+        if (tileCentral != null)
+            tileCentral.HighlightEnemyKillZone(true); // Casilla de la Reina
 
-    Vector2Int[] direcciones = {
+        Vector2Int[] direcciones = {
         new Vector2Int(1,0), new Vector2Int(-1,0),
         new Vector2Int(0,1), new Vector2Int(0,-1),
         new Vector2Int(1,1), new Vector2Int(-1,1),
         new Vector2Int(1,-1), new Vector2Int(-1,-1)
     };
 
-    foreach (var dir in direcciones)
-    {
-        for (int i = 1; i <= rangoRangeZone; i++)
+        foreach (var dir in direcciones)
         {
-            Vector2Int coord = posicionActual + dir * i;
-            if (coord.x < 0 || coord.y < 0 || coord.x > 7 || coord.y > 7)
-                break;
-
-            var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(coord);
-            
-            // 💡 NUEVO: Bloqueo visual si hay cualquier otra ficha enemiga
-            bool bloqueVisual = objetos.Any(obj =>
-            obj is IFichaEnemiga && (Object)obj != this);
-
-            if (bloqueVisual)
+            for (int i = 1; i <= rangoRangeZone; i++)
             {
-                BoardManagerGlobal.Instance.AgregarMensajeInterno($"👁️ Reina no colorea {coord} (ocupado por otra enemiga)");
-                break; // 🔺 No pinta ni sigue la línea
-            }
+                Vector2Int coord = posicionActual + dir * i;
+                if (coord.x < 0 || coord.y < 0 || coord.x > 7 || coord.y > 7)
+                    break;
 
-            Tile tile = BoardManagerGlobal.Instance.GetTileAt(coord);
-            if (tile == null) break;
+                var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(coord);
 
-            if (i <= rangoKillZone)
-                tile.HighlightEnemyKillZone(true);
-            else
-                tile.HighlightEnemyRangeZone(true);
+                // 💡 NUEVO: Bloqueo visual si hay cualquier otra ficha enemiga
+                bool bloqueVisual = objetos.Any(obj =>
+                obj is IFichaEnemiga && (Object)obj != this);
 
-            // 🛑 Obstáculo que detiene visión (fichas o recolectables)
-            bool hayObstaculo = objetos.Any(obj =>
-                (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable);
+                if (bloqueVisual)
+                {
+                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"👁️ Reina no colorea {coord} (ocupado por otra enemiga)");
+                    break; // 🔺 No pinta ni sigue la línea
+                }
 
-            if (hayObstaculo)
-            {
-                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛑 Visión bloqueada por {objetos.First()} en {coord}");
-                break;
+                Tile tile = BoardManagerGlobal.Instance.GetTileAt(coord);
+                if (tile == null) break;
+
+                if (i <= rangoKillZone)
+                    tile.HighlightEnemyKillZone(true);
+                else
+                    tile.HighlightEnemyRangeZone(true);
+
+                // 🛑 Obstáculo que detiene visión (fichas o recolectables)
+                bool hayObstaculo = objetos.Any(obj =>
+                    (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable);
+
+                if (hayObstaculo)
+                {
+                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛑 Visión bloqueada por {objetos.First()} en {coord}");
+                    break;
+                }
             }
         }
     }
-}
 
 
 
@@ -267,83 +267,10 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
     public void RevisarAmenazasEnZona()
     {
-        StartCoroutine(ProcesarAmenazas());
+        StartCoroutine(ProcesarAmenazasDesdeArbitro());
     }
 
-    private IEnumerator ProcesarAmenazas()
-    {
-        // ✅ NUEVO: recorre solo su rango en el tablero, con ayuda del árbitro
-        Vector2Int[] direcciones = {
-            new Vector2Int(1,0), new Vector2Int(-1,0),
-            new Vector2Int(0,1), new Vector2Int(0,-1),
-            new Vector2Int(1,1), new Vector2Int(-1,1),
-            new Vector2Int(1,-1), new Vector2Int(-1,-1)
-        };
-
-        foreach (var dir in direcciones)
-        {
-            Vector2Int paso = posicionActual + dir;
-            int pasosContados = 1;
-
-            while (pasosContados <= rangoRangeZone)
-            {
-                if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
-                    break;
-
-                var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
-
-                bool hayObstaculo = objetos.Any(obj =>
-                    (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable);
-
-                // 🔒 Se evalúan asesinatos SOLO si no hay obstáculo. 
-                if (!hayObstaculo)
-                {
-                    foreach (var pieza in objetos)
-                    {
-                        if (pieza is IFichaAliada && pieza != (object)this)
-                        {
-                            Vector2Int pos = pieza.GetPosicionActual();
-                            bool asesinatoEjecutado = false;
-
-                            RevisarAmenazaAPieza(pos, () =>
-                            {
-                                if (Vector2Int.Distance(posicionActual, pos) <= rangoKillZone)
-                                {
-                                    StartCoroutine(MatarPiezaDespuesDelay((MonoBehaviour)pieza, pos));
-                                    asesinatoEjecutado = true;
-                                }
-                            });
-
-                            if (asesinatoEjecutado)
-                            {
-                                if (ataquesConcatenados)
-                                {
-                                    BoardManagerGlobal.Instance.AgregarMensajeInterno("⏳ Reina Negra pausa tras asesinato.");
-                                    yield return new WaitForSeconds(1f);
-                                }
-                                else
-                                {
-                                    BoardManagerGlobal.Instance.AgregarMensajeInterno("🛑 Reina Roja detiene su cacería tras el primer asesinato.");
-                                    yield break;
-                                }
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛑 Reina interrumpe su escaneo por obstáculo en {paso}");
-                    break;
-                }
-
-                paso += dir;
-                pasosContados++;
-            }
-
-        }
-        RevisarObjetosRecoleccionablesEnCasilla();
-    }
-
+    
     private void RevisarObjetosRecoleccionablesEnCasilla()
     {
         // ✅ Ahora revisa con el árbitro silencioso
@@ -446,8 +373,6 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
-
-
     public void MostrarRango()
     {
         MostrarRangoDeAtaque();
@@ -487,10 +412,10 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         rangoKillZone = 3;
         rangoRangeZone = 5;
     }
-    
-    
-        public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga)
-        {
+
+
+    public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga)
+    {
         if (posicion != posicionActual) return;
 
         foreach (var objeto in BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual))
@@ -502,41 +427,108 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
                 BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ TileEffect activado por llegada de la Reina a {posicion}");
             }
         }
-        }
+    }
     private bool HayObstaculoEntre(Vector2Int origen, Vector2Int destino)
-{
-    int dx = destino.x - origen.x;
-    int dy = destino.y - origen.y;
-
-    if (!(dx == 0 || dy == 0 || Mathf.Abs(dx) == Mathf.Abs(dy)))
-        return false;
-
-    Vector2Int direccion = new Vector2Int(
-        dx == 0 ? 0 : (dx > 0 ? 1 : -1),
-        dy == 0 ? 0 : (dy > 0 ? 1 : -1)
-    );
-
-    Vector2Int paso = origen + direccion;
-    while (paso != destino)
     {
-        if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
-            break;
+        int dx = destino.x - origen.x;
+        int dy = destino.y - origen.y;
 
-        var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
-        bool hayObstaculo = objetos.Any(obj =>
-            obj is IFicha && obj is IObjetoRecoleccionable
+        if (!(dx == 0 || dy == 0 || Mathf.Abs(dx) == Mathf.Abs(dy)))
+            return false;
+
+        Vector2Int direccion = new Vector2Int(
+            dx == 0 ? 0 : (dx > 0 ? 1 : -1),
+            dy == 0 ? 0 : (dy > 0 ? 1 : -1)
         );
 
-        if (hayObstaculo)
+        Vector2Int paso = origen + direccion;
+        while (paso != destino)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔰 Obstáculo detectado en {paso}. Línea bloqueada.");
-            return true;
+            if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
+                break;
+
+            var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
+            bool hayObstaculo = objetos.Any(obj =>
+            (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable
+            );
+
+            if (hayObstaculo)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔰 Obstáculo detectado en {paso}. Línea bloqueada.");
+                return true;
+            }
+
+            paso += direccion;
         }
 
-        paso += direccion;
+        return false;
     }
 
-    return false;
-}
+    
+private IEnumerator ProcesarAmenazasDesdeArbitro()
+{
+    for (int x = 0; x <= 7; x++)
+    {
+        for (int y = 0; y <= 7; y++)
+        {
+            Vector2Int posObjetivo = new Vector2Int(x, y);
+            if (posObjetivo == posicionActual)
+                continue;
+
+            int dx = posObjetivo.x - posicionActual.x;
+            int dy = posObjetivo.y - posicionActual.y;
+
+            bool esDireccionValida = dx == 0 || dy == 0 || Mathf.Abs(dx) == Mathf.Abs(dy);
+            if (!esDireccionValida)
+                continue;
+
+            int distancia = Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy));
+            if (distancia > rangoRangeZone)
+                continue;
+
+            if (HayObstaculoEntre(posicionActual, posObjetivo))
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧱 Obstáculo entre Reina y {posObjetivo}, se cancela ataque.");
+                continue;
+            }
+
+            var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(posObjetivo);
+
+            foreach (var obj in objetos)
+            {
+                if (obj is IFichaAliada && obj != (object)this)
+                {
+                    bool asesinatoEjecutado = false;
+
+                    RevisarAmenazaAPieza(posObjetivo, () =>
+                    {
+                        if (distancia <= rangoKillZone)
+                        {
+                            StartCoroutine(MatarPiezaDespuesDelay((MonoBehaviour)obj, posObjetivo));
+                            asesinatoEjecutado = true;
+                        }
+                    });
+
+                    if (asesinatoEjecutado)
+                    {
+                        if (ataquesConcatenados)
+                        {
+                            BoardManagerGlobal.Instance.AgregarMensajeInterno("⏳ Reina Negra pausa tras asesinato.");
+                            yield return new WaitForSeconds(1f);
+                        }
+                        else
+                        {
+                            BoardManagerGlobal.Instance.AgregarMensajeInterno("🛑 Reina Roja detiene su cacería tras el primer asesinato.");
+                            yield break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    RevisarObjetosRecoleccionablesEnCasilla();
+    }
+
 
 }
