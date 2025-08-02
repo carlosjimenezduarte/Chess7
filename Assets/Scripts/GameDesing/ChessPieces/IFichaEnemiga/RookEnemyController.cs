@@ -101,6 +101,15 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, IPieceWi
     {
                //RevisarSiReinaEnemigaLlegó(posicion, rey);
     }
+    public void ProcesarMovimientoAliado(Vector2Int posAliada, int idMovimiento)
+    {
+        // ✅ Solo intenta atacar si nadie más ha atacado en este movimiento
+        if (!BoardManagerGlobal.Instance.RegistrarIntentoDeAtaque(this, idMovimiento))
+            return;
+
+        // Aquí va tu lógica de ataque principal
+        RevisarAmenazasEnZona();
+    }
 
 
 }

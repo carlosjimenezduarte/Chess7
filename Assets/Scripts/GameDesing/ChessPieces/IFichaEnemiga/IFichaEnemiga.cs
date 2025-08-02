@@ -9,5 +9,7 @@ public interface IFichaEnemiga
     void ReiniciarTurno();
 
     Vector2Int GetPosicionActual();
-        
+    // 🔹 Integración con el Árbitro Silencioso
+    void ProcesarMovimientoAliado(Vector2Int posAliada, int idMovimiento);
+    
 }
