@@ -9,4 +9,6 @@ public interface ITileEffect
     void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga);
 
     void VerificarTurnoActual(int turnoActual);
+
+    
 }
