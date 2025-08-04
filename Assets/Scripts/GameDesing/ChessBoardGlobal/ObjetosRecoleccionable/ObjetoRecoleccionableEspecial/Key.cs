@@ -101,6 +101,11 @@ public class Key : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRe
         tileCoords.x >= 0 && tileCoords.y >= 0 && tileCoords.x <= 7 && tileCoords.y <= 7;
     public void RevisarSiReinaNegraEnemigaLlegó(Vector2Int posicion, BlackQueenEnemyController reinaenemiga)
     {
-               //RevisarSiReinaEnemigaLlegó(posicion, rey);
+        //RevisarSiReinaEnemigaLlegó(posicion, rey);
+    }
+    
+    public void RevisarSiTorreNegraEnemigaLlegó(Vector2Int posicion, BlackRookEnemyController torrenegraenemiga)
+    {
+        //
     }
 }

@@ -116,6 +116,9 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, IPieceWi
         //RevisarSiReinaEnemigaLlegó(posicion, rey);
     }
 
-
+    public void RevisarSiTorreNegraEnemigaLlegó(Vector2Int posicion, BlackRookEnemyController torrenegraenemiga)
+    {
+        //
+    }
 
 }

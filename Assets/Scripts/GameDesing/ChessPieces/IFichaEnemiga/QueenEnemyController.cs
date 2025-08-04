@@ -155,7 +155,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         StartCoroutine(ProcesarLlegadaPeonConEspera(posicionPeon, peon));
     }
 
-        
+
     private IEnumerator ProcesarLlegadaPeonConEspera(Vector2Int posicionPeon, PawnController peon)
     {
         // 🔹 Pausa breve para permitir que ReinaNegra actúe primero
@@ -523,27 +523,27 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
     private IEnumerator ProcesarAmenazasDesdeArbitro()
     {
-        
-    // 🛑 Comprobación de autorización global del Árbitro
+
+        // 🛑 Comprobación de autorización global del Árbitro
         int idMovimiento = BoardManagerGlobal.Instance.idMovimientoActual;
-    if (!BoardManagerGlobal.Instance.RegistrarIntentoDeAtaque(this, idMovimiento))
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno(
-            $"⛔ {name} ignoró ataque: otra ficha ya actuó en movimiento {idMovimiento}."
-        );
-        yield break; // 🚫 Ni busca objetivo ni se mueve
-    }
+        if (!BoardManagerGlobal.Instance.RegistrarIntentoDeAtaque(this, idMovimiento))
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                $"⛔ {name} ignoró ataque: otra ficha ya actuó en movimiento {idMovimiento}."
+            );
+            yield break; // 🚫 Ni busca objetivo ni se mueve
+        }
 
-    // Si ya no tiene rango letal, no hace nada
-    if (rangoKillZone <= 0)
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Roja no tiene energía letal este turno.");
-        yield break;
-    }
+        // Si ya no tiene rango letal, no hace nada
+        if (rangoKillZone <= 0)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Roja no tiene energía letal este turno.");
+            yield break;
+        }
 
-    // Direcciones absolutas de ajedrez real
-    Vector2Int[] direcciones = new Vector2Int[]
-    {
+        // Direcciones absolutas de ajedrez real
+        Vector2Int[] direcciones = new Vector2Int[]
+        {
         new Vector2Int(1,0),   // Este
         new Vector2Int(-1,0),  // Oeste
         new Vector2Int(0,1),   // Norte
@@ -552,53 +552,53 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         new Vector2Int(-1,1),  // NO
         new Vector2Int(1,-1),  // SE
         new Vector2Int(-1,-1), // SO
-    };
+        };
 
-    MonoBehaviour objetivoElegido = null;
-    Vector2Int posicionObjetivo = new Vector2Int(-1, -1);
+        MonoBehaviour objetivoElegido = null;
+        Vector2Int posicionObjetivo = new Vector2Int(-1, -1);
 
-    // 1️⃣ Buscar primer objetivo válido
-    foreach (var dir in direcciones)
-    {
-        Vector2Int paso = posicionActual;
-
-        for (int i = 1; i <= rangoRangeZone; i++)
+        // 1️⃣ Buscar primer objetivo válido
+        foreach (var dir in direcciones)
         {
-            paso += dir;
+            Vector2Int paso = posicionActual;
 
-            if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
-                break;
-
-            var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
-
-            var fichaAliada = objetos.OfType<IFichaAliada>().FirstOrDefault();
-            if (fichaAliada != null)
+            for (int i = 1; i <= rangoRangeZone; i++)
             {
-                objetivoElegido = (MonoBehaviour)fichaAliada;
-                posicionObjetivo = paso;
-                break;
+                paso += dir;
+
+                if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
+                    break;
+
+                var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
+
+                var fichaAliada = objetos.OfType<IFichaAliada>().FirstOrDefault();
+                if (fichaAliada != null)
+                {
+                    objetivoElegido = (MonoBehaviour)fichaAliada;
+                    posicionObjetivo = paso;
+                    break;
+                }
+
+                bool hayObstaculo = objetos.Any(obj =>
+                    (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable
+                );
+                if (hayObstaculo)
+                    break;
             }
 
-            bool hayObstaculo = objetos.Any(obj =>
-                (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable
-            );
-            if (hayObstaculo)
+            if (objetivoElegido != null)
                 break;
         }
 
-        if (objetivoElegido != null)
-            break;
-    }
+        // 2️⃣ Si no hay objetivo, solo limpia casilla
+        if (objetivoElegido == null)
+        {
+            RevisarObjetosRecoleccionablesEnCasilla();
+            yield break;
+        }
 
-    // 2️⃣ Si no hay objetivo, solo limpia casilla
-    if (objetivoElegido == null)
-    {
-        RevisarObjetosRecoleccionablesEnCasilla();
-        yield break;
-    }
-
-    // 3️⃣ Ataque o penalización
-    float distancia = Vector2Int.Distance(posicionActual, posicionObjetivo);
+        // 3️⃣ Ataque o penalización
+        float distancia = Vector2Int.Distance(posicionActual, posicionObjetivo);
 
         if (distancia <= rangoKillZone)
         {
@@ -607,31 +607,36 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
             rangoKillZone = 0;
             BoardManagerGlobal.Instance.AgregarMensajeInterno("🩸 Reina Roja ejecutó su presa y se detiene.");
-             
-    }
-    
-    RevisarObjetosRecoleccionablesEnCasilla();
-    yield break;
+
+        }
+
+        RevisarObjetosRecoleccionablesEnCasilla();
+        yield break;
     }
 
 
     public void ProcesarMovimientoAliado(Vector2Int posAliada, int idMovimiento)
     {
-    // ✅ Solo intenta atacar si nadie más ha atacado en este movimiento
-    if (!BoardManagerGlobal.Instance.RegistrarIntentoDeAtaque(this, idMovimiento))
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno(
-            $"⛔ {name} no puede atacar: otra ficha ya lo hizo en el movimiento {idMovimiento}."
-        );
-        return; // 🚫 No inicia su coroutine ni cambia de posición
-    }
+        // ✅ Solo intenta atacar si nadie más ha atacado en este movimiento
+        if (!BoardManagerGlobal.Instance.RegistrarIntentoDeAtaque(this, idMovimiento))
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                $"⛔ {name} no puede atacar: otra ficha ya lo hizo en el movimiento {idMovimiento}."
+            );
+            return; // 🚫 No inicia su coroutine ni cambia de posición
+        }
 
-    // ✅ Si llega aquí, es la atacante autorizada
-    RevisarAmenazasEnZona(); 
+        // ✅ Si llega aquí, es la atacante autorizada
+        RevisarAmenazasEnZona();
     }
     public void RevisarSiReinaNegraEnemigaLlegó(Vector2Int posicion, BlackQueenEnemyController reinaenemiga)
     {
-               //RevisarSiReinaEnemigaLlegó(posicion, rey);
+        //RevisarSiReinaEnemigaLlegó(posicion, rey);
+    }
+    
+    public void RevisarSiTorreNegraEnemigaLlegó(Vector2Int posicion, BlackRookEnemyController torrenegraenemiga)
+    {
+        //
     }
 
 }

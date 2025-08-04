@@ -10,6 +10,8 @@ public interface ITileEffect
     void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga);
 
     void RevisarSiReinaNegraEnemigaLlegó(Vector2Int posicion, BlackQueenEnemyController reinanegraenemiga);
+
+    void RevisarSiTorreNegraEnemigaLlegó(Vector2Int posicion, BlackRookEnemyController torrenegraenemiga);
     void VerificarTurnoActual(int turnoActual);
     
 }

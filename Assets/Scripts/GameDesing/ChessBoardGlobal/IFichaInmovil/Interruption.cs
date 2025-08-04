@@ -119,6 +119,9 @@ public class Interruption : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, I
     {
         //RevisarSiReinaEnemigaLlegó(posicion, rey);
     }
-    
+    public void RevisarSiTorreNegraEnemigaLlegó(Vector2Int posicion, BlackRookEnemyController torrenegraenemiga)
+    {
+        //
+    }
     
 }

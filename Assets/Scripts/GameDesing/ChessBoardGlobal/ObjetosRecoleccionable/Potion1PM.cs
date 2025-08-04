@@ -241,10 +241,14 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPi
     {
         //RevisarSiReinaEnemigaLlegó(posicion, rey);
     }
-    
-     public void RevisarSiReinaNegraEnemigaLlegó(Vector2Int posicion, BlackQueenEnemyController reinaenemiga)
+
+    public void RevisarSiReinaNegraEnemigaLlegó(Vector2Int posicion, BlackQueenEnemyController reinaenemiga)
     {
-               //RevisarSiReinaEnemigaLlegó(posicion, rey);
+        //RevisarSiReinaEnemigaLlegó(posicion, rey);
     }
     
+    public void RevisarSiTorreNegraEnemigaLlegó(Vector2Int posicion, BlackRookEnemyController torrenegraenemiga)
+    {
+        //
+    }
 }

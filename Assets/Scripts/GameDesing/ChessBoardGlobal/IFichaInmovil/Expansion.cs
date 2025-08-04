@@ -163,9 +163,10 @@ public class Expansion : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPie
     {
         //RevisarSiReinaEnemigaLlegó(posicion, rey);
     }
+
     
-    public void RevisarSiFichaAliadaLlegó(Vector2Int posicionFicha, IFichaAliada ficha)
+    public void RevisarSiTorreNegraEnemigaLlegó(Vector2Int posicion, BlackRookEnemyController torrenegraenemiga)
     {
-     //StartCoroutine(ProcesarLlegadaFichaAliada(posicionFicha, ficha)); 
+        //
     }
 } 

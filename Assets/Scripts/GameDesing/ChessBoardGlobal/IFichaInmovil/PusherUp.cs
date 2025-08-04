@@ -140,8 +140,8 @@ public class PusherUp : MonoBehaviour, ITileEffect, IFichaInmovil, IFicha, IPiec
     {
         //RevisarSiReinaEnemigaLlegó(posicion, rey);
     }
-    public void RevisarSiFichaAliadaLlegó(Vector2Int posicionFicha, IFichaAliada ficha)
+    public void RevisarSiTorreNegraEnemigaLlegó(Vector2Int posicion, BlackRookEnemyController torrenegraenemiga)
     {
-     //StartCoroutine(ProcesarLlegadaFichaAliada(posicionFicha, ficha)); 
+        //
     }
 }
