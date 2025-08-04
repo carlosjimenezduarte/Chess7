@@ -35,20 +35,28 @@ public class Tile : MonoBehaviour
     }
 
     public void HighlightEnemyAttack(bool state)
-{
+    {
+        if (myImage == null) return;
+
+        Color colorAtaque = new Color(1f, 0.2f, 0.9f, 1f);
+        myImage.color = state ? colorAtaque : Color.clear;
+    }
+
+    public void HighlightBlackAttack(bool state)
+    {
     if (myImage == null) return;
 
-    Color colorAtaque = new Color(1f, 0.2f, 0.9f, 1f);
+    Color colorAtaque = new Color(0.322f, 0.318f, 0.314f, 0.8f);
     myImage.color = state ? colorAtaque : Color.clear;
-}
+    }
     public void HighlightSpecific(bool isActive)
     {
-    if (myImage != null)
-    {
-        myImage.color = isActive 
-            ? new Color(1f, 0.2f, 0.9f, 1f) // fucsia sólido
-            : Color.white;
-    }
+        if (myImage != null)
+        {
+            myImage.color = isActive
+                ? new Color(1f, 0.2f, 0.9f, 1f) // fucsia sólido
+                : Color.white;
+        }
     }
 
     public bool EsCasillaDeAtaque()

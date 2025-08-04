@@ -114,12 +114,12 @@ public class BlackBishopEnemyController : MonoBehaviour, IPointerClickHandler, I
 
     public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
     {
-        RevisarAmenazaAPieza(posicionPeon, () =>
-        {
-            StartCoroutine(MatarPiezaDespuesDelay(peon, posicionPeon));
-        });
-        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    RevisarAmenazaAPieza(posicionPeon, () =>
+    {
+        StartCoroutine(ProcesarAmenazasDesdeArbitro());
+    });
     }
+
 
     private IEnumerator MatarPiezaDespuesDelay(MonoBehaviour pieza, Vector2Int posicion)
     {
@@ -146,7 +146,7 @@ public class BlackBishopEnemyController : MonoBehaviour, IPointerClickHandler, I
         );
 
         // 🔹 Marcar ataque para la jerarquía
-        BoardManagerGlobal.Instance.reinaNegraAtaco = true;
+        BoardManagerGlobal.Instance.alfilNegraAtaco = true;
 
         yield return new WaitForSeconds(1f);
     }
@@ -157,7 +157,7 @@ public class BlackBishopEnemyController : MonoBehaviour, IPointerClickHandler, I
 
         Tile tileCentral = BoardManagerGlobal.Instance.GetTileAt(posicionActual);
         if (tileCentral != null)
-            tileCentral.HighlightEnemyKillZone(true);
+            tileCentral.HighlightBlackAttack(true);
 
         Vector2Int[] direcciones = {
             new Vector2Int(1,1), new Vector2Int(-1,1),
@@ -173,14 +173,22 @@ public class BlackBishopEnemyController : MonoBehaviour, IPointerClickHandler, I
                     break;
 
                 var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(coord);
+                // 💡 NUEVO: Bloqueo visual si hay cualquier otra ficha enemiga
+                bool bloqueVisual = objetos.Any(obj =>
+                obj is IFichaEnemiga && (Object)obj != this);
 
+                if (bloqueVisual)
+                {
+                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"👁️ Reina no colorea {coord} (ocupado por otra enemiga)");
+                    break; // 🔺 No pinta ni sigue la línea
+                }
                 Tile tile = BoardManagerGlobal.Instance.GetTileAt(coord);
                 if (tile == null) break;
 
                 if (i <= rangoKillZone)
-                    tile.HighlightEnemyKillZone(true);
+                    tile.HighlightBlackAttack(true);
                 else
-                    tile.HighlightEnemyRangeZone(true);
+                    tile.HighlightBlackAttack(true);
 
                 // 🔹 Detener la visual si hay obstáculo
                 bool hayObstaculo = objetos.Any(obj =>
@@ -213,57 +221,92 @@ public class BlackBishopEnemyController : MonoBehaviour, IPointerClickHandler, I
 
     private IEnumerator ProcesarAmenazasDesdeArbitro()
     {
-        Vector2Int[] direcciones = {
-            new Vector2Int(1,1), new Vector2Int(-1,1),
-            new Vector2Int(1,-1), new Vector2Int(-1,-1)
-        };
-
-        MonoBehaviour objetivoElegido = null;
-        Vector2Int posicionObjetivo = new Vector2Int(-1, -1);
-
-        // 1️⃣ Buscar primer objetivo válido en diagonal
-        foreach (var dir in direcciones)
+    int asesinatos = 0; // Contador de kills
+    yield return new WaitForSeconds(0.04f);
+    // 🔹 Comprobar jerarquía de ataque antes de iniciar
+        if (BoardManagerGlobal.Instance.reinaNegraAtaco)
         {
-            Vector2Int paso = posicionActual;
-            for (int i = 1; i <= rangoRangeZone; i++)
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Alfil Negro cede: Reina Negra ya atacó.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionAlfilNegro(false);
+            yield break;
+        }
+    
+    if (BoardManagerGlobal.Instance.torreNegraAtaco)
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Alfil Negro cede: Torre Negra ya atacó.");
+        BoardManagerGlobal.Instance.ReportarFinInspeccionAlfilNegro(false);
+        yield break;
+    }
+    
+    if (rangoKillZone <= 0)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Alfil Negro sin energía letal este turno.");
+            yield break;
+        }
+
+    Vector2Int[] direcciones = new Vector2Int[]
+    {
+        new Vector2Int(1,1),    // NE
+        new Vector2Int(-1,1),   // NO
+        new Vector2Int(1,-1),   // SE
+        new Vector2Int(-1,-1),  // SO
+    };
+
+    // 🔹 Explorar en diagonales
+    foreach (var dir in direcciones)
+    {
+        Vector2Int paso = posicionActual;
+
+        for (int i = 1; i <= rangoRangeZone; i++)
+        {
+            paso += dir;
+
+            // 🚫 Salir si está fuera del tablero
+            if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
+                break;
+
+            var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
+
+            // 💀 Si encuentra ficha aliada, ejecutar
+            var fichaAliada = objetos.OfType<IFichaAliada>().FirstOrDefault();
+            if (fichaAliada != null)
             {
-                paso += dir;
-                if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
-                    break;
+                BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                    $"💥 Alfil Negro ejecuta a {((MonoBehaviour)fichaAliada).name} en {paso}"
+                );
 
-                var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
+                yield return StartCoroutine(MatarPiezaDespuesDelay((MonoBehaviour)fichaAliada, paso));
+                asesinatos++;
 
-                var fichaAliada = objetos.OfType<IFichaAliada>().FirstOrDefault();
-                if (fichaAliada != null)
+                if (asesinatos >= 7)
                 {
-                    objetivoElegido = (MonoBehaviour)fichaAliada;
-                    posicionObjetivo = paso;
-                    break;
+                    BoardManagerGlobal.Instance.AgregarMensajeInterno("🩸 Alfil Negro alcanzó su límite de 7 ejecuciones.");
+                    yield break;
                 }
 
-                bool hayObstaculo = objetos.Any(obj =>
-                    (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable
-                );
-                if (hayObstaculo)
-                    break;
+                // 🔹 Sigue en la misma diagonal mientras haya camino libre
+                continue;
             }
-            if (objetivoElegido != null)
+
+            // 🛑 Si hay obstáculo (enemigo o recolectable), detener dirección
+            bool hayObstaculo = objetos.Any(obj =>
+                (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable
+            );
+            if (hayObstaculo)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛡️ Visión de Alfil Negro bloqueada en {paso}");
                 break;
+            }
         }
+    }
 
-        if (objetivoElegido == null)
-        {
-            yield break; // Nada que atacar
-        }
+    // 📝 Informe final
+    if (asesinatos > 0)
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♝ Alfil Negro completó su barrido con {asesinatos} ejecución(es).");
+    else
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Alfil Negro no encontró víctimas en este barrido.");
 
-        float distancia = Vector2Int.Distance(posicionActual, posicionObjetivo);
-        if (distancia <= rangoKillZone)
-        {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"💥 Alfil Negro mata a {objetivoElegido.name} en {posicionObjetivo}");
-            yield return StartCoroutine(MatarPiezaDespuesDelay(objetivoElegido, posicionObjetivo));
-        }
-
-        yield break;
+    yield break;
     }
 
     private bool HayObstaculoEntre(Vector2Int origen, Vector2Int destino)

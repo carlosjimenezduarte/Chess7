@@ -114,12 +114,11 @@ public class BlackRookEnemyController : MonoBehaviour, IPointerClickHandler, ITi
 
     public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
     {
-        RevisarAmenazaAPieza(posicionPeon, () =>
-        {
-            StartCoroutine(MatarPiezaDespuesDelay(peon, posicionPeon));
-        });
-        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+        // 🔹 Directamente iniciamos el procesamiento unificado
+        StartCoroutine(ProcesarAmenazasDesdeArbitro());
     }
+
+    
 
     private IEnumerator MatarPiezaDespuesDelay(MonoBehaviour pieza, Vector2Int posicion)
     {
@@ -146,7 +145,7 @@ public class BlackRookEnemyController : MonoBehaviour, IPointerClickHandler, ITi
         );
 
         // 🔹 Marcar ataque para la jerarquía
-        BoardManagerGlobal.Instance.reinaNegraAtaco = true;
+        BoardManagerGlobal.Instance.torreNegraAtaco = true;
 
         yield return new WaitForSeconds(1f);
     }
@@ -157,7 +156,7 @@ public class BlackRookEnemyController : MonoBehaviour, IPointerClickHandler, ITi
 
         Tile tileCentral = BoardManagerGlobal.Instance.GetTileAt(posicionActual);
         if (tileCentral != null)
-            tileCentral.HighlightEnemyKillZone(true);
+            tileCentral.HighlightBlackAttack(true);
 
         Vector2Int[] direcciones = {
             new Vector2Int(1,0), new Vector2Int(-1,0), // E-O
@@ -174,13 +173,23 @@ public class BlackRookEnemyController : MonoBehaviour, IPointerClickHandler, ITi
 
                 var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(coord);
 
+                // 💡 NUEVO: Bloqueo visual si hay cualquier otra ficha enemiga
+                bool bloqueVisual = objetos.Any(obj =>
+                obj is IFichaEnemiga && (Object)obj != this);
+
+                if (bloqueVisual)
+                {
+                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"👁️ Torre Negra no colorea {coord} (ocupado por otra enemiga)");
+                    break; // 🔺 No pinta ni sigue la línea
+                }
+
                 Tile tile = BoardManagerGlobal.Instance.GetTileAt(coord);
                 if (tile == null) break;
 
                 if (i <= rangoKillZone)
-                    tile.HighlightEnemyKillZone(true);
+                    tile.HighlightBlackAttack(true);
                 else
-                    tile.HighlightEnemyRangeZone(true);
+                    tile.HighlightBlackAttack(true);
 
                 // 🔹 Detener la visual si hay obstáculo
                 bool hayObstaculo = objetos.Any(obj =>
@@ -213,15 +222,32 @@ public class BlackRookEnemyController : MonoBehaviour, IPointerClickHandler, ITi
 
     private IEnumerator ProcesarAmenazasDesdeArbitro()
     {
+        int asesinatos = 0;
+
+        if (rangoKillZone <= 0)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Torre Negra sin energía letal este turno.");
+            yield break;
+        }
+
+        // 🔹 Pausa inicial mínima para ceder prioridad a ReinaNegra
+        yield return new WaitForSeconds(0.03f);
+
+        // 🔹 Jerarquía: si Reina atacó, cedo mi turno
+        if (BoardManagerGlobal.Instance.reinaNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Torre Negra cede: Reina ya atacó.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionTorreNegra(false);
+            yield break;
+        }
+
         Vector2Int[] direcciones = {
-            new Vector2Int(1,0), new Vector2Int(-1,0),
-            new Vector2Int(0,1), new Vector2Int(0,-1)
+            new Vector2Int(1,0),   // Este
+            new Vector2Int(-1,0),  // Oeste
+            new Vector2Int(0,1),   // Norte
+            new Vector2Int(0,-1)   // Sur
         };
 
-        MonoBehaviour objetivoElegido = null;
-        Vector2Int posicionObjetivo = new Vector2Int(-1, -1);
-
-        // 1️⃣ Buscar primer objetivo válido en línea recta
         foreach (var dir in direcciones)
         {
             Vector2Int paso = posicionActual;
@@ -236,35 +262,38 @@ public class BlackRookEnemyController : MonoBehaviour, IPointerClickHandler, ITi
                 var fichaAliada = objetos.OfType<IFichaAliada>().FirstOrDefault();
                 if (fichaAliada != null)
                 {
-                    objetivoElegido = (MonoBehaviour)fichaAliada;
-                    posicionObjetivo = paso;
-                    break;
+                    BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                        $"💥 Torre Negra ejecuta a {((MonoBehaviour)fichaAliada).name} en {paso}"
+                    );
+
+                    yield return StartCoroutine(MatarPiezaDespuesDelay((MonoBehaviour)fichaAliada, paso));
+                    asesinatos++;
+
+                    if (asesinatos >= 7)
+                    {
+                        BoardManagerGlobal.Instance.AgregarMensajeInterno("🩸 Torre Negra alcanzó su límite de 7 ejecuciones.");
+                        BoardManagerGlobal.Instance.ReportarFinInspeccionTorreNegra(true);
+                        yield break;
+                    }
+
+                    continue;
                 }
 
                 bool hayObstaculo = objetos.Any(obj =>
                     (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable
                 );
-                if (hayObstaculo)
-                    break;
+                if (hayObstaculo) break;
             }
-            if (objetivoElegido != null)
-                break;
         }
 
-        if (objetivoElegido == null)
-        {
-            yield break; // Nada que atacar
-        }
+        BoardManagerGlobal.Instance.ReportarFinInspeccionTorreNegra(asesinatos > 0);
 
-        float distancia = Vector2Int.Distance(posicionActual, posicionObjetivo);
-        if (distancia <= rangoKillZone)
-        {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"💥 Torre Negra mata a {objetivoElegido.name} en {posicionObjetivo}");
-            yield return StartCoroutine(MatarPiezaDespuesDelay(objetivoElegido, posicionObjetivo));
-        }
-
-        yield break;
+        if (asesinatos > 0)
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♖ Torre Negra completó su barrido con {asesinatos} ejecución(es).");
+        else
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Torre Negra no encontró víctimas en este barrido.");
     }
+
 
     public void ProcesarMovimientoAliado(Vector2Int posAliada, int idMovimiento)
     {

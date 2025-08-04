@@ -7,6 +7,9 @@ public class BoardManagerGlobal : MonoBehaviour
 {
     public static BoardManagerGlobal Instance;
     public bool reinaNegraAtaco = false;
+    public bool torreNegraAtaco = false;
+    public bool alfilNegraAtaco = false;
+    public bool caballoNegraAtaco = false;
     private List<IFichaEnemiga> fichasEnemigasRegistradas = new List<IFichaEnemiga>();
 
     // 🔁 Control de activaciones por movimiento
@@ -488,6 +491,9 @@ public class BoardManagerGlobal : MonoBehaviour
     public void ResetearAtaquesEnemigos()
     {
         reinaNegraAtaco = false;
+        torreNegraAtaco = false;
+        alfilNegraAtaco = false;
+        caballoNegraAtaco = false;
         AgregarMensajeInterno("♛ Árbitro: Reset de ataques enemigos.");
     }
 
@@ -496,19 +502,64 @@ public class BoardManagerGlobal : MonoBehaviour
         // 🔹 Se ejecuta cuando ya todas las fichas enemigas evaluaron el movimiento
         ResetearAtaquesEnemigos();
     }
-    
+
+    public void ReportarFinInspeccionTorreNegra(bool ataco)
+    {
+        if (!ataco)
+        {
+            // Si la TorreNegra no atacó, es señal de que el ciclo se completó
+            ResetearAtaquesEnemigos();
+            AgregarMensajeInterno("♜ Árbitro: Torre Negra inspeccionó y cedió su turno. Ataques reiniciados.");
+        }
+        else
+        {
+            // Si atacó, la prioridad natural sigue; no reiniciamos porque ya actuó
+            AgregarMensajeInterno("♛ Árbitro: Torre Negra atacó. Ciclo completado.");
+        }
+    }
+    public void ReportarFinInspeccionAlfilNegro(bool ataco)
+    {
+        if (!ataco)
+        {
+            // Si la TorreNegra no atacó, es señal de que el ciclo se completó
+            ResetearAtaquesEnemigos();
+            AgregarMensajeInterno("♝ Árbitro: Alfil Negro inspeccionó y cedió su turno. Ataques reiniciados.");
+        }
+        else
+        {
+            // Si atacó, la prioridad natural sigue; no reiniciamos porque ya actuó
+            AgregarMensajeInterno("♝ Árbitro: Alfil Negro atacó. Ciclo completado.");
+        }
+    }
+
+    public void ReportarFinInspeccionCaballoNegro(bool ataco)
+    {
+        if (!ataco)
+        {
+            // Si la TorreNegra no atacó, es señal de que el ciclo se completó
+            ResetearAtaquesEnemigos();
+            AgregarMensajeInterno("♞ Árbitro: Caballo Negro inspeccionó y cedió su turno. Ataques reiniciados.");
+        }
+        else
+        {
+            // Si atacó, la prioridad natural sigue; no reiniciamos porque ya actuó
+            AgregarMensajeInterno("♞ Árbitro: Caballo Negro atacó. Ciclo completado.");
+        }
+    }
+
     public void ReportarFinInspeccionReinaRoja(bool ataco)
     {
-    if (!ataco)
-    {
-        // Si la ReinaRoja no atacó, es señal de que el ciclo se completó
-        ResetearAtaquesEnemigos();
-        AgregarMensajeInterno("♛ Árbitro: Reina Roja inspeccionó y cedió su turno. Ataques reiniciados.");
+        if (!ataco)
+        {
+            // Si la ReinaRoja no atacó, es señal de que el ciclo se completó
+            ResetearAtaquesEnemigos();
+            AgregarMensajeInterno("♛ Árbitro: Reina Roja inspeccionó y cedió su turno. Ataques reiniciados.");
+        }
+        else
+        {
+            // Si atacó, la prioridad natural sigue; no reiniciamos porque ya actuó
+            AgregarMensajeInterno("♛ Árbitro: Reina Roja atacó. Ciclo completado.");
+        }
     }
-    else
-    {
-        // Si atacó, la prioridad natural sigue; no reiniciamos porque ya actuó
-        AgregarMensajeInterno("♛ Árbitro: Reina Roja atacó. Ciclo completado.");
-    }
-    }
+
 }

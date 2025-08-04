@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 7957543422082279335}
   - component: {fileID: 3417829838113377925}
   - component: {fileID: 7340785100093625428}
-  - component: {fileID: 247803540973184791}
   - component: {fileID: 3057412625012859387}
+  - component: {fileID: 247803540973184791}
   m_Layer: 5
   m_Name: BlackKnightEnemy
   m_TagString: Untagged
@@ -91,6 +91,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileCoords: {x: 6, y: 6}
+--- !u!114 &3057412625012859387
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8669404750556632435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b4e92433ee292043a24c7099287f9d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  esInamovible: 0
 --- !u!114 &247803540973184791
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -105,17 +118,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileCoords: {x: 6, y: 6}
   activoEnTablero: 0
-  esInamovible: 0
---- !u!114 &3057412625012859387
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8669404750556632435}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b4e92433ee292043a24c7099287f9d7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
   esInamovible: 0
