@@ -12,7 +12,6 @@ public class EditorUniversalRecolectable : Editor
         var esEspecial = mono is IObjetoRecoleccionableEspecial;
         var esFicha = mono is IFicha;
         var esInmovil = mono is IFichaInmovil;
-        var esFichaEnemiga = mono is IFichaEnemiga; // 🟡 Nueva detección
 
         var tipo = mono.GetType();
         var vieneDelFuturoField = tipo.GetField("vieneDelFuturo");
@@ -25,7 +24,7 @@ public class EditorUniversalRecolectable : Editor
         var conPosicion = mono as IPieceWithPosition;
 
         // ------------------------------------------------------------------
-        // 💎 OBJETOS RECOLECTABLES ESPECIALES
+        // 🟡 OBJETOS RECOLECTABLES ESPECIALES
         // ------------------------------------------------------------------
         if (esRecolectable && esEspecial)
         {
@@ -121,15 +120,6 @@ public class EditorUniversalRecolectable : Editor
                     Debug.Log($"🔓 {mono.name}: esInamovible fue forzado a FALSE (Ficha movible).");
                 }
                 EditorGUILayout.HelpBox("ℹ️ Este objeto es una ficha movible (IFicha).", MessageType.Info);
-            }
-
-            // 🟡 Campo extra para fichas enemigas con prioridad jerárquica
-            var prioridadField = tipo.GetField("prioridadJerarquica");
-            if (esFichaEnemiga && prioridadField != null)
-            {
-                int prioridad = (int)prioridadField.GetValue(mono);
-                prioridad = EditorGUILayout.IntField("Prioridad Jerárquica", prioridad);
-                prioridadField.SetValue(mono, prioridad);
             }
 
             MostrarCampoCoordenadas(piecePositioner, movable, conPosicion, "📍 Posición Inicial");

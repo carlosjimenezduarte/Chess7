@@ -205,6 +205,8 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
             MostrarMovimientoPosible();
             mostrandoMovimientos = true;
+           // ✅ Notificar al Árbitro para autorizar solo 1 ataque enemigo
+            BoardManagerGlobal.Instance.NotificarMovimientoAliado(posicionActual);
 
             var reina = FindFirstObjectByType<QueenEnemyController>();
             if (reina != null)

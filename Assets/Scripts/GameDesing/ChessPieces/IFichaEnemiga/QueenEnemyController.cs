@@ -7,10 +7,10 @@ using System.Linq;
 
 public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEffect, IPieceWithPosition, IFicha, IFichaEnemiga
 {
-    
+
 
     [Header("Jerarquía de ataque")]
-    [SerializeField]public int prioridadJerarquica = 1; // 1 = más prioridad, número mayor = menor prioridad
+
     public int rangoKillZone { get; set; } = 3;
 
     public bool esInamovible = false;
@@ -29,28 +29,28 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
     private Vector2Int ultimaPosicionAmenaza = new Vector2Int(-99, -99);
 
     private void Start()
-{
-    // 1️⃣ Determinar posición inicial
-    PiecePositioner piecePositioner = GetComponent<PiecePositioner>();
-    if (piecePositioner != null)
     {
-        posicionActual = piecePositioner.tileCoords;
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ Reina inició en {posicionActual}");
-    }
-    else
-    {
-        posicionActual = new Vector2Int(0, 0);
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("⚠️ No hay PiecePositioner en la Reina. Usando (0,0).");
-    }
+        // 1️⃣ Determinar posición inicial
+        PiecePositioner piecePositioner = GetComponent<PiecePositioner>();
+        if (piecePositioner != null)
+        {
+            posicionActual = piecePositioner.tileCoords;
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ Reina inició en {posicionActual}");
+        }
+        else
+        {
+            posicionActual = new Vector2Int(0, 0);
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("⚠️ No hay PiecePositioner en la Reina. Usando (0,0).");
+        }
 
-    // 2️⃣ Registrar posición en el tablero global
-    BoardManagerGlobal.Instance.RegistrarMovimiento(this, posicionActual);
+        // 2️⃣ Registrar posición en el tablero global
+        BoardManagerGlobal.Instance.RegistrarMovimiento(this, posicionActual);
 
-    // 3️⃣ Registrar como ficha enemiga para el Árbitro Silencioso
-    BoardManagerGlobal.Instance.RegistrarFichaEnemiga(this);
+        // 3️⃣ Registrar como ficha enemiga para el Árbitro Silencioso
+        BoardManagerGlobal.Instance.RegistrarFichaEnemiga(this);
 
-    // 4️⃣ Reporte final
-    BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+        // 4️⃣ Reporte final
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
     public void SetPosicionActual(Vector2Int nuevaPos)
@@ -152,55 +152,93 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
     public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
     {
+        StartCoroutine(ProcesarLlegadaPeonConEspera(posicionPeon, peon));
+    }
+
+        
+    private IEnumerator ProcesarLlegadaPeonConEspera(Vector2Int posicionPeon, PawnController peon)
+    {
+        // 🔹 Pausa breve para permitir que ReinaNegra actúe primero
+        yield return new WaitForSeconds(0.05f);
+
+        // 1️⃣ Verificar jerarquía de ataque
+        if (BoardManagerGlobal.Instance.reinaNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                "♛ Reina Roja piensa: 'Reina Negra ya actuó, cedo mi turno.'"
+            );
+
+            // 🔹 Avisar al Tablero que ya inspeccionó y cedió
+            BoardManagerGlobal.Instance.ReportarFinInspeccionReinaRoja(false);
+            yield break;
+        }
+
+        // 2️⃣ Verificar si el Peón sigue vivo
+        if (peon == null || peon.gameObject == null)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                "♛ Reina Roja piensa: 'El peón ya no existe, no tengo nada que hacer.'"
+            );
+
+            // 🔹 Aunque no atacó, informar inspección completada
+            BoardManagerGlobal.Instance.ReportarFinInspeccionReinaRoja(false);
+            yield break;
+        }
+
+        // 3️⃣ Proceder con la amenaza normal
         RevisarAmenazaAPieza(posicionPeon, () =>
         {
             if (Vector2Int.Distance(posicionActual, posicionPeon) <= rangoKillZone)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                    $"♛ Reina Roja ejecuta al Peón en {posicionPeon}"
+                );
                 StartCoroutine(MatarPiezaDespuesDelay(peon, posicionPeon));
+            }
             else
             {
                 peon.AumentarRangoMovimiento(-2);
-                BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina aplicó penalización al Peón por estar en zona de amenaza");
+                BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                    $"♛ Reina Roja penaliza al Peón en {posicionPeon}"
+                );
             }
         });
+
+        // 🔹 Avisar al Tablero que la ReinaRoja atacó
+        BoardManagerGlobal.Instance.ReportarFinInspeccionReinaRoja(true);
+
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
+
     private IEnumerator MatarPiezaDespuesDelay(MonoBehaviour pieza, Vector2Int posicion)
     {
-    // ✅ Bloqueo físico: si otra Reina ya está en la casilla, aborta
-    if (BoardManagerGlobal.Instance.EstaCasillaOcupada(posicion, this))
-    {
+
+        // 1️⃣ Moverse lógicamente
+        SetPosicionActual(posicion);
+
+        if (TryGetComponent<MovableTileObject>(out var movable))
+            movable.tileCoords = posicion;
+
+        transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(posicion);
+
+        // 2️⃣ Exiliar la pieza víctima
+        if (pieza is IPieceWithPosition piezaVictima)
+            piezaVictima.SetPosicionActual(new Vector2Int(-1, -1));
+
+        if (pieza is PawnController peon)
+        {
+            peon.OcultarMovimientos();
+            peon.mostrandoMovimientos = false;
+        }
+
+        Destroy(pieza.gameObject);
+
         BoardManagerGlobal.Instance.AgregarMensajeInterno(
-            $"⛔ {name} no se mueve: {posicion} ya ocupada por otra ficha."
+            $"💀 {pieza.name} ejecutado por la Reina en {posicion}"
         );
-        yield break;
-    }
 
-    // 1️⃣ Moverse lógicamente
-    SetPosicionActual(posicion);
-
-    if (TryGetComponent<MovableTileObject>(out var movable))
-        movable.tileCoords = posicion;
-
-    transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(posicion);
-
-    // 2️⃣ Exiliar la pieza víctima
-    if (pieza is IPieceWithPosition piezaVictima)
-        piezaVictima.SetPosicionActual(new Vector2Int(-1, -1));
-
-    if (pieza is PawnController peon)
-    {
-        peon.OcultarMovimientos();
-        peon.mostrandoMovimientos = false;
-    }
-
-    Destroy(pieza.gameObject);
-
-    BoardManagerGlobal.Instance.AgregarMensajeInterno(
-        $"💀 {pieza.name} ejecutado por la Reina en {posicion}"
-    );
-
-    yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(1f);
     }
 
 
@@ -485,21 +523,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
     private IEnumerator ProcesarAmenazasDesdeArbitro()
     {
-    // 🔹 0️⃣ Comprobación de prioridad jerárquica
-    var reinas = FindObjectsByType<QueenEnemyController>(FindObjectsSortMode.None);
-
-    bool hayReinaDeMayorPrioridadQueAtaco = reinas
-    .Any(r => r != this 
-            && r.prioridadJerarquica < this.prioridadJerarquica 
-            && r.rangoKillZone == 0); // 0 = ya ejecutó su ataque
-
-    if (hayReinaDeMayorPrioridadQueAtaco)
-    {
-    BoardManagerGlobal.Instance.AgregarMensajeInterno(
-        $"⛔ {name} (prio {prioridadJerarquica}) se abstiene: una reina de prioridad mayor ya actuó."
-    );
-    yield break;
-    }
+        
     // 🛑 Comprobación de autorización global del Árbitro
         int idMovimiento = BoardManagerGlobal.Instance.idMovimientoActual;
     if (!BoardManagerGlobal.Instance.RegistrarIntentoDeAtaque(this, idMovimiento))
@@ -583,24 +607,9 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
             rangoKillZone = 0;
             BoardManagerGlobal.Instance.AgregarMensajeInterno("🩸 Reina Roja ejecutó su presa y se detiene.");
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🏁 {name} (prio {prioridadJerarquica}) completó su acción y no actuará más este turno."
-);
+             
     }
-        else
-        {
-            if (objetivoElegido is PawnController peon)
-                peon.AumentarRangoMovimiento(-2);
-            else if (objetivoElegido is KingController rey)
-            {
-                rey.GanarPuntoMovimiento(-2);
-                rey.puntosAccionActual -= 2;
-            }
-
-            BoardManagerGlobal.Instance.AgregarMensajeInterno(
-                $"⚡ Reina Roja penaliza a {objetivoElegido.name} en {posicionObjetivo}"
-            );
-        }
-
+    
     RevisarObjetosRecoleccionablesEnCasilla();
     yield break;
     }
@@ -620,6 +629,9 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
     // ✅ Si llega aquí, es la atacante autorizada
     RevisarAmenazasEnZona(); 
     }
-
+    public void RevisarSiReinaNegraEnemigaLlegó(Vector2Int posicion, BlackQueenEnemyController reinaenemiga)
+    {
+               //RevisarSiReinaEnemigaLlegó(posicion, rey);
+    }
 
 }

@@ -44,7 +44,7 @@ public class Interruption : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, I
 
     public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga)
     {
-               //RevisarSiReinaEnemigaLlegó(posicion, rey);
+        //RevisarSiReinaEnemigaLlegó(posicion, rey);
     }
 
     public void RevisarSiFichaLlegó(Vector2Int posicionFicha, IFicha ficha)
@@ -68,10 +68,10 @@ public class Interruption : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, I
 
         // Cancelar movimientos de todas las fichas aliadas excepto el activador
         var fichasAliadas = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<IFichaAliada>();
-        
+
         foreach (var ficha in fichasAliadas)
         {
-            if (ficha == (object)activador) continue;        
+            if (ficha == (object)activador) continue;
             ficha.OcultarMovimientos();
             ficha.rangoAtaque = 0;
             ficha.rangoMovimientoBase = 0;
@@ -94,12 +94,12 @@ public class Interruption : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, I
         foreach (var enemigo in fichasEnemigas)
         {
             enemigo.OcultarRango();
-            enemigo.rangoKillZone=0;
-            enemigo.rangoRangeZone=0;
+            enemigo.rangoKillZone = 0;
+            enemigo.rangoRangeZone = 0;
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧊 Ataque bloqueado para enemiga {((MonoBehaviour)enemigo).name}");
         }
 
-        
+
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
@@ -114,4 +114,11 @@ public class Interruption : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, I
     {
         return tileCoords;
     }
+
+    public void RevisarSiReinaNegraEnemigaLlegó(Vector2Int posicion, BlackQueenEnemyController reinaenemiga)
+    {
+        //RevisarSiReinaEnemigaLlegó(posicion, rey);
+    }
+    
+    
 }

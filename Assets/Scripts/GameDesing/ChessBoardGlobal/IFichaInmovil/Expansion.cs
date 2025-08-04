@@ -25,7 +25,7 @@ public class Expansion : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPie
             // ✅ Reporte manual al Árbitro Silencioso
             BoardManagerGlobal.Instance.ReportarFichaInamovible(this);
         }
-               
+
     }
     public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey)
     {
@@ -39,13 +39,13 @@ public class Expansion : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPie
 
     public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga)
     {
-         if (posicion == tileCoords)
+        if (posicion == tileCoords)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"♔ Rey llegó a casilla con Expansion en {tileCoords}.");
             ActivarExpansion(reinaenemiga);
         }
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
-               
+
     }
 
     public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
@@ -93,7 +93,7 @@ public class Expansion : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPie
             {
                 BoardManagerGlobal.Instance.AgregarMensajeInterno($"🌌 {obj.name} está fuera del tablero en {obj.tileCoords}.");
                 continue;
-            }           
+            }
 
             Vector2Int dir = CalcularDireccion(obj.tileCoords - tileCoords);
             Vector2Int destino = obj.tileCoords + dir;
@@ -148,14 +148,24 @@ public class Expansion : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPie
     {
         return esInamovible;
     }
-    
+
     public void SetPosicionActual(Vector2Int nuevaPos)
     {
-    tileCoords = nuevaPos;
+        tileCoords = nuevaPos;
     }
 
-public Vector2Int GetPosicionActual()
+    public Vector2Int GetPosicionActual()
     {
-    return tileCoords;
+        return tileCoords;
+    }
+
+    public void RevisarSiReinaNegraEnemigaLlegó(Vector2Int posicion, BlackQueenEnemyController reinaenemiga)
+    {
+        //RevisarSiReinaEnemigaLlegó(posicion, rey);
+    }
+    
+    public void RevisarSiFichaAliadaLlegó(Vector2Int posicionFicha, IFichaAliada ficha)
+    {
+     //StartCoroutine(ProcesarLlegadaFichaAliada(posicionFicha, ficha)); 
     }
 } 

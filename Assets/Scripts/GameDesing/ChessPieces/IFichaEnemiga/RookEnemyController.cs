@@ -5,6 +5,8 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, IPieceWi
 {
     public bool esInamovible = false;
 
+
+
     public Vector2Int posicionActual;
 
 
@@ -99,17 +101,21 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, IPieceWi
 
     public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga)
     {
-               //RevisarSiReinaEnemigaLlegó(posicion, rey);
+        //RevisarSiReinaEnemigaLlegó(posicion, rey);
     }
     public void ProcesarMovimientoAliado(Vector2Int posAliada, int idMovimiento)
     {
-        // ✅ Solo intenta atacar si nadie más ha atacado en este movimiento
-        if (!BoardManagerGlobal.Instance.RegistrarIntentoDeAtaque(this, idMovimiento))
-            return;
+
 
         // Aquí va tu lógica de ataque principal
         RevisarAmenazasEnZona();
     }
+
+    public void RevisarSiReinaNegraEnemigaLlegó(Vector2Int posicion, BlackQueenEnemyController reinaenemiga)
+    {
+        //RevisarSiReinaEnemigaLlegó(posicion, rey);
+    }
+
 
 
 }

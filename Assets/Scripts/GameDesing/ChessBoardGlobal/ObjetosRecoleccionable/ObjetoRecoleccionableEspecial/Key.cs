@@ -56,7 +56,7 @@ public class Key : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRe
 
     public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga)
     {
-               //RevisarSiReinaEnemigaLlegó(posicion, rey);
+        //RevisarSiReinaEnemigaLlegó(posicion, rey);
     }
 
     public void RevisarSiFichaLlegó(Vector2Int posicion, IFicha ficha)
@@ -82,21 +82,25 @@ public class Key : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRe
     }
 
     private void VerificarAutoChequeoGeneral()
-{
-    var fichasAliadas = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-        .OfType<IFichaAliada>();
-
-    foreach (var ficha in fichasAliadas)
     {
-        if (ficha is KingController rey)
-            RevisarSiReyLlegó(rey.GetPosicionActual(), rey);
-        else
-            RevisarSiFichaAliadaLlegó(ficha.GetPosicionActual(), ficha);
+        var fichasAliadas = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+            .OfType<IFichaAliada>();
+
+        foreach (var ficha in fichasAliadas)
+        {
+            if (ficha is KingController rey)
+                RevisarSiReyLlegó(rey.GetPosicionActual(), rey);
+            else
+                RevisarSiFichaAliadaLlegó(ficha.GetPosicionActual(), ficha);
+        }
     }
-}
 
     public Vector2Int GetPosicionActual() => tileCoords;
 
     public bool EstaRealmenteEnTablero() =>
         tileCoords.x >= 0 && tileCoords.y >= 0 && tileCoords.x <= 7 && tileCoords.y <= 7;
+    public void RevisarSiReinaNegraEnemigaLlegó(Vector2Int posicion, BlackQueenEnemyController reinaenemiga)
+    {
+               //RevisarSiReinaEnemigaLlegó(posicion, rey);
+    }
 }

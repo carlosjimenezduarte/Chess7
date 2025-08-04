@@ -6,7 +6,7 @@ using System.Text;
 public class BoardManagerGlobal : MonoBehaviour
 {
     public static BoardManagerGlobal Instance;
-
+    public bool reinaNegraAtaco = false;
     private List<IFichaEnemiga> fichasEnemigasRegistradas = new List<IFichaEnemiga>();
 
     // 🔁 Control de activaciones por movimiento
@@ -460,10 +460,7 @@ public class BoardManagerGlobal : MonoBehaviour
             .OfType<IFichaAliada>()
             .ToList();
     }
-    /// <summary>
-    /// Autoriza el ataque de una ficha enemiga si nadie ha atacado en este movimiento.
-    /// Devuelve true si puede atacar, false si debe ignorar.
-    /// </summary>
+
     public bool RegistrarIntentoDeAtaque(IFichaEnemiga ficha, int idMovimiento)
     {
         if (idUltimoAtaque == idMovimiento)
@@ -476,20 +473,42 @@ public class BoardManagerGlobal : MonoBehaviour
         AgregarMensajeInterno($"✅ {((MonoBehaviour)ficha).name} autorizado como único atacante del movimiento ID={idMovimiento}");
         return true;
     }
-    
-    /// <summary>
-    /// Llamar cada vez que un aliado se mueva. Aumenta el ID de movimiento
-    /// y notifica a todas las fichas enemigas.
-    /// </summary>
+
     public void NotificarMovimientoAliado(Vector2Int posAliada)
     {
-    idMovimientoActual++;
+        idMovimientoActual++;
 
-    AgregarMensajeInterno($"♟ Movimiento aliado detectado en {posAliada}. Movimiento ID = {idMovimientoActual}");
+        AgregarMensajeInterno($"♟ Movimiento aliado detectado en {posAliada}. Movimiento ID = {idMovimientoActual}");
 
-    foreach (var ficha in fichasEnemigasRegistradas)
+        foreach (var ficha in fichasEnemigasRegistradas)
+        {
+            ficha.ProcesarMovimientoAliado(posAliada, idMovimientoActual);
+        }
+    }
+    public void ResetearAtaquesEnemigos()
     {
-        ficha.ProcesarMovimientoAliado(posAliada, idMovimientoActual);
+        reinaNegraAtaco = false;
+        AgregarMensajeInterno("♛ Árbitro: Reset de ataques enemigos.");
+    }
+
+    public void ProcesarMovimientoAliadoFinalizado()
+    {
+        // 🔹 Se ejecuta cuando ya todas las fichas enemigas evaluaron el movimiento
+        ResetearAtaquesEnemigos();
+    }
+    
+    public void ReportarFinInspeccionReinaRoja(bool ataco)
+    {
+    if (!ataco)
+    {
+        // Si la ReinaRoja no atacó, es señal de que el ciclo se completó
+        ResetearAtaquesEnemigos();
+        AgregarMensajeInterno("♛ Árbitro: Reina Roja inspeccionó y cedió su turno. Ataques reiniciados.");
+    }
+    else
+    {
+        // Si atacó, la prioridad natural sigue; no reiniciamos porque ya actuó
+        AgregarMensajeInterno("♛ Árbitro: Reina Roja atacó. Ciclo completado.");
     }
     }
 }

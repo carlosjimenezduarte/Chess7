@@ -222,14 +222,18 @@ public class PotionPA : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPie
     {
         // No reacciona a fichas enemigas directamente.
     }
-    
+
     public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reina)
     {
-               //RevisarSiReinaEnemigaLlegó(posicion, rey);
+        //RevisarSiReinaEnemigaLlegó(posicion, rey);
     }
 
     public bool EsInamovible()
     {
         return esInamovible;
+    }
+     public void RevisarSiReinaNegraEnemigaLlegó(Vector2Int posicion, BlackQueenEnemyController reinaenemiga)
+    {
+               //RevisarSiReinaEnemigaLlegó(posicion, rey);
     }
 }
