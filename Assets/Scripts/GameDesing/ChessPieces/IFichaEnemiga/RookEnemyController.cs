@@ -121,4 +121,12 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, IPieceWi
         //
     }
 
+    public void RevisarSiAlfilNegroEnemigoLlegó(Vector2Int posicion, BlackBishopEnemyController alfilnegroenemigo)
+    {
+        //
+    }
+    public void RevisarSiCaballoNegroEnemigoLlegó(Vector2Int posicion, BlackKnightEnemyController caballonegroenemigo)
+    {
+        //
+    }
 }

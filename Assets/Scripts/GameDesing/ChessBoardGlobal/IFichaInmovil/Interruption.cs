@@ -123,5 +123,13 @@ public class Interruption : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, I
     {
         //
     }
-    
+
+    public void RevisarSiAlfilNegroEnemigoLlegó(Vector2Int posicion, BlackBishopEnemyController alfilnegroenemigo)
+    {
+        //
+    }
+    public void RevisarSiCaballoNegroEnemigoLlegó(Vector2Int posicion, BlackKnightEnemyController caballonegroenemigo)
+    {
+        //
+    }
 }

@@ -8,7 +8,7 @@ using System.Linq;
 public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEffect, IPieceWithPosition, IFicha, IFichaEnemiga
 {
     [Header("Jerarquía de ataque")]
-    
+
     public int rangoKillZone { get; set; } = 7;
 
     public bool esInamovible = false;
@@ -19,28 +19,28 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
     private bool mostrandoRango = false;
 
     private void Start()
-{
-    // 1️⃣ Determinar posición inicial
-    PiecePositioner piecePositioner = GetComponent<PiecePositioner>();
-    if (piecePositioner != null)
     {
-        posicionActual = piecePositioner.tileCoords;
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ Reina inició en {posicionActual}");
-    }
-    else
-    {
-        posicionActual = new Vector2Int(0, 0);
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("⚠️ No hay PiecePositioner en la Reina. Usando (0,0).");
-    }
+        // 1️⃣ Determinar posición inicial
+        PiecePositioner piecePositioner = GetComponent<PiecePositioner>();
+        if (piecePositioner != null)
+        {
+            posicionActual = piecePositioner.tileCoords;
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ Reina inició en {posicionActual}");
+        }
+        else
+        {
+            posicionActual = new Vector2Int(0, 0);
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("⚠️ No hay PiecePositioner en la Reina. Usando (0,0).");
+        }
 
-    // 2️⃣ Registrar posición en el tablero global
-    BoardManagerGlobal.Instance.RegistrarMovimiento(this, posicionActual);
+        // 2️⃣ Registrar posición en el tablero global
+        BoardManagerGlobal.Instance.RegistrarMovimiento(this, posicionActual);
 
-    // 3️⃣ Registrar como ficha enemiga para el Árbitro Silencioso
-    BoardManagerGlobal.Instance.RegistrarFichaEnemiga(this);
+        // 3️⃣ Registrar como ficha enemiga para el Árbitro Silencioso
+        BoardManagerGlobal.Instance.RegistrarFichaEnemiga(this);
 
-    // 4️⃣ Reporte final
-    BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+        // 4️⃣ Reporte final
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
     public void SetPosicionActual(Vector2Int nuevaPos)
@@ -129,7 +129,7 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
         {
             if (Vector2Int.Distance(posicionActual, posicionRey) <= rangoKillZone)
                 StartCoroutine(MatarPiezaDespuesDelay(rey, posicionRey));
-            
+
         });
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
@@ -140,12 +140,12 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
         {
             if (Vector2Int.Distance(posicionActual, posicionPeon) <= rangoKillZone)
                 StartCoroutine(MatarPiezaDespuesDelay(peon, posicionPeon));
-            
+
         });
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
-    
-    
+
+
 
     private IEnumerator MatarPiezaDespuesDelay(MonoBehaviour pieza, Vector2Int posicion)
     {
@@ -157,8 +157,8 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
 
         transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(posicion);
 
-            // Exiliar pieza víctima
-            if (pieza is IPieceWithPosition piezaVictima)
+        // Exiliar pieza víctima
+        if (pieza is IPieceWithPosition piezaVictima)
             piezaVictima.SetPosicionActual(new Vector2Int(-7, -7));
 
         if (pieza is PawnController peon)
@@ -308,8 +308,8 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
     public void ReiniciarTurno()
     {
 
-        rangoKillZone = 3;
-        rangoRangeZone = 5;
+        rangoKillZone = 7;
+        rangoRangeZone = 7;
     }
 
 
@@ -318,7 +318,7 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
         // 🚫 Evitar bucles infinitos
         if (reinanegraenemiga == this) return; // No procesar a sí misma
 
-    
+
         // ✅ Solo activar efectos de la casilla (no otras Reinas)
         foreach (var objeto in BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual))
         {
@@ -371,21 +371,21 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
 
     private IEnumerator ProcesarAmenazasDesdeArbitro()
     {
-        
-    // 🛑 Comprobación de autorización global del Árbitro
+
+        // 🛑 Comprobación de autorización global del Árbitro
         int idMovimiento = BoardManagerGlobal.Instance.idMovimientoActual;
-    
 
-    // Si ya no tiene rango letal, no hace nada
-    if (rangoKillZone <= 0)
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Roja no tiene energía letal este turno.");
-        yield break;
-    }
 
-    // Direcciones absolutas de ajedrez real
-    Vector2Int[] direcciones = new Vector2Int[]
-    {
+        // Si ya no tiene rango letal, no hace nada
+        if (rangoKillZone <= 0)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Roja no tiene energía letal este turno.");
+            yield break;
+        }
+
+        // Direcciones absolutas de ajedrez real
+        Vector2Int[] direcciones = new Vector2Int[]
+        {
         new Vector2Int(1,0),   // Este
         new Vector2Int(-1,0),  // Oeste
         new Vector2Int(0,1),   // Norte
@@ -394,53 +394,53 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
         new Vector2Int(-1,1),  // NO
         new Vector2Int(1,-1),  // SE
         new Vector2Int(-1,-1), // SO
-    };
+        };
 
-    MonoBehaviour objetivoElegido = null;
-    Vector2Int posicionObjetivo = new Vector2Int(-1, -1);
+        MonoBehaviour objetivoElegido = null;
+        Vector2Int posicionObjetivo = new Vector2Int(-1, -1);
 
-    // 1️⃣ Buscar primer objetivo válido
-    foreach (var dir in direcciones)
-    {
-        Vector2Int paso = posicionActual;
-
-        for (int i = 1; i <= rangoRangeZone; i++)
+        // 1️⃣ Buscar primer objetivo válido
+        foreach (var dir in direcciones)
         {
-            paso += dir;
+            Vector2Int paso = posicionActual;
 
-            if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
-                break;
-
-            var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
-
-            var fichaAliada = objetos.OfType<IFichaAliada>().FirstOrDefault();
-            if (fichaAliada != null)
+            for (int i = 1; i <= rangoRangeZone; i++)
             {
-                objetivoElegido = (MonoBehaviour)fichaAliada;
-                posicionObjetivo = paso;
-                break;
+                paso += dir;
+
+                if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
+                    break;
+
+                var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
+
+                var fichaAliada = objetos.OfType<IFichaAliada>().FirstOrDefault();
+                if (fichaAliada != null)
+                {
+                    objetivoElegido = (MonoBehaviour)fichaAliada;
+                    posicionObjetivo = paso;
+                    break;
+                }
+
+                bool hayObstaculo = objetos.Any(obj =>
+                    (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable
+                );
+                if (hayObstaculo)
+                    break;
             }
 
-            bool hayObstaculo = objetos.Any(obj =>
-                (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable
-            );
-            if (hayObstaculo)
+            if (objetivoElegido != null)
                 break;
         }
 
-        if (objetivoElegido != null)
-            break;
-    }
+        // 2️⃣ Si no hay objetivo, solo limpia casilla
+        if (objetivoElegido == null)
+        {
+            RevisarObjetosRecoleccionablesEnCasilla();
+            yield break;
+        }
 
-    // 2️⃣ Si no hay objetivo, solo limpia casilla
-    if (objetivoElegido == null)
-    {
-        RevisarObjetosRecoleccionablesEnCasilla();
-        yield break;
-    }
-
-    // 3️⃣ Ataque o penalización
-    float distancia = Vector2Int.Distance(posicionActual, posicionObjetivo);
+        // 3️⃣ Ataque o penalización
+        float distancia = Vector2Int.Distance(posicionActual, posicionObjetivo);
 
         if (distancia <= rangoKillZone)
         {
@@ -449,7 +449,7 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
 
             //rangoKillZone = 0;
             BoardManagerGlobal.Instance.AgregarMensajeInterno("🩸 Reina Roja ejecutó su presa y se detiene.");
-         
+
         }
         else
         {
@@ -466,21 +466,29 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
             );
         }
 
-    RevisarObjetosRecoleccionablesEnCasilla();
-    yield break;
+        RevisarObjetosRecoleccionablesEnCasilla();
+        yield break;
     }
 
 
     public void ProcesarMovimientoAliado(Vector2Int posAliada, int idMovimiento)
     {
-    // ✅ Si llega aquí, es la atacante autorizada
-    RevisarAmenazasEnZona(); 
+        // ✅ Si llega aquí, es la atacante autorizada
+        RevisarAmenazasEnZona();
     }
     public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga)
     {
-               //RevisarSiReinaEnemigaLlegó(posicion, rey);
+        //RevisarSiReinaEnemigaLlegó(posicion, rey);
     }
     public void RevisarSiTorreNegraEnemigaLlegó(Vector2Int posicion, BlackRookEnemyController torrenegraenemiga)
+    {
+        //
+    }
+    public void RevisarSiAlfilNegroEnemigoLlegó(Vector2Int posicion, BlackBishopEnemyController alfilnegroenemigo)
+    {
+        //
+    }
+    public void RevisarSiCaballoNegroEnemigoLlegó(Vector2Int posicion, BlackKnightEnemyController caballonegroenemigo)
     {
         //
     }

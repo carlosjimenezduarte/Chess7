@@ -144,4 +144,13 @@ public class PusherUp : MonoBehaviour, ITileEffect, IFichaInmovil, IFicha, IPiec
     {
         //
     }
+    public void RevisarSiAlfilNegroEnemigoLlegó(Vector2Int posicion, BlackBishopEnemyController alfilnegroenemigo)
+    {
+        //
+    }
+
+    public void RevisarSiCaballoNegroEnemigoLlegó(Vector2Int posicion, BlackKnightEnemyController caballonegroenemigo)
+    {
+        //
+    }
 }
