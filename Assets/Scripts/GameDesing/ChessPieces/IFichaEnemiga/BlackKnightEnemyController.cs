@@ -339,4 +339,9 @@ public class BlackKnightEnemyController : MonoBehaviour, IPointerClickHandler, I
         //
     }
 
+     public void RevisarSiAlfilEnemigoLlegó(Vector2Int posicion, BishopEnemyController alfilenemigo)
+    {
+        //
+    }
+
 }

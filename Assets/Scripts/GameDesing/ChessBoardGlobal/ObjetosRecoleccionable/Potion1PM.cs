@@ -264,4 +264,8 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPi
     {
         //
     }
+    public void RevisarSiAlfilEnemigoLlegó(Vector2Int posicion, BishopEnemyController alfilenemigo)
+    {
+        //
+    }
 }

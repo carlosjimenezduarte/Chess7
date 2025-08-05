@@ -118,8 +118,13 @@ public class Key : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRe
         //
 
     }
-    
+
     public void RevisarSiTorreEnemigaLlegó(Vector2Int posicion, RookEnemyController torreenemiga)
+    {
+        //
+    }
+    
+     public void RevisarSiAlfilEnemigoLlegó(Vector2Int posicion, BishopEnemyController alfilenemigo)
     {
         //
     }

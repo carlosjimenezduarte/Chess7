@@ -471,8 +471,13 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
     {
         //
     }
-    
+
     public void RevisarSiTorreEnemigaLlegó(Vector2Int posicion, RookEnemyController torreenemiga)
+    {
+        //
+    }
+    
+    public void RevisarSiAlfilEnemigoLlegó(Vector2Int posicion, BishopEnemyController alfilenemigo)
     {
         //
     }

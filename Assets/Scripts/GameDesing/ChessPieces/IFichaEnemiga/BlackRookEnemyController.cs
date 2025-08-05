@@ -369,6 +369,11 @@ public class BlackRookEnemyController : MonoBehaviour, IPointerClickHandler, ITi
         //
     }
 
+    public void RevisarSiAlfilEnemigoLlegó(Vector2Int posicion, BishopEnemyController alfilenemigo)
+    {
+        //
+    }
+
     public void MostrarRango() => MostrarRangoDeAtaque();
     public void OcultarRango() => OcultarRangoDeAtaque();
     public bool EsInamovible() => esInamovible;

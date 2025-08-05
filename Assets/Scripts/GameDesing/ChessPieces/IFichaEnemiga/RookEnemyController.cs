@@ -443,7 +443,7 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
         }
         if (BoardManagerGlobal.Instance.reinaRojaAtaco)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("♜ Torre Roja cede: Caballo Negro ya atacó.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♜ Torre Roja cede: Reina Roja ya atacó.");
             BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
             yield break;
         }
@@ -497,7 +497,6 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
                         {
                             rey.GanarPuntoMovimiento(-2);
                             rey.turnosRestantes -= 1;
-                            //rey.puntosAccionActual -= 1;
                             BoardManagerGlobal.Instance.AgregarMensajeInterno(
                                 $"♜ Torre Roja penaliza al Rey en {paso}. PA: {rey.puntosAccionActual}"
                             );
@@ -556,6 +555,11 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
         //
     }
     public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga)
+    {
+        //
+    }
+
+    public void RevisarSiAlfilEnemigoLlegó(Vector2Int posicion, BishopEnemyController alfilenemigo)
     {
         //
     }

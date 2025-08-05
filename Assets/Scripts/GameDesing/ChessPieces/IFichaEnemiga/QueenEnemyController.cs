@@ -579,7 +579,6 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
                         {
                             rey.GanarPuntoMovimiento(-2);
                             rey.turnosRestantes -= 1;
-                            //rey.puntosAccionActual -= 1;
                             BoardManagerGlobal.Instance.AgregarMensajeInterno(
                                 $"♛ Reina Roja penaliza al Rey en {paso}. PA: {rey.puntosAccionActual}"
                             );
@@ -645,8 +644,13 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
     {
         //
     }
-    
+
     public void RevisarSiTorreEnemigaLlegó(Vector2Int posicion, RookEnemyController torreenemiga)
+    {
+        //
+    }
+    
+    public void RevisarSiAlfilEnemigoLlegó(Vector2Int posicion, BishopEnemyController alfilenemigo)
     {
         //
     }

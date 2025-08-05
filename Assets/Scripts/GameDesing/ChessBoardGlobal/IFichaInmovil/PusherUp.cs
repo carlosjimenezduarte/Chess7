@@ -158,4 +158,9 @@ public class PusherUp : MonoBehaviour, ITileEffect, IFichaInmovil, IFicha, IPiec
     {
         //
     }
+
+     public void RevisarSiAlfilEnemigoLlegó(Vector2Int posicion, BishopEnemyController alfilenemigo)
+    {
+        //
+    }
 }

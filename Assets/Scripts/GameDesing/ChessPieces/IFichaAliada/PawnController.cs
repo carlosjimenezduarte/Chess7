@@ -369,13 +369,31 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
             );
         }
     }
-    
+
     public void RecibirPenalizacionTorre()
     {
-    var reytorre = FindFirstObjectByType<KingController>();
-    if (reytorre != null)
+        var reytorre = FindFirstObjectByType<KingController>();
+        if (reytorre != null)
+        {
+            reytorre.puntosAccionActual -= 1;
+
+            // 🔹 Actualizar HUD inmediatamente
+            var gameManager = FindFirstObjectByType<ChessGameManager>();
+            if (gameManager != null)
+                gameManager.ActualizarHUD();
+
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                $"♛ Peón en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reytorre.puntosAccionActual}"
+            );
+        }
+    }
+    
+    public void RecibirPenalizacionAlfil()
     {
-        reytorre.puntosAccionActual -= 1;
+    var reyalfil = FindFirstObjectByType<KingController>();
+    if (reyalfil != null)
+    {
+        reyalfil.puntosAccionActual -= 1;
 
         // 🔹 Actualizar HUD inmediatamente
         var gameManager = FindFirstObjectByType<ChessGameManager>();
@@ -383,7 +401,7 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
             gameManager.ActualizarHUD();
 
         BoardManagerGlobal.Instance.AgregarMensajeInterno(
-            $"♛ Peón en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reytorre.puntosAccionActual}"
+            $"♛ Peón en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reyalfil.puntosAccionActual}"
         );
     }
     }

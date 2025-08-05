@@ -137,4 +137,9 @@ public class Interruption : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, I
     {
         //
     }
+
+     public void RevisarSiAlfilEnemigoLlegó(Vector2Int posicion, BishopEnemyController alfilenemigo)
+    {
+        //
+    }
 }

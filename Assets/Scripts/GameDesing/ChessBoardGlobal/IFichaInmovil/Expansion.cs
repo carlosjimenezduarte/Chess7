@@ -182,4 +182,9 @@ public class Expansion : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPie
     {
         //
     }
+
+    public void RevisarSiAlfilEnemigoLlegó(Vector2Int posicion, BishopEnemyController alfilenemigo)
+    {
+        //
+    }
 } 

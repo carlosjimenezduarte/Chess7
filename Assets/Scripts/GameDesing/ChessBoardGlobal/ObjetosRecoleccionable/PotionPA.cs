@@ -255,4 +255,9 @@ public class PotionPA : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPie
     {
         //
     }
+
+     public void RevisarSiAlfilEnemigoLlegó(Vector2Int posicion, BishopEnemyController alfilenemigo)
+    {
+        //
+    }
 }
