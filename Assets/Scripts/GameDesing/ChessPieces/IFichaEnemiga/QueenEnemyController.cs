@@ -272,100 +272,117 @@ public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
         }
     }
 
-    public void VerificarAmenazaSobre(Vector2Int posicionPieza)
+    public IEnumerator VerificarAmenazaSobre(Vector2Int posicionPieza)
+{
+    // 🔹 Pequeño delay visual para simular "pensamiento"
+    yield return new WaitForSeconds(0.1f);
+
+    BoardManagerGlobal.Instance.AgregarMensajeInterno(
+        $"♛ [DEBUG] Iniciando VerificarAmenazaSobre hacia {posicionPieza}"
+    );
+
+    // 🧹 Limpiar overlays previos
+    foreach (var obj in overlaysInstanciados)
+        Destroy(obj);
+    overlaysInstanciados.Clear();
+
+    // 1️⃣ Vectores de dirección de la Reina (ajedrez)
+    Vector2Int[] direcciones = {
+        new Vector2Int(1,0),   // Este
+        new Vector2Int(-1,0),  // Oeste
+        new Vector2Int(0,1),   // Norte
+        new Vector2Int(0,-1),  // Sur
+        new Vector2Int(1,1),   // NE
+        new Vector2Int(-1,1),  // NO
+        new Vector2Int(1,-1),  // SE
+        new Vector2Int(-1,-1)  // SO
+    };
+
+    bool amenazaCreada = false;
+
+    // 2️⃣ Revisar cada dirección
+    foreach (var dir in direcciones)
     {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ [DEBUG] Iniciando VerificarAmenazaSobre hacia {posicionPieza}");
-
-        // Limpieza de overlays anteriores
-        foreach (var obj in overlaysInstanciados)
-            Destroy(obj);
-        overlaysInstanciados.Clear();
-
-        int dx = posicionPieza.x - posicionActual.x;
-        int dy = posicionPieza.y - posicionActual.y;
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ [DEBUG] Diferencia dx: {dx}, dy: {dy}");
-
-        bool esDireccionValida = dx == 0 || dy == 0 || Mathf.Abs(dx) == Mathf.Abs(dy);
-        if (!esDireccionValida)
-        {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ [ABORTADO] Dirección no válida para ataque (no es línea recta ni diagonal)");
-            ultimaPosicionAmenaza = new Vector2Int(-99, -99);
-            return;
-        }
-
-        // ✅ Nueva validación de distancia máxima
-        int distancia = Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy));
-        if (distancia > rangoRangeZone)
-        {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ [ABORTADO] {posicionPieza} está fuera de rango visual ({distancia} > {rangoRangeZone})");
-        ultimaPosicionAmenaza = new Vector2Int(-99, -99);
-        return;
-        }
-
-        Vector2Int direccion = new Vector2Int(
-            dx == 0 ? 0 : (dx > 0 ? 1 : -1),
-            dy == 0 ? 0 : (dy > 0 ? 1 : -1)
-        );
-
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ [DEBUG] Dirección calculada: {direccion}");
-
         Vector2Int paso = posicionActual;
-        int pasosContados = 0;
         List<Vector2Int> lineaDeAtaque = new List<Vector2Int>();
 
-        while (pasosContados <= rangoRangeZone && paso != posicionPieza)
+        for (int i = 1; i <= rangoRangeZone; i++)
         {
-            paso += direccion;
-            pasosContados++;
+            paso += dir;
 
+            // 🚫 Fuera de tablero
             if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
-            {
-                BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ [ABORTADO] Paso fuera del tablero en {paso}");
                 break;
-            }
 
-            var objetosEnPaso = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso, incluirRecolectables: false);
-            bool hayObstaculo = objetosEnPaso.Any(obj => (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable);
+            // 🔍 Chequear obstáculos
+            var objetosEnPaso = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
+            bool hayObstaculo = objetosEnPaso.Any(obj =>
+                (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable
+            );
 
-            if (hayObstaculo)
-            {
-                BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ [BLOQUEADO] Objeto detectado en {paso}, línea interrumpida.");
-                break;
-            }
-
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ [DEBUG] Añadiendo paso a línea: {paso}");
+            // ✅ Guardamos este paso como parte de la línea visual
             lineaDeAtaque.Add(paso);
-        }
 
-        if (paso == posicionPieza)
-        {
-            if (HayObstaculoEntre(posicionActual, posicionPieza))
+            // 🎯 Si encontramos la posición de la pieza en esta dirección
+            if (paso == posicionPieza)
             {
-                BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ [BLOQUEO] Prefabs no instanciados. Obstáculo entre Reina y {posicionPieza}");
-                ultimaPosicionAmenaza = new Vector2Int(-99, -99);
-                return;
+                // ⚡ Si hay obstáculo previo, abortamos amenaza
+                if (HayObstaculoEntre(posicionActual, posicionPieza))
+                {
+                    BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                        $"♛ [BLOQUEO] Obstáculo detectado, amenaza abortada hacia {posicionPieza}"
+                    );
+                    ultimaPosicionAmenaza = new Vector2Int(-99, -99);
+                    yield break;
+                }
+                // 🔹 VALIDACIÓN FINAL
+                    var objetivo = BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionPieza)
+                                    .OfType<IFichaAliada>()
+                                    .FirstOrDefault();
+                    if (objetivo == null)
+                    {
+                        BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                            $"♛ [ABORTADO] Ficha en {posicionPieza} ya no existe. Amenaza cancelada."
+                        );
+                        ultimaPosicionAmenaza = new Vector2Int(-99, -99);
+                        yield break;
+                    }
+
+                // 🌟 Agregamos también la propia casilla de la Reina al inicio
+                    lineaDeAtaque.Insert(0, posicionActual);
+
+                // 🌟 Instanciar overlays para toda la línea (incluyendo la Reina)
+                foreach (var coord in lineaDeAtaque)
+                {
+                    GameObject overlay = Instantiate(prefabRojo, dangerOverlayParent);
+                    overlay.GetComponent<RectTransform>().anchoredPosition =
+                        BoardManagerGlobal.Instance.GetTileAnchoredPosition(coord);
+                    overlaysInstanciados.Add(overlay);
+                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ [PREFAB] Overlay rojo en {coord}");
+                }
+
+                ultimaPosicionAmenaza = posicionPieza;
+                amenazaCreada = true;
+                break; // ✅ No seguimos más en esta dirección
             }
 
-            lineaDeAtaque.Insert(0, posicionActual);
-            lineaDeAtaque.Add(posicionPieza);
-
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ [ÉXITO] Se alcanzó {posicionPieza}. Instanciando prefabs de peligro.");
-
-            foreach (Vector2Int coord in lineaDeAtaque)
-            {
-                GameObject overlay = Instantiate(prefabRojo, dangerOverlayParent);
-                overlay.GetComponent<RectTransform>().anchoredPosition =
-                    BoardManagerGlobal.Instance.GetTileAnchoredPosition(coord);
-                overlaysInstanciados.Add(overlay);
-                BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ [PREFAB] Overlay rojo en {coord}");
-            }
-
-            ultimaPosicionAmenaza = posicionPieza;
+            // 🛑 Si hay obstáculo en esta casilla, detenemos la línea
+            if (hayObstaculo) break;
         }
 
-
-        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+        if (amenazaCreada) break; // ✅ Salimos si ya sembramos amenaza
     }
+
+    if (!amenazaCreada)
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno(
+            $"♛ [INFO] No se creó amenaza visual hacia {posicionPieza} (no alineada o bloqueada)"
+        );
+        ultimaPosicionAmenaza = new Vector2Int(-99, -99);
+    }
+
+    BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+}
 
     public void MostrarRango()
     {
@@ -591,8 +608,8 @@ public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
 
     public void ProcesarMovimientoAliado(Vector2Int posAliada, int idMovimiento)
     {
-    // ✅ Actualiza la visual de amenaza siempre que haya un movimiento aliado
-    VerificarAmenazaSobre(posAliada);
+    // ✅ Llamamos a la verificación visual con delay y chequeo de supervivencia
+    StartCoroutine(VerificarAmenazaSobre(posAliada));
 
     // ✅ Solo intenta atacar si nadie más ha atacado en este movimiento
     if (!BoardManagerGlobal.Instance.RegistrarIntentoDeAtaque(this, idMovimiento))
@@ -600,7 +617,7 @@ public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
         BoardManagerGlobal.Instance.AgregarMensajeInterno(
             $"⛔ {name} no puede atacar: otra ficha ya lo hizo en el movimiento {idMovimiento}."
         );
-        return; // 🚫 No inicia su coroutine ni cambia de posición
+        return; // 🚫 No inicia su coroutine de ataque
     }
 
     // ✅ Si llega aquí, es la atacante autorizada
