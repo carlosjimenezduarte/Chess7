@@ -351,6 +351,23 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
     }
     public bool EstaActivo() => juegoActivo;
     public bool EsInamovible() => esInamovible;
-    
+
+    public void RecibirPenalizacionPorReina()
+    {
+    var rey = FindFirstObjectByType<KingController>();
+    if (rey != null)
+    {
+        rey.puntosAccionActual -= 1;
+
+        // 🔹 Actualizar HUD inmediatamente
+        var gameManager = FindFirstObjectByType<ChessGameManager>();
+        if (gameManager != null)
+            gameManager.ActualizarHUD();
+
+        BoardManagerGlobal.Instance.AgregarMensajeInterno(
+            $"♛ Peón en {posicionActual} penalizado: -1 PA. PA actual del Rey: {rey.puntosAccionActual}"
+        );
+    }
+    }
     
 }

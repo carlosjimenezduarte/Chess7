@@ -159,7 +159,7 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
 
         // Exiliar pieza víctima
         if (pieza is IPieceWithPosition piezaVictima)
-            piezaVictima.SetPosicionActual(new Vector2Int(-7, -7));
+            piezaVictima.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
 
         if (pieza is PawnController peon)
         {

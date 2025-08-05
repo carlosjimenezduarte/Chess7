@@ -10,6 +10,13 @@ public class BoardManagerGlobal : MonoBehaviour
     public bool torreNegraAtaco = false;
     public bool alfilNegraAtaco = false;
     public bool caballoNegraAtaco = false;
+    public bool reinaRojaAtaco = false;
+    public bool torreRojaAtaco = false;
+    public bool alfilRojoAtaco = false;
+    public bool caballoRojoAtaco = false;
+
+    public bool peonRojoAtaco = false;
+
     private List<IFichaEnemiga> fichasEnemigasRegistradas = new List<IFichaEnemiga>();
 
     // 🔁 Control de activaciones por movimiento
@@ -494,6 +501,11 @@ public class BoardManagerGlobal : MonoBehaviour
         torreNegraAtaco = false;
         alfilNegraAtaco = false;
         caballoNegraAtaco = false;
+        reinaRojaAtaco = false;
+        torreRojaAtaco = false;
+        alfilRojoAtaco = false;
+        caballoRojoAtaco = false;
+        peonRojoAtaco = false;
         AgregarMensajeInterno("♛ Árbitro: Reset de ataques enemigos.");
     }
 
@@ -562,4 +574,62 @@ public class BoardManagerGlobal : MonoBehaviour
         }
     }
 
+    public void ReportarFinInspeccionTorreRoja(bool ataco)
+    {
+        if (!ataco)
+        {
+            // Si la ReinaRoja no atacó, es señal de que el ciclo se completó
+            ResetearAtaquesEnemigos();
+            AgregarMensajeInterno("♜  Árbitro: Torre Roja inspeccionó y cedió su turno. Ataques reiniciados.");
+        }
+        else
+        {
+            // Si atacó, la prioridad natural sigue; no reiniciamos porque ya actuó
+            AgregarMensajeInterno("♜  Árbitro: Torre Roja atacó. Ciclo completado.");
+        }
+    }
+
+    public void ReportarFinInspeccionAlfilRojo(bool ataco)
+    {
+        if (!ataco)
+        {
+            // Si la ReinaRoja no atacó, es señal de que el ciclo se completó
+            ResetearAtaquesEnemigos();
+            AgregarMensajeInterno("♝ Árbitro: Alfil Rojo inspeccionó y cedió su turno. Ataques reiniciados.");
+        }
+        else
+        {
+            // Si atacó, la prioridad natural sigue; no reiniciamos porque ya actuó
+            AgregarMensajeInterno("♝ Árbitro: Alfil Rojo atacó. Ciclo completado.");
+        }
+    }
+
+    public void ReportarFinInspeccionCaballoRojo(bool ataco)
+    {
+        if (!ataco)
+        {
+            // Si la ReinaRoja no atacó, es señal de que el ciclo se completó
+            ResetearAtaquesEnemigos();
+            AgregarMensajeInterno("♞ Árbitro: Caballo Rojo inspeccionó y cedió su turno. Ataques reiniciados.");
+        }
+        else
+        {
+            // Si atacó, la prioridad natural sigue; no reiniciamos porque ya actuó
+            AgregarMensajeInterno("♞ Árbitro: Caballo Rojo atacó. Ciclo completado.");
+        }
+    }
+    public void ReportarFinInspeccionPeonRojo(bool ataco)
+    {
+        if (!ataco)
+        {
+            // Si la ReinaRoja no atacó, es señal de que el ciclo se completó
+            ResetearAtaquesEnemigos();
+            AgregarMensajeInterno("♙ Árbitro: Peón Rojo inspeccionó y cedió su turno. Ataques reiniciados.");
+        }
+        else
+        {
+            // Si atacó, la prioridad natural sigue; no reiniciamos porque ya actuó
+            AgregarMensajeInterno("♙ Árbitro: Peón Rojo atacó. Ciclo completado.");
+        }
+    }
 }

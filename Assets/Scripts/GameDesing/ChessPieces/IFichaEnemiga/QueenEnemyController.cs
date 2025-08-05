@@ -163,7 +163,7 @@ public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
 
         // 2️⃣ Exiliar la pieza víctima
         if (pieza is IPieceWithPosition piezaVictima)
-            piezaVictima.SetPosicionActual(new Vector2Int(-1, -1));
+            piezaVictima.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
 
         if (pieza is PawnController peon)
         {
@@ -291,6 +291,15 @@ public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
             BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ [ABORTADO] Dirección no válida para ataque (no es línea recta ni diagonal)");
             ultimaPosicionAmenaza = new Vector2Int(-99, -99);
             return;
+        }
+
+        // ✅ Nueva validación de distancia máxima
+        int distancia = Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy));
+        if (distancia > rangoRangeZone)
+        {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ [ABORTADO] {posicionPieza} está fuera de rango visual ({distancia} > {rangoRangeZone})");
+        ultimaPosicionAmenaza = new Vector2Int(-99, -99);
+        return;
         }
 
         Vector2Int direccion = new Vector2Int(
@@ -462,11 +471,32 @@ public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
 
    private IEnumerator ProcesarAmenazasDesdeArbitro()
     {
-    // 🛑 Jerarquía: cede si Reina Negra atacó
+     yield return new WaitForSeconds(0.06f);
+
+    // 🔹 Verificación jerárquica
     if (BoardManagerGlobal.Instance.reinaNegraAtaco)
     {
         BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Roja cede: Reina Negra ya atacó.");
-        BoardManagerGlobal.Instance.ReportarFinInspeccionReinaRoja(false);
+        BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
+        yield break;
+    }
+    if (BoardManagerGlobal.Instance.torreNegraAtaco)
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Roja cede: Torre Negra ya atacó.");
+        BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
+        yield break;
+    }
+    if (BoardManagerGlobal.Instance.alfilNegraAtaco)
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Roja cede: Alfil Negro ya atacó.");
+        BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
+        yield break;
+    }
+
+    if (BoardManagerGlobal.Instance.caballoNegraAtaco)
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Roja cede: Alfil Negro ya atacó.");
+        BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
         yield break;
     }
 
@@ -528,14 +558,15 @@ public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
                     if (fichaAliada is KingController rey)
                     {
                         rey.GanarPuntoMovimiento(-2);
-                        rey.puntosAccionActual -= 2;
                         rey.turnosRestantes -= 1;
-                        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ Reina Roja penaliza al Rey en {paso}");
+                        rey.puntosAccionActual -= 2;
+                        BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                            $"♛ Reina Roja penaliza al Rey en {paso}. PA: {rey.puntosAccionActual}"
+                        );
                     }
                     else if (fichaAliada is PawnController peon)
                     {
-                        peon.AumentarRangoMovimiento(-2);
-                        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ Reina Roja penaliza al Peón en {paso}");
+                           peon.RecibirPenalizacionPorReina();                        
                     }
 
                     // Penalización no rompe la exploración, sigue buscando otras víctimas
