@@ -153,4 +153,9 @@ public class PusherUp : MonoBehaviour, ITileEffect, IFichaInmovil, IFicha, IPiec
     {
         //
     }
+
+    public void RevisarSiTorreEnemigaLlegó(Vector2Int posicion, RookEnemyController torreenemiga)
+    {
+        //
+    }
 }

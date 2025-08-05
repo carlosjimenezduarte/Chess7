@@ -250,4 +250,9 @@ public class PotionPA : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPie
     {
         //
     }
+
+    public void RevisarSiTorreEnemigaLlegó(Vector2Int posicion, RookEnemyController torreenemiga)
+    {
+        //
+    }
 }

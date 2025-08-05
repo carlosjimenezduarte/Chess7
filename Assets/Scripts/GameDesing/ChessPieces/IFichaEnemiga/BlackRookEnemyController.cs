@@ -364,6 +364,11 @@ public class BlackRookEnemyController : MonoBehaviour, IPointerClickHandler, ITi
         //
     }
 
+    public void RevisarSiTorreEnemigaLlegó(Vector2Int posicion, RookEnemyController torreenemiga)
+    {
+        //
+    }
+
     public void MostrarRango() => MostrarRangoDeAtaque();
     public void OcultarRango() => OcultarRangoDeAtaque();
     public bool EsInamovible() => esInamovible;

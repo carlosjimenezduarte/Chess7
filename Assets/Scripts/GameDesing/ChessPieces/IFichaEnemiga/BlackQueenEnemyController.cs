@@ -369,18 +369,18 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
     }
 
 
-   private IEnumerator ProcesarAmenazasDesdeArbitro()
-{
-    int asesinatos = 0; // Contador de kills por barrido
-
-    if (rangoKillZone <= 0)
+    private IEnumerator ProcesarAmenazasDesdeArbitro()
     {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Negra sin energía letal este turno.");
-        yield break;
-    }
+        int asesinatos = 0; // Contador de kills por barrido
 
-    Vector2Int[] direcciones = new Vector2Int[]
-    {
+        if (rangoKillZone <= 0)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Negra sin energía letal este turno.");
+            yield break;
+        }
+
+        Vector2Int[] direcciones = new Vector2Int[]
+        {
         new Vector2Int(1,0),   // Este
         new Vector2Int(-1,0),  // Oeste
         new Vector2Int(0,1),   // Norte
@@ -389,65 +389,65 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
         new Vector2Int(-1,1),  // NO
         new Vector2Int(1,-1),  // SE
         new Vector2Int(-1,-1), // SO
-    };
+        };
 
-    // 🔹 Explorar todas las direcciones
-    foreach (var dir in direcciones)
-    {
-        Vector2Int paso = posicionActual;
-
-        for (int i = 1; i <= rangoRangeZone; i++)
+        // 🔹 Explorar todas las direcciones
+        foreach (var dir in direcciones)
         {
-            paso += dir;
+            Vector2Int paso = posicionActual;
 
-            // 🚫 Salir si está fuera del tablero
-            if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
-                break;
-
-            var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
-
-            // 💀 Si encuentra ficha aliada, ejecutar
-            var fichaAliada = objetos.OfType<IFichaAliada>().FirstOrDefault();
-            if (fichaAliada != null)
+            for (int i = 1; i <= rangoRangeZone; i++)
             {
-                BoardManagerGlobal.Instance.AgregarMensajeInterno(
-                    $"💥 Reina Negra ejecuta a {((MonoBehaviour)fichaAliada).name} en {paso}"
-                );
+                paso += dir;
 
-                yield return StartCoroutine(MatarPiezaDespuesDelay((MonoBehaviour)fichaAliada, paso));
-                asesinatos++;
+                // 🚫 Salir si está fuera del tablero
+                if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
+                    break;
 
-                if (asesinatos >= 7)
+                var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
+
+                // 💀 Si encuentra ficha aliada, ejecutar
+                var fichaAliada = objetos.OfType<IFichaAliada>().FirstOrDefault();
+                if (fichaAliada != null)
                 {
-                    BoardManagerGlobal.Instance.AgregarMensajeInterno("🩸 Reina Negra alcanzó su límite de 7 ejecuciones.");
-                    yield break;
+                    BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                        $"💥 Reina Negra ejecuta a {((MonoBehaviour)fichaAliada).name} en {paso}"
+                    );
+
+                    yield return StartCoroutine(MatarPiezaDespuesDelay((MonoBehaviour)fichaAliada, paso));
+                    asesinatos++;
+
+                    if (asesinatos >= 7)
+                    {
+                        BoardManagerGlobal.Instance.AgregarMensajeInterno("🩸 Reina Negra alcanzó su límite de 7 ejecuciones.");
+                        yield break;
+                    }
+
+                    // 🔹 Continua en la misma dirección mientras haya camino libre
+                    continue;
                 }
 
-                // 🔹 Continua en la misma dirección mientras haya camino libre
-                continue;
-            }
-
-            // 🛑 Si hay obstáculo (enemigo o recolectable), detener dirección
-            bool hayObstaculo = objetos.Any(obj =>
-                (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable
-            );
-            if (hayObstaculo)
-            {
-                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛡️ Visión de Reina Negra bloqueada en {paso}");
-                break;
+                // 🛑 Si hay obstáculo (enemigo o recolectable), detener dirección
+                bool hayObstaculo = objetos.Any(obj =>
+                    (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable
+                );
+                if (hayObstaculo)
+                {
+                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛡️ Visión de Reina Negra bloqueada en {paso}");
+                    break;
+                }
             }
         }
+
+        RevisarObjetosRecoleccionablesEnCasilla();
+
+        if (asesinatos > 0)
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ Reina Negra completó su cacería con {asesinatos} ejecución(es).");
+        else
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Negra no encontró víctimas en este barrido.");
+
+        yield break;
     }
-
-    RevisarObjetosRecoleccionablesEnCasilla();
-
-    if (asesinatos > 0)
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ Reina Negra completó su cacería con {asesinatos} ejecución(es).");
-    else
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Negra no encontró víctimas en este barrido.");
-
-    yield break;
-}
 
 
     public void ProcesarMovimientoAliado(Vector2Int posAliada, int idMovimiento)
@@ -468,6 +468,11 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
         //
     }
     public void RevisarSiCaballoNegroEnemigoLlegó(Vector2Int posicion, BlackKnightEnemyController caballonegroenemigo)
+    {
+        //
+    }
+    
+    public void RevisarSiTorreEnemigaLlegó(Vector2Int posicion, RookEnemyController torreenemiga)
     {
         //
     }

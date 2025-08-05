@@ -1,113 +1,538 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
-public class RookEnemyController : MonoBehaviour, IPointerClickHandler, IPieceWithPosition, IFicha, IFichaEnemiga, ITileEffect
+public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEffect, IPieceWithPosition, IFicha, IFichaEnemiga
 {
+    [Header("Jerarquía de ataque")]
+    public int rangoKillZone { get; set; } = 3;
     public bool esInamovible = false;
+    public int rangoRangeZone { get; set; } = 5;
 
+    [Header("Prefab para zonas peligrosas")]
+    [SerializeField] public GameObject prefabRojo;
 
+    [Header("Padre para overlays")]
+    public Transform dangerOverlayParent;
 
-    public Vector2Int posicionActual;
+    private Vector2Int posicionActual;
+    private bool mostrandoRango = false;
+    private List<GameObject> overlaysInstanciados = new List<GameObject>();
+    private Vector2Int ultimaPosicionAmenaza = new Vector2Int(-99, -99);
 
+    private void Start()
+    {
+        PiecePositioner piecePositioner = GetComponent<PiecePositioner>();
+        if (piecePositioner != null)
+        {
+            posicionActual = piecePositioner.tileCoords;
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♜ Torre inició en {posicionActual}");
+        }
+        else
+        {
+            posicionActual = new Vector2Int(0, 0);
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("⚠️ No hay PiecePositioner en la Torre. Usando (0,0).");
+        }
 
+        BoardManagerGlobal.Instance.RegistrarMovimiento(this, posicionActual);
+        BoardManagerGlobal.Instance.RegistrarFichaEnemiga(this);
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    }
 
     public void SetPosicionActual(Vector2Int nuevaPos)
     {
+#if UNITY_EDITOR
+        if (!Application.isPlaying)
+        {
+            posicionActual = nuevaPos;
+            return;
+        }
+#endif
         posicionActual = nuevaPos;
+        if (TryGetComponent<PiecePositioner>(out var piecePositioner))
+            piecePositioner.tileCoords = nuevaPos;
+        foreach (var efecto in BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual).OfType<ITileEffect>())
+        {
+            efecto.RevisarSiTorreEnemigaLlegó(posicionActual, this);
+        }
+
+        BoardManagerGlobal.Instance?.RegistrarMovimiento(this, nuevaPos);
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♜ Torre actualizó su posición lógica a {nuevaPos}");
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
-    public Vector2Int GetPosicionActual()
-    {
-        return posicionActual;
-    }
-
-    public void VerificarAmenazaSobre(Vector2Int posicionPieza)
-    {
-
-    }
-
-
-    public void MostrarRango()
-    {
-        // Devuelve la posición actual de la torre.
-        // Por ahora puedes devolver un valor por defecto
-
-    }
-
-    public void OcultarRango()
-    {
-        // Devuelve la posición actual de la torre.
-        // Por ahora puedes devolver un valor por defecto:
-
-    }
-
-    public void ActivarJuego()
-    {
-        // Devuelve la posición actual de la torre.
-        // Por ahora puedes devolver un valor por defecto:
-
-    }
+    public Vector2Int GetPosicionActual() => posicionActual;
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log("♜ Torre enemiga clickeada");
+        var manager = FindFirstObjectByType<ChessGameManager>();
+
+        if (manager == null || !manager.IsJuegoActivo())
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♜ No se puede mostrar rango: juego no activo.");
+            BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+            return;
+        }
+
+        mostrandoRango = !mostrandoRango;
+
+        if (mostrandoRango)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♜ Mostrando rango de ataque (Tiles)");
+            MostrarRangoDeAtaque();
+        }
+        else
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♜ Ocultando rango de ataque (Tiles)");
+            OcultarRangoDeAtaque();
+        }
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
-    public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
+    private void RevisarAmenazaAPieza(Vector2Int posicionPieza, System.Action efectoSobrePieza)
     {
-        // Lógica vacía por ahora
+        int dx = posicionPieza.x - posicionActual.x;
+        int dy = posicionPieza.y - posicionActual.y;
+
+        bool esDireccionValida = dx == 0 || dy == 0; // Solo ortogonal
+        if (!esDireccionValida) return;
+
+        if (HayObstaculoEntre(posicionActual, posicionPieza))
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛡️ Amenaza bloqueada por obstáculo entre Torre {posicionActual} y pieza {posicionPieza}");
+            return;
+        }
+
+        efectoSobrePieza.Invoke();
     }
 
     public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey)
     {
-        // Lógica vacía por ahora
+        RevisarAmenazaAPieza(posicionRey, () =>
+        {
+            StartCoroutine(ProcesarAmenazasDesdeArbitro());
+        });
     }
 
-    public void RevisarSiFichaLlegó(Vector2Int posicionFicha, IFicha ficha)
+    public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
     {
-        // Lógica vacía por ahora
+        RevisarAmenazaAPieza(posicionPeon, () =>
+        {
+            StartCoroutine(ProcesarAmenazasDesdeArbitro());
+        });
+    }
+
+    private IEnumerator MatarPiezaDespuesDelay(MonoBehaviour pieza, Vector2Int posicion)
+    {
+        SetPosicionActual(posicion);
+
+        if (TryGetComponent<MovableTileObject>(out var movable))
+            movable.tileCoords = posicion;
+
+        transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(posicion);
+
+        if (pieza is IPieceWithPosition piezaVictima)
+            piezaVictima.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
+
+        if (pieza is PawnController peon)
+        {
+            peon.OcultarMovimientos();
+            peon.mostrandoMovimientos = false;
+        }
+
+        Destroy(pieza.gameObject);
+
+        BoardManagerGlobal.Instance.AgregarMensajeInterno(
+            $"💀 {pieza.name} ejecutado por la Torre en {posicion}"
+        );
+
+        BoardManagerGlobal.Instance.torreRojaAtaco = true;
+        yield return new WaitForSeconds(1f);
+    }
+
+    public void MostrarRangoDeAtaque()
+    {
+        OcultarRangoDeAtaque();
+
+        Tile tileCentral = BoardManagerGlobal.Instance.GetTileAt(posicionActual);
+        if (tileCentral != null)
+            tileCentral.HighlightEnemyKillZone(true);
+
+        Vector2Int[] direcciones = {
+            new Vector2Int(1,0), new Vector2Int(-1,0),
+            new Vector2Int(0,1), new Vector2Int(0,-1)
+        };
+
+        foreach (var dir in direcciones)
+        {
+            for (int i = 1; i <= rangoRangeZone; i++)
+            {
+                Vector2Int coord = posicionActual + dir * i;
+                if (coord.x < 0 || coord.y < 0 || coord.x > 7 || coord.y > 7)
+                    break;
+
+                var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(coord);
+                bool bloqueVisual = objetos.Any(obj =>
+                    obj is IFichaEnemiga && (Object)obj != this);
+
+                if (bloqueVisual)
+                {
+                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"👁️ Torre no colorea {coord} (ocupado por otra enemiga)");
+                    break;
+                }
+
+                Tile tile = BoardManagerGlobal.Instance.GetTileAt(coord);
+                if (tile == null) break;
+
+                if (i <= rangoKillZone)
+                    tile.HighlightEnemyKillZone(true);
+                else
+                    tile.HighlightEnemyRangeZone(true);
+
+                bool hayObstaculo = objetos.Any(obj =>
+                    (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable);
+
+                if (hayObstaculo)
+                {
+                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛑 Visión bloqueada por {objetos.First()} en {coord}");
+                    break;
+                }
+            }
+        }
+    }
+
+    public void OcultarRangoDeAtaque()
+    {
+        foreach (Tile tile in BoardManagerGlobal.Instance.tiles)
+            tile.ResetColor();
     }
 
     public void VerificarTurnoActual(int turnoActual)
     {
-        // Lógica vacía por ahora
+        RevisarAmenazasEnZona();
     }
 
     public void RevisarAmenazasEnZona()
     {
-        //
-    }
-    public bool EsInamovible()
-    {
-        return esInamovible;
+        StartCoroutine(ProcesarAmenazasDesdeArbitro());
     }
 
-    public int rangoKillZone
+    private void RevisarObjetosRecoleccionablesEnCasilla()
     {
-        get => 0;
-        set => Debug.LogWarning("⚠️ El Rey no usa 'rangoAtaque'");
+        foreach (var objeto in BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual))
+        {
+            if (objeto is IObjetoRecoleccionable)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"💥 Torre destruye objeto {objeto} en {posicionActual}");
+                if (objeto is Potion1PM pocion)
+                    pocion.ExiliarADimensionDivina();
+
+                Destroy(((MonoBehaviour)objeto).gameObject);
+            }
+        }
     }
 
-    public int rangoRangeZone
+    public IEnumerator VerificarAmenazaSobre(Vector2Int posicionPieza)
     {
-        get => 0;
-        set => Debug.LogWarning("⚠️ El Rey no usa 'rangoAtaque'");
+        yield return new WaitForSeconds(0.1f);
+
+        BoardManagerGlobal.Instance.AgregarMensajeInterno(
+            $"♜ [DEBUG] Iniciando VerificarAmenazaSobre hacia {posicionPieza}"
+        );
+
+        foreach (var obj in overlaysInstanciados)
+            Destroy(obj);
+        overlaysInstanciados.Clear();
+
+        Vector2Int[] direcciones = {
+            new Vector2Int(1,0),
+            new Vector2Int(-1,0),
+            new Vector2Int(0,1),
+            new Vector2Int(0,-1)
+        };
+
+        bool amenazaCreada = false;
+
+        foreach (var dir in direcciones)
+        {
+            Vector2Int paso = posicionActual;
+            List<Vector2Int> lineaDeAtaque = new List<Vector2Int>();
+
+            for (int i = 1; i <= rangoRangeZone; i++)
+            {
+                paso += dir;
+
+                if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
+                    break;
+
+                var objetosEnPaso = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
+                bool hayObstaculo = objetosEnPaso.Any(obj =>
+                    (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable
+                );
+
+                lineaDeAtaque.Add(paso);
+
+                if (paso == posicionPieza)
+                {
+                    if (HayObstaculoEntre(posicionActual, posicionPieza))
+                    {
+                        BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                            $"♜ [BLOQUEO] Obstáculo detectado, amenaza abortada hacia {posicionPieza}"
+                        );
+                        ultimaPosicionAmenaza = new Vector2Int(-99, -99);
+                        yield break;
+                    }
+                    var objetivo = BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionPieza)
+                                    .OfType<IFichaAliada>()
+                                    .FirstOrDefault();
+                    if (objetivo == null)
+                    {
+                        BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                            $"♜ [ABORTADO] Ficha en {posicionPieza} ya no existe. Amenaza cancelada."
+                        );
+                        ultimaPosicionAmenaza = new Vector2Int(-99, -99);
+                        yield break;
+                    }
+
+                    lineaDeAtaque.Insert(0, posicionActual);
+
+                    foreach (var coord in lineaDeAtaque)
+                    {
+                        GameObject overlay = Instantiate(prefabRojo, dangerOverlayParent);
+                        overlay.GetComponent<RectTransform>().anchoredPosition =
+                            BoardManagerGlobal.Instance.GetTileAnchoredPosition(coord);
+                        overlaysInstanciados.Add(overlay);
+                        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♜ [PREFAB] Overlay rojo en {coord}");
+                    }
+
+                    ultimaPosicionAmenaza = posicionPieza;
+                    amenazaCreada = true;
+                    break;
+                }
+
+                if (hayObstaculo) break;
+            }
+
+            if (amenazaCreada) break;
+        }
+
+        if (!amenazaCreada)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                $"♜ [INFO] No se creó amenaza visual hacia {posicionPieza} (no alineada o bloqueada)"
+            );
+            ultimaPosicionAmenaza = new Vector2Int(-99, -99);
+        }
+
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
+
+    public void MostrarRango() => MostrarRangoDeAtaque();
+    public void OcultarRango() => OcultarRangoDeAtaque();
+
+    public void RevisarSiFichaLlegó(Vector2Int posicionFicha, IFicha ficha)
+    {
+        if (posicionFicha != posicionActual) return;
+
+        foreach (var objeto in BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual))
+        {
+            if (objeto is IObjetoRecoleccionable)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"♜ Torre destruye objeto {objeto} porque ficha {ficha} lo trajo encima");
+                if (objeto is Potion1PM pocion)
+                    pocion.ExiliarADimensionDivina();
+
+                Destroy(((MonoBehaviour)objeto).gameObject);
+            }
+        }
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    }
+
+    public bool EsInamovible() => esInamovible;
 
     public void ReiniciarTurno()
     {
-        //
+        rangoKillZone = 3;
+        rangoRangeZone = 5;
     }
 
-    public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga)
+    public void RevisarSiTorreEnemigaLlegó(Vector2Int posicion, RookEnemyController torreenemiga)
     {
-        //RevisarSiReinaEnemigaLlegó(posicion, rey);
+        if (torreenemiga == this) return;
+        if (ultimaPosicionAmenaza == posicion) return;
+
+        ultimaPosicionAmenaza = posicion;
+
+        foreach (var objeto in BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual))
+        {
+            if (objeto is ITileEffect efecto && !(objeto is IFichaEnemiga))
+            {
+                efecto.RevisarSiTorreEnemigaLlegó(posicion, this);
+                BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                    $"♜ TileEffect activado por llegada de la Torre a {posicion}"
+                );
+            }
+        }
     }
+
+    private bool HayObstaculoEntre(Vector2Int origen, Vector2Int destino)
+    {
+        int dx = destino.x - origen.x;
+        int dy = destino.y - origen.y;
+
+        if (!(dx == 0 || dy == 0)) // Solo ortogonal
+            return false;
+
+        Vector2Int direccion = new Vector2Int(
+            dx == 0 ? 0 : (dx > 0 ? 1 : -1),
+            dy == 0 ? 0 : (dy > 0 ? 1 : -1)
+        );
+
+        Vector2Int paso = origen + direccion;
+        while (paso != destino)
+        {
+            if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
+                break;
+
+            var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
+            bool hayObstaculo = objetos.Any(obj =>
+                (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable
+            );
+
+            if (hayObstaculo)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔰 Obstáculo detectado en {paso}. Línea bloqueada.");
+                return true;
+            }
+
+            paso += direccion;
+        }
+
+        return false;
+    }
+
+    private IEnumerator ProcesarAmenazasDesdeArbitro()
+    {
+        yield return new WaitForSeconds(0.07f);
+
+        if (BoardManagerGlobal.Instance.reinaNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♜ Torre Roja cede: Reina Negra ya atacó.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
+            yield break;
+        }
+        if (BoardManagerGlobal.Instance.torreNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♜ Torre Roja cede: Torre Negra ya atacó.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
+            yield break;
+        }
+        if (BoardManagerGlobal.Instance.alfilNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♜ Torre Roja cede: Alfil Negro ya atacó.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
+            yield break;
+        }
+        if (BoardManagerGlobal.Instance.caballoNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♜ Torre Roja cede: Caballo Negro ya atacó.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
+            yield break;
+        }
+        if (BoardManagerGlobal.Instance.reinaRojaAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♜ Torre Roja cede: Caballo Negro ya atacó.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
+            yield break;
+        }
+
+        int asesinatos = 0;
+
+        if (rangoKillZone <= 0)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♜ Torre Roja no tiene energía letal este turno.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionTorreRoja(false);
+            yield break;
+        }
+
+        Vector2Int[] direcciones = {
+            new Vector2Int(1,0),
+            new Vector2Int(-1,0),
+            new Vector2Int(0,1),
+            new Vector2Int(0,-1)
+        };
+
+        foreach (var dir in direcciones)
+        {
+            Vector2Int paso = posicionActual;
+
+            for (int i = 1; i <= rangoRangeZone; i++)
+            {
+                paso += dir;
+
+                if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
+                    break;
+
+                var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
+                var fichaAliada = objetos.OfType<IFichaAliada>().FirstOrDefault();
+
+                if (fichaAliada != null)
+                {
+                    float distancia = Vector2Int.Distance(posicionActual, paso);
+
+                    if (distancia <= rangoKillZone)
+                    {
+                        BoardManagerGlobal.Instance.AgregarMensajeInterno($"💥 Torre Roja ejecuta a {((MonoBehaviour)fichaAliada).name} en {paso}");
+                        yield return StartCoroutine(MatarPiezaDespuesDelay((MonoBehaviour)fichaAliada, paso));
+                        asesinatos++;
+                        rangoKillZone = 0;
+                        BoardManagerGlobal.Instance.ReportarFinInspeccionTorreRoja(true);
+                        yield break;
+                    }
+                    else
+                    {
+                        if (fichaAliada is KingController rey)
+                        {
+                            rey.GanarPuntoMovimiento(-2);
+                            rey.turnosRestantes -= 1;
+                            //rey.puntosAccionActual -= 1;
+                            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                                $"♜ Torre Roja penaliza al Rey en {paso}. PA: {rey.puntosAccionActual}"
+                            );
+                        }
+                        else if (fichaAliada is PawnController peon)
+                        {
+                            peon.RecibirPenalizacionTorre();
+                        }
+                    }
+                }
+
+                bool hayObstaculo = objetos.Any(obj =>
+                    (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable
+                );
+                if (hayObstaculo) break;
+            }
+        }
+
+        BoardManagerGlobal.Instance.ReportarFinInspeccionTorreRoja(asesinatos > 0);
+        RevisarObjetosRecoleccionablesEnCasilla();
+        yield break;
+    }
+
     public void ProcesarMovimientoAliado(Vector2Int posAliada, int idMovimiento)
     {
+        StartCoroutine(VerificarAmenazaSobre(posAliada));
 
+        if (!BoardManagerGlobal.Instance.RegistrarIntentoDeAtaque(this, idMovimiento))
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                $"⛔ {name} no puede atacar: otra ficha ya lo hizo en el movimiento {idMovimiento}."
+            );
+            return;
+        }
 
-        // Aquí va tu lógica de ataque principal
         RevisarAmenazasEnZona();
     }
 
@@ -125,7 +550,12 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, IPieceWi
     {
         //
     }
+
     public void RevisarSiCaballoNegroEnemigoLlegó(Vector2Int posicion, BlackKnightEnemyController caballonegroenemigo)
+    {
+        //
+    }
+    public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga)
     {
         //
     }

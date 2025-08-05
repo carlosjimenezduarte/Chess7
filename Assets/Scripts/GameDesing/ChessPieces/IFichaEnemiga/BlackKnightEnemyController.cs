@@ -124,7 +124,7 @@ public class BlackKnightEnemyController : MonoBehaviour, IPointerClickHandler, I
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
-    
+
 
     private IEnumerator MatarPiezaDespuesDelay(MonoBehaviour pieza, Vector2Int posicion)
     {
@@ -158,36 +158,36 @@ public class BlackKnightEnemyController : MonoBehaviour, IPointerClickHandler, I
 
     public void MostrarRangoDeAtaque()
     {
-    OcultarRangoDeAtaque();
+        OcultarRangoDeAtaque();
 
-    Tile tileCentral = BoardManagerGlobal.Instance.GetTileAt(posicionActual);
-    if (tileCentral != null)
-        tileCentral.HighlightBlackAttack(true); // Casilla del caballo
+        Tile tileCentral = BoardManagerGlobal.Instance.GetTileAt(posicionActual);
+        if (tileCentral != null)
+            tileCentral.HighlightBlackAttack(true); // Casilla del caballo
 
-    foreach (var delta in movimientosL)
-    {
-        Vector2Int coord = posicionActual + delta;
-        if (coord.x < 0 || coord.y < 0 || coord.x > 7 || coord.y > 7)
-            continue;
-
-        var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(coord);
-
-        // 💡 NUEVO: Si la casilla final está ocupada por otra ficha enemiga, no coloreamos
-        bool bloqueVisual = objetos.Any(obj =>
-            obj is IFichaEnemiga && (Object)obj != this);
-
-        if (bloqueVisual)
+        foreach (var delta in movimientosL)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno(
-                $"👁️ Caballo Negro no colorea {coord} (ocupado por otra ficha enemiga)"
-            );
-            continue; // No colorea, pero sigue revisando las demás L
-        }
+            Vector2Int coord = posicionActual + delta;
+            if (coord.x < 0 || coord.y < 0 || coord.x > 7 || coord.y > 7)
+                continue;
 
-        Tile tile = BoardManagerGlobal.Instance.GetTileAt(coord);
-        if (tile != null)
-            tile.HighlightBlackAttack(true); // Siempre letal en su salto
-    }
+            var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(coord);
+
+            // 💡 NUEVO: Si la casilla final está ocupada por otra ficha enemiga, no coloreamos
+            bool bloqueVisual = objetos.Any(obj =>
+                obj is IFichaEnemiga && (Object)obj != this);
+
+            if (bloqueVisual)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                    $"👁️ Caballo Negro no colorea {coord} (ocupado por otra ficha enemiga)"
+                );
+                continue; // No colorea, pero sigue revisando las demás L
+            }
+
+            Tile tile = BoardManagerGlobal.Instance.GetTileAt(coord);
+            if (tile != null)
+                tile.HighlightBlackAttack(true); // Siempre letal en su salto
+        }
     }
 
     public void OcultarRangoDeAtaque()
@@ -208,92 +208,92 @@ public class BlackKnightEnemyController : MonoBehaviour, IPointerClickHandler, I
 
     private IEnumerator ProcesarAmenazasDesdeArbitro()
     {
-    int asesinatos = 0;
+        int asesinatos = 0;
 
-    // 🔹 Pequeña espera para respetar jerarquía
-    yield return new WaitForSeconds(0.05f);
+        // 🔹 Pequeña espera para respetar jerarquía
+        yield return new WaitForSeconds(0.05f);
 
-    // 🔹 Verificación jerárquica
-    if (BoardManagerGlobal.Instance.reinaNegraAtaco)
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("♞ Caballo Negro cede: Reina Negra ya atacó.");
-        BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
-        yield break;
-    }
-    if (BoardManagerGlobal.Instance.torreNegraAtaco)
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("♞ Caballo Negro cede: Torre Negra ya atacó.");
-        BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
-        yield break;
-    }
-    if (BoardManagerGlobal.Instance.alfilNegraAtaco)
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("♞ Caballo Negro cede: Alfil Negro ya atacó.");
-        BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
-        yield break;
-    }
-
-    if (rangoKillZone <= 0)
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("♞ Caballo Negro sin energía letal este turno.");
-        yield break;
-    }
-
-    // ♻️ Lógica de ataque depredador
-    bool continuar = true;
-    while (continuar && asesinatos < 7)
-    {
-        continuar = false; // Se activa solo si mata a alguien en este ciclo
-
-        foreach (var delta in movimientosL)
+        // 🔹 Verificación jerárquica
+        if (BoardManagerGlobal.Instance.reinaNegraAtaco)
         {
-            Vector2Int destino = posicionActual + delta;
-            if (destino.x < 0 || destino.y < 0 || destino.x > 7 || destino.y > 7)
-                continue;
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♞ Caballo Negro cede: Reina Negra ya atacó.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
+            yield break;
+        }
+        if (BoardManagerGlobal.Instance.torreNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♞ Caballo Negro cede: Torre Negra ya atacó.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
+            yield break;
+        }
+        if (BoardManagerGlobal.Instance.alfilNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♞ Caballo Negro cede: Alfil Negro ya atacó.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
+            yield break;
+        }
 
-            var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino);
-            var fichaAliada = objetos.OfType<IFichaAliada>().FirstOrDefault();
+        if (rangoKillZone <= 0)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♞ Caballo Negro sin energía letal este turno.");
+            yield break;
+        }
 
-            if (fichaAliada != null)
+        // ♻️ Lógica de ataque depredador
+        bool continuar = true;
+        while (continuar && asesinatos < 7)
+        {
+            continuar = false; // Se activa solo si mata a alguien en este ciclo
+
+            foreach (var delta in movimientosL)
             {
-                BoardManagerGlobal.Instance.AgregarMensajeInterno(
-                    $"💥 Caballo Negro ejecuta a {((MonoBehaviour)fichaAliada).name} en {destino}"
-                );
+                Vector2Int destino = posicionActual + delta;
+                if (destino.x < 0 || destino.y < 0 || destino.x > 7 || destino.y > 7)
+                    continue;
 
-                yield return StartCoroutine(MatarPiezaDespuesDelay((MonoBehaviour)fichaAliada, destino));
-                asesinatos++;
-                continuar = true;
-                BoardManagerGlobal.Instance.caballoNegraAtaco = true;
+                var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino);
+                var fichaAliada = objetos.OfType<IFichaAliada>().FirstOrDefault();
 
-                if (asesinatos >= 7)
+                if (fichaAliada != null)
                 {
-                    BoardManagerGlobal.Instance.AgregarMensajeInterno("🩸 Caballo Negro alcanzó su límite de 7 ejecuciones.");
-                    BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(true);
-                    yield break;
+                    BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                        $"💥 Caballo Negro ejecuta a {((MonoBehaviour)fichaAliada).name} en {destino}"
+                    );
+
+                    yield return StartCoroutine(MatarPiezaDespuesDelay((MonoBehaviour)fichaAliada, destino));
+                    asesinatos++;
+                    continuar = true;
+                    BoardManagerGlobal.Instance.caballoNegraAtaco = true;
+
+                    if (asesinatos >= 7)
+                    {
+                        BoardManagerGlobal.Instance.AgregarMensajeInterno("🩸 Caballo Negro alcanzó su límite de 7 ejecuciones.");
+                        BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(true);
+                        yield break;
+                    }
+
+                    // 🔹 Pausa corta para claridad visual
+                    yield return new WaitForSeconds(0.1f);
+
+                    // 🔹 Rompe el foreach para reescanear desde nueva posición
+                    break;
                 }
-
-                // 🔹 Pausa corta para claridad visual
-                yield return new WaitForSeconds(0.1f);
-
-                // 🔹 Rompe el foreach para reescanear desde nueva posición
-                break;
             }
         }
-    }
 
-    // 🔹 Informe final y notificación al árbitro
-    BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(asesinatos > 0);
+        // 🔹 Informe final y notificación al árbitro
+        BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(asesinatos > 0);
 
-    if (asesinatos > 0)
-        BoardManagerGlobal.Instance.AgregarMensajeInterno(
-            $"♞ Caballo Negro completó su barrido con {asesinatos} ejecución(es)."
-        );
-    else
-        BoardManagerGlobal.Instance.AgregarMensajeInterno(
-            "♞ Caballo Negro no encontró víctimas en este barrido."
-        );
+        if (asesinatos > 0)
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                $"♞ Caballo Negro completó su barrido con {asesinatos} ejecución(es)."
+            );
+        else
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                "♞ Caballo Negro no encontró víctimas en este barrido."
+            );
 
-    yield break;
+        yield break;
     }
 
 
@@ -330,6 +330,11 @@ public class BlackKnightEnemyController : MonoBehaviour, IPointerClickHandler, I
     }
 
     public void RevisarSiReinaNegraEnemigaLlegó(Vector2Int posicion, BlackQueenEnemyController reinanegraenemiga)
+    {
+        //
+    }
+
+    public void RevisarSiTorreEnemigaLlegó(Vector2Int posicion, RookEnemyController torreenemiga)
     {
         //
     }

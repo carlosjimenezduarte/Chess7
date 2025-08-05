@@ -135,19 +135,19 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
     public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey)
     {
-    RevisarAmenazaAPieza(posicionRey, () =>
-    {
-        StartCoroutine(ProcesarAmenazasDesdeArbitro());
-    });
+        RevisarAmenazaAPieza(posicionRey, () =>
+        {
+            StartCoroutine(ProcesarAmenazasDesdeArbitro());
+        });
     }
 
-public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
+    public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
     {
-    RevisarAmenazaAPieza(posicionPeon, () =>
-    {
-        StartCoroutine(ProcesarAmenazasDesdeArbitro());
-    });
-    }   
+        RevisarAmenazaAPieza(posicionPeon, () =>
+        {
+            StartCoroutine(ProcesarAmenazasDesdeArbitro());
+        });
+    }
 
 
     private IEnumerator MatarPiezaDespuesDelay(MonoBehaviour pieza, Vector2Int posicion)
@@ -176,6 +176,9 @@ public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
         BoardManagerGlobal.Instance.AgregarMensajeInterno(
             $"💀 {pieza.name} ejecutado por la Reina en {posicion}"
         );
+
+        // 🔹 Marcar ataque para jerarquía
+        BoardManagerGlobal.Instance.reinaRojaAtaco = true;
 
         yield return new WaitForSeconds(1f);
     }
@@ -273,21 +276,21 @@ public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
     }
 
     public IEnumerator VerificarAmenazaSobre(Vector2Int posicionPieza)
-{
-    // 🔹 Pequeño delay visual para simular "pensamiento"
-    yield return new WaitForSeconds(0.1f);
+    {
+        // 🔹 Pequeño delay visual para simular "pensamiento"
+        yield return new WaitForSeconds(0.1f);
 
-    BoardManagerGlobal.Instance.AgregarMensajeInterno(
-        $"♛ [DEBUG] Iniciando VerificarAmenazaSobre hacia {posicionPieza}"
-    );
+        BoardManagerGlobal.Instance.AgregarMensajeInterno(
+            $"♛ [DEBUG] Iniciando VerificarAmenazaSobre hacia {posicionPieza}"
+        );
 
-    // 🧹 Limpiar overlays previos
-    foreach (var obj in overlaysInstanciados)
-        Destroy(obj);
-    overlaysInstanciados.Clear();
+        // 🧹 Limpiar overlays previos
+        foreach (var obj in overlaysInstanciados)
+            Destroy(obj);
+        overlaysInstanciados.Clear();
 
-    // 1️⃣ Vectores de dirección de la Reina (ajedrez)
-    Vector2Int[] direcciones = {
+        // 1️⃣ Vectores de dirección de la Reina (ajedrez)
+        Vector2Int[] direcciones = {
         new Vector2Int(1,0),   // Este
         new Vector2Int(-1,0),  // Oeste
         new Vector2Int(0,1),   // Norte
@@ -298,44 +301,44 @@ public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
         new Vector2Int(-1,-1)  // SO
     };
 
-    bool amenazaCreada = false;
+        bool amenazaCreada = false;
 
-    // 2️⃣ Revisar cada dirección
-    foreach (var dir in direcciones)
-    {
-        Vector2Int paso = posicionActual;
-        List<Vector2Int> lineaDeAtaque = new List<Vector2Int>();
-
-        for (int i = 1; i <= rangoRangeZone; i++)
+        // 2️⃣ Revisar cada dirección
+        foreach (var dir in direcciones)
         {
-            paso += dir;
+            Vector2Int paso = posicionActual;
+            List<Vector2Int> lineaDeAtaque = new List<Vector2Int>();
 
-            // 🚫 Fuera de tablero
-            if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
-                break;
-
-            // 🔍 Chequear obstáculos
-            var objetosEnPaso = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
-            bool hayObstaculo = objetosEnPaso.Any(obj =>
-                (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable
-            );
-
-            // ✅ Guardamos este paso como parte de la línea visual
-            lineaDeAtaque.Add(paso);
-
-            // 🎯 Si encontramos la posición de la pieza en esta dirección
-            if (paso == posicionPieza)
+            for (int i = 1; i <= rangoRangeZone; i++)
             {
-                // ⚡ Si hay obstáculo previo, abortamos amenaza
-                if (HayObstaculoEntre(posicionActual, posicionPieza))
+                paso += dir;
+
+                // 🚫 Fuera de tablero
+                if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
+                    break;
+
+                // 🔍 Chequear obstáculos
+                var objetosEnPaso = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
+                bool hayObstaculo = objetosEnPaso.Any(obj =>
+                    (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable
+                );
+
+                // ✅ Guardamos este paso como parte de la línea visual
+                lineaDeAtaque.Add(paso);
+
+                // 🎯 Si encontramos la posición de la pieza en esta dirección
+                if (paso == posicionPieza)
                 {
-                    BoardManagerGlobal.Instance.AgregarMensajeInterno(
-                        $"♛ [BLOQUEO] Obstáculo detectado, amenaza abortada hacia {posicionPieza}"
-                    );
-                    ultimaPosicionAmenaza = new Vector2Int(-99, -99);
-                    yield break;
-                }
-                // 🔹 VALIDACIÓN FINAL
+                    // ⚡ Si hay obstáculo previo, abortamos amenaza
+                    if (HayObstaculoEntre(posicionActual, posicionPieza))
+                    {
+                        BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                            $"♛ [BLOQUEO] Obstáculo detectado, amenaza abortada hacia {posicionPieza}"
+                        );
+                        ultimaPosicionAmenaza = new Vector2Int(-99, -99);
+                        yield break;
+                    }
+                    // 🔹 VALIDACIÓN FINAL
                     var objetivo = BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionPieza)
                                     .OfType<IFichaAliada>()
                                     .FirstOrDefault();
@@ -348,41 +351,41 @@ public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
                         yield break;
                     }
 
-                // 🌟 Agregamos también la propia casilla de la Reina al inicio
+                    // 🌟 Agregamos también la propia casilla de la Reina al inicio
                     lineaDeAtaque.Insert(0, posicionActual);
 
-                // 🌟 Instanciar overlays para toda la línea (incluyendo la Reina)
-                foreach (var coord in lineaDeAtaque)
-                {
-                    GameObject overlay = Instantiate(prefabRojo, dangerOverlayParent);
-                    overlay.GetComponent<RectTransform>().anchoredPosition =
-                        BoardManagerGlobal.Instance.GetTileAnchoredPosition(coord);
-                    overlaysInstanciados.Add(overlay);
-                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ [PREFAB] Overlay rojo en {coord}");
+                    // 🌟 Instanciar overlays para toda la línea (incluyendo la Reina)
+                    foreach (var coord in lineaDeAtaque)
+                    {
+                        GameObject overlay = Instantiate(prefabRojo, dangerOverlayParent);
+                        overlay.GetComponent<RectTransform>().anchoredPosition =
+                            BoardManagerGlobal.Instance.GetTileAnchoredPosition(coord);
+                        overlaysInstanciados.Add(overlay);
+                        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ [PREFAB] Overlay rojo en {coord}");
+                    }
+
+                    ultimaPosicionAmenaza = posicionPieza;
+                    amenazaCreada = true;
+                    break; // ✅ No seguimos más en esta dirección
                 }
 
-                ultimaPosicionAmenaza = posicionPieza;
-                amenazaCreada = true;
-                break; // ✅ No seguimos más en esta dirección
+                // 🛑 Si hay obstáculo en esta casilla, detenemos la línea
+                if (hayObstaculo) break;
             }
 
-            // 🛑 Si hay obstáculo en esta casilla, detenemos la línea
-            if (hayObstaculo) break;
+            if (amenazaCreada) break; // ✅ Salimos si ya sembramos amenaza
         }
 
-        if (amenazaCreada) break; // ✅ Salimos si ya sembramos amenaza
-    }
+        if (!amenazaCreada)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                $"♛ [INFO] No se creó amenaza visual hacia {posicionPieza} (no alineada o bloqueada)"
+            );
+            ultimaPosicionAmenaza = new Vector2Int(-99, -99);
+        }
 
-    if (!amenazaCreada)
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno(
-            $"♛ [INFO] No se creó amenaza visual hacia {posicionPieza} (no alineada o bloqueada)"
-        );
-        ultimaPosicionAmenaza = new Vector2Int(-99, -99);
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
-
-    BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
-}
 
     public void MostrarRango()
     {
@@ -486,50 +489,50 @@ public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
     }
 
 
-   private IEnumerator ProcesarAmenazasDesdeArbitro()
+    private IEnumerator ProcesarAmenazasDesdeArbitro()
     {
-     yield return new WaitForSeconds(0.06f);
+        yield return new WaitForSeconds(0.06f);
 
-    // 🔹 Verificación jerárquica
-    if (BoardManagerGlobal.Instance.reinaNegraAtaco)
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Roja cede: Reina Negra ya atacó.");
-        BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
-        yield break;
-    }
-    if (BoardManagerGlobal.Instance.torreNegraAtaco)
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Roja cede: Torre Negra ya atacó.");
-        BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
-        yield break;
-    }
-    if (BoardManagerGlobal.Instance.alfilNegraAtaco)
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Roja cede: Alfil Negro ya atacó.");
-        BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
-        yield break;
-    }
+        // 🔹 Verificación jerárquica
+        if (BoardManagerGlobal.Instance.reinaNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Roja cede: Reina Negra ya atacó.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
+            yield break;
+        }
+        if (BoardManagerGlobal.Instance.torreNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Roja cede: Torre Negra ya atacó.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
+            yield break;
+        }
+        if (BoardManagerGlobal.Instance.alfilNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Roja cede: Alfil Negro ya atacó.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
+            yield break;
+        }
 
-    if (BoardManagerGlobal.Instance.caballoNegraAtaco)
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Roja cede: Alfil Negro ya atacó.");
-        BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
-        yield break;
-    }
+        if (BoardManagerGlobal.Instance.caballoNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Roja cede: Alfil Negro ya atacó.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
+            yield break;
+        }
 
-    int asesinatos = 0;
+        int asesinatos = 0;
 
-    // Si ya no tiene rango letal, no hace nada
-    if (rangoKillZone <= 0)
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Roja no tiene energía letal este turno.");
-        BoardManagerGlobal.Instance.ReportarFinInspeccionReinaRoja(false);
-        yield break;
-    }
+        // Si ya no tiene rango letal, no hace nada
+        if (rangoKillZone <= 0)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Roja no tiene energía letal este turno.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionReinaRoja(false);
+            yield break;
+        }
 
-    // Direcciones de ajedrez
-    Vector2Int[] direcciones = new Vector2Int[]
-    {
+        // Direcciones de ajedrez
+        Vector2Int[] direcciones = new Vector2Int[]
+        {
         new Vector2Int(1,0),   // Este
         new Vector2Int(-1,0),  // Oeste
         new Vector2Int(0,1),   // Norte
@@ -538,90 +541,90 @@ public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
         new Vector2Int(-1,1),  // NO
         new Vector2Int(1,-1),  // SE
         new Vector2Int(-1,-1), // SO
-    };
+        };
 
-    // Buscar objetivos en rango
-    foreach (var dir in direcciones)
-    {
-        Vector2Int paso = posicionActual;
-
-        for (int i = 1; i <= rangoRangeZone; i++)
+        // Buscar objetivos en rango
+        foreach (var dir in direcciones)
         {
-            paso += dir;
+            Vector2Int paso = posicionActual;
 
-            if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
-                break;
-
-            var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
-            var fichaAliada = objetos.OfType<IFichaAliada>().FirstOrDefault();
-
-            if (fichaAliada != null)
+            for (int i = 1; i <= rangoRangeZone; i++)
             {
-                float distancia = Vector2Int.Distance(posicionActual, paso);
+                paso += dir;
 
-                // 🔹 Kill o Penalización según distancia
-                if (distancia <= rangoKillZone)
-                {
-                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"💥 Reina Roja ejecuta a {((MonoBehaviour)fichaAliada).name} en {paso}");
-                    yield return StartCoroutine(MatarPiezaDespuesDelay((MonoBehaviour)fichaAliada, paso));
-                    asesinatos++;
-                    rangoKillZone = 0; // Solo un asesinato por turno
-                    BoardManagerGlobal.Instance.ReportarFinInspeccionReinaRoja(true);
-                    yield break;
-                }
-                else
-                {
-                    // 🔹 Penalización por estar en rango visual
-                    if (fichaAliada is KingController rey)
-                    {
-                        rey.GanarPuntoMovimiento(-2);
-                        rey.turnosRestantes -= 1;
-                        rey.puntosAccionActual -= 2;
-                        BoardManagerGlobal.Instance.AgregarMensajeInterno(
-                            $"♛ Reina Roja penaliza al Rey en {paso}. PA: {rey.puntosAccionActual}"
-                        );
-                    }
-                    else if (fichaAliada is PawnController peon)
-                    {
-                           peon.RecibirPenalizacionPorReina();                        
-                    }
+                if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
+                    break;
 
-                    // Penalización no rompe la exploración, sigue buscando otras víctimas
+                var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
+                var fichaAliada = objetos.OfType<IFichaAliada>().FirstOrDefault();
+
+                if (fichaAliada != null)
+                {
+                    float distancia = Vector2Int.Distance(posicionActual, paso);
+
+                    // 🔹 Kill o Penalización según distancia
+                    if (distancia <= rangoKillZone)
+                    {
+                        BoardManagerGlobal.Instance.AgregarMensajeInterno($"💥 Reina Roja ejecuta a {((MonoBehaviour)fichaAliada).name} en {paso}");
+                        yield return StartCoroutine(MatarPiezaDespuesDelay((MonoBehaviour)fichaAliada, paso));
+                        asesinatos++;
+                        rangoKillZone = 0; // Solo un asesinato por turno
+                        BoardManagerGlobal.Instance.ReportarFinInspeccionReinaRoja(true);
+                        yield break;
+                    }
+                    else
+                    {
+                        // 🔹 Penalización por estar en rango visual
+                        if (fichaAliada is KingController rey)
+                        {
+                            rey.GanarPuntoMovimiento(-2);
+                            rey.turnosRestantes -= 1;
+                            //rey.puntosAccionActual -= 1;
+                            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                                $"♛ Reina Roja penaliza al Rey en {paso}. PA: {rey.puntosAccionActual}"
+                            );
+                        }
+                        else if (fichaAliada is PawnController peon)
+                        {
+                            peon.RecibirPenalizacionTorre();
+                        }
+
+                        // Penalización no rompe la exploración, sigue buscando otras víctimas
+                    }
                 }
+
+                // Si hay obstáculo enemigo o recolectable, detiene la línea
+                bool hayObstaculo = objetos.Any(obj =>
+                    (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable
+                );
+                if (hayObstaculo) break;
             }
-
-            // Si hay obstáculo enemigo o recolectable, detiene la línea
-            bool hayObstaculo = objetos.Any(obj =>
-                (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable
-            );
-            if (hayObstaculo) break;
         }
-    }
 
-    // Si llegó aquí sin matar, igual reporta inspección
-    BoardManagerGlobal.Instance.ReportarFinInspeccionReinaRoja(asesinatos > 0);
-    RevisarObjetosRecoleccionablesEnCasilla();
-    yield break;
+        // Si llegó aquí sin matar, igual reporta inspección
+        BoardManagerGlobal.Instance.ReportarFinInspeccionReinaRoja(asesinatos > 0);
+        RevisarObjetosRecoleccionablesEnCasilla();
+        yield break;
     }
 
 
 
     public void ProcesarMovimientoAliado(Vector2Int posAliada, int idMovimiento)
     {
-    // ✅ Llamamos a la verificación visual con delay y chequeo de supervivencia
-    StartCoroutine(VerificarAmenazaSobre(posAliada));
+        // ✅ Llamamos a la verificación visual con delay y chequeo de supervivencia
+        StartCoroutine(VerificarAmenazaSobre(posAliada));
 
-    // ✅ Solo intenta atacar si nadie más ha atacado en este movimiento
-    if (!BoardManagerGlobal.Instance.RegistrarIntentoDeAtaque(this, idMovimiento))
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno(
-            $"⛔ {name} no puede atacar: otra ficha ya lo hizo en el movimiento {idMovimiento}."
-        );
-        return; // 🚫 No inicia su coroutine de ataque
-    }
+        // ✅ Solo intenta atacar si nadie más ha atacado en este movimiento
+        if (!BoardManagerGlobal.Instance.RegistrarIntentoDeAtaque(this, idMovimiento))
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                $"⛔ {name} no puede atacar: otra ficha ya lo hizo en el movimiento {idMovimiento}."
+            );
+            return; // 🚫 No inicia su coroutine de ataque
+        }
 
-    // ✅ Si llega aquí, es la atacante autorizada
-    RevisarAmenazasEnZona();
+        // ✅ Si llega aquí, es la atacante autorizada
+        RevisarAmenazasEnZona();
     }
     public void RevisarSiReinaNegraEnemigaLlegó(Vector2Int posicion, BlackQueenEnemyController reinaenemiga)
     {
@@ -637,8 +640,13 @@ public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
     {
         //
     }
-    
+
     public void RevisarSiCaballoNegroEnemigoLlegó(Vector2Int posicion, BlackKnightEnemyController caballonegroenemigo)
+    {
+        //
+    }
+    
+    public void RevisarSiTorreEnemigaLlegó(Vector2Int posicion, RookEnemyController torreenemiga)
     {
         //
     }

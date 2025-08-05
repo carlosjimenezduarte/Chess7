@@ -177,4 +177,9 @@ public class Expansion : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPie
     {
         //
     }
+
+    public void RevisarSiTorreEnemigaLlegó(Vector2Int posicion, RookEnemyController torreenemiga)
+    {
+        //
+    }
 } 

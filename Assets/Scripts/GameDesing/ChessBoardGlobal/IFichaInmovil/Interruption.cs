@@ -132,4 +132,9 @@ public class Interruption : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, I
     {
         //
     }
+
+    public void RevisarSiTorreEnemigaLlegó(Vector2Int posicion, RookEnemyController torreenemiga)
+    {
+        //
+    }
 }
