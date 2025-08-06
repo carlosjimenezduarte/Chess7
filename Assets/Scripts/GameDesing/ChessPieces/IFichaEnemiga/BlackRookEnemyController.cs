@@ -236,7 +236,7 @@ public class BlackRookEnemyController : MonoBehaviour, IPointerClickHandler, ITi
         // 🔹 Jerarquía: si Reina atacó, cedo mi turno
         if (BoardManagerGlobal.Instance.reinaNegraAtaco)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Torre Negra cede: Reina ya atacó.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Torre Negra cede: Reina Negra ya atacó.");
             BoardManagerGlobal.Instance.ReportarFinInspeccionTorreNegra(false);
             yield break;
         }

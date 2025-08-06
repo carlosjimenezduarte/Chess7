@@ -417,13 +417,13 @@ public class BishopEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
         if (BoardManagerGlobal.Instance.reinaRojaAtaco)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Alfil Rojo cede: Reina Roja ya atacó.");
-            BoardManagerGlobal.Instance.ReportarFinInspeccionAlfilNegro(false);
+            BoardManagerGlobal.Instance.ReportarFinInspeccionAlfilRojo(false);
             yield break;
         }
         if (BoardManagerGlobal.Instance.torreRojaAtaco)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Alfil Rojo cede: Torre Roja ya atacó.");
-            BoardManagerGlobal.Instance.ReportarFinInspeccionAlfilNegro(false);
+            BoardManagerGlobal.Instance.ReportarFinInspeccionAlfilRojo(false);
             yield break;
         }
 

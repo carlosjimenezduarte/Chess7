@@ -7,23 +7,14 @@ using System.Linq;
 public class PawnEnemyController : MonoBehaviour, IPointerClickHandler, ITileEffect, IPieceWithPosition, IFicha, IFichaEnemiga
 {
     [Header("Jerarquía de ataque")]
-    public int rangoKillZone { get; set; } = 3;
-
+    public int rangoKillZone { get; set; } = 1;
     public bool esInamovible = false;
-    public int rangoRangeZone { get; set; } = 5;
-
-    [Header("Prefab para zonas peligrosas")]
-    public GameObject prefabRojo;
-
-    [Header("Padre para overlays")]
-    public Transform dangerOverlayParent;
+    public int rangoRangeZone { get; set; } = 1;
 
     private Vector2Int posicionActual;
     private bool mostrandoRango = false;
 
-    private List<GameObject> overlaysInstanciados = new List<GameObject>();
-    private Vector2Int ultimaPosicionAmenaza = new Vector2Int(-99, -99);
-
+    
     private void Start()
     {
         // 1️⃣ Determinar posición inicial
@@ -262,8 +253,8 @@ public class PawnEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
 
     public void ReiniciarTurno()
     {
-        rangoKillZone = 3;
-        rangoRangeZone = 5;
+        rangoKillZone = 1;
+        rangoRangeZone = 1;
     }
 
     private bool HayObstaculoEntre(Vector2Int origen, Vector2Int destino)
@@ -301,7 +292,7 @@ public class PawnEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
 
     private IEnumerator ProcesarAmenazasDesdeArbitro()
     {
-        yield return new WaitForSeconds(0.010f);
+        yield return new WaitForSeconds(0.1f);
 
         // 🔹 Verificación jerárquica de prioridad
         if (BoardManagerGlobal.Instance.reinaNegraAtaco)
@@ -342,13 +333,13 @@ public class PawnEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
         }
         if (BoardManagerGlobal.Instance.alfilRojoAtaco)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Peón Rojo cede: Torre Roja ya atacó.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Peón Rojo cede: Alfil Rojo ya atacó.");
             BoardManagerGlobal.Instance.ReportarFinInspeccionPeonRojo(false);
             yield break;
         }
         if (BoardManagerGlobal.Instance.caballoRojoAtaco)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Peón Rojo cede: Torre Roja ya atacó.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Peón Rojo cede: Caballo Rojo ya atacó.");
             BoardManagerGlobal.Instance.ReportarFinInspeccionPeonRojo(false);
             yield break;
         }

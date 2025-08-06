@@ -223,14 +223,14 @@ public class KnightEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
         // 🔹 Verificación jerárquica de prioridad
         if (BoardManagerGlobal.Instance.reinaNegraAtaco)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("♞ Alfil Rojo cede: Reina Negra ya atacó.");
-            BoardManagerGlobal.Instance.ReportarFinInspeccionAlfilRojo(false);
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♞ Caballo Rojo cede: Reina Negra ya atacó.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoRojo(false);
             yield break;
         }
         if (BoardManagerGlobal.Instance.torreNegraAtaco)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("♞ Alfil Rojo cede: Torre Negra ya atacó.");
-            BoardManagerGlobal.Instance.ReportarFinInspeccionAlfilRojo(false);
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♞ Caballo Rojo cede: Torre Negra ya atacó.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoRojo(false);
             yield break;
         }
         if (BoardManagerGlobal.Instance.alfilNegraAtaco)
@@ -254,6 +254,12 @@ public class KnightEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
         if (BoardManagerGlobal.Instance.torreRojaAtaco)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno("♞ Caballo Rojo cede: Torre Roja ya atacó.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoRojo(false);
+            yield break;
+        }
+        if (BoardManagerGlobal.Instance.alfilRojoAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♞ Caballo Rojo cede: Alfil Rojo ya atacó.");
             BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoRojo(false);
             yield break;
         }
