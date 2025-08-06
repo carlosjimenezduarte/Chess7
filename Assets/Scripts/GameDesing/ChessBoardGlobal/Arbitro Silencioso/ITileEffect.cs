@@ -15,6 +15,8 @@ public interface ITileEffect
 
     void RevisarSiCaballoEnemigoLlegó(Vector2Int posicion, KnightEnemyController caballoenemigo);
 
+    void RevisarSiPeonEnemigoLlegó(Vector2Int posicion, PawnEnemyController peonenemigo);
+
     void RevisarSiReinaNegraEnemigaLlegó(Vector2Int posicion, BlackQueenEnemyController reinanegraenemiga);
 
     void RevisarSiTorreNegraEnemigaLlegó(Vector2Int posicion, BlackRookEnemyController torrenegraenemiga);

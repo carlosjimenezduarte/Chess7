@@ -12,10 +12,10 @@ public class KnightEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
     public int rangoRangeZone { get; set; } = 1; // Solo marca las 8 posiciones posibles
 
     [Header("Prefab para zonas peligrosas")]
-   
+
     private Vector2Int posicionActual;
     private bool mostrandoRango = false;
-   
+
 
     // Movimientos tipo L del Caballo
     private static readonly Vector2Int[] movimientosCaballo = {
@@ -196,7 +196,7 @@ public class KnightEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
         }
     }
 
-  
+
 
     public void MostrarRango() => MostrarRangoDeAtaque();
     public void OcultarRango() => OcultarRangoDeAtaque();
@@ -257,7 +257,7 @@ public class KnightEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
             BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoRojo(false);
             yield break;
         }
-      
+
         int asesinatos = 0;
 
         foreach (var move in movimientosCaballo)
@@ -283,7 +283,7 @@ public class KnightEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
 
     public void ProcesarMovimientoAliado(Vector2Int posAliada, int idMovimiento)
     {
-        
+
 
         if (!BoardManagerGlobal.Instance.RegistrarIntentoDeAtaque(this, idMovimiento))
         {
@@ -331,5 +331,10 @@ public class KnightEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
     public void RevisarSiCaballoEnemigoLlegó(Vector2Int posicion, KnightEnemyController caballoenemigo)
     {
         //
+    }
+    
+    public void RevisarSiPeonEnemigoLlegó(Vector2Int posicion, PawnEnemyController peonenemigo)
+    {
+        
     }
 }

@@ -481,9 +481,13 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
     {
         //
     }
-    
+
     public void RevisarSiCaballoEnemigoLlegó(Vector2Int posicion, KnightEnemyController caballoenemigo)
     {
         //
+    }
+    public void RevisarSiPeonEnemigoLlegó(Vector2Int posicion, PawnEnemyController peonenemigo)
+    {
+        
     }
 }

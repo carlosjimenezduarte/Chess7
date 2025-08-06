@@ -568,4 +568,8 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
     {
         //
     }
+    public void RevisarSiPeonEnemigoLlegó(Vector2Int posicion, PawnEnemyController peonenemigo)
+    {
+        
+    }
 }

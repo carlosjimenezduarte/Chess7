@@ -146,4 +146,8 @@ public class Interruption : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, I
     {
         //
     }
+    public void RevisarSiPeonEnemigoLlegó(Vector2Int posicion, PawnEnemyController peonenemigo)
+    {
+        
+    }
 }

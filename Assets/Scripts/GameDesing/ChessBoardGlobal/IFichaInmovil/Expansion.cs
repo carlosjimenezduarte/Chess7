@@ -192,4 +192,8 @@ public class Expansion : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPie
     {
         //
     }
+    public void RevisarSiPeonEnemigoLlegó(Vector2Int posicion, PawnEnemyController peonenemigo)
+    {
+        
+    }
 } 

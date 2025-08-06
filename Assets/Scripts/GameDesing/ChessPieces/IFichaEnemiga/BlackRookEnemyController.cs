@@ -378,9 +378,13 @@ public class BlackRookEnemyController : MonoBehaviour, IPointerClickHandler, ITi
     public void OcultarRango() => OcultarRangoDeAtaque();
     public bool EsInamovible() => esInamovible;
     public void ReiniciarTurno() { rangoKillZone = 7; rangoRangeZone = 7; }
-    
+
     public void RevisarSiCaballoEnemigoLlegó(Vector2Int posicion, KnightEnemyController caballoenemigo)
     {
         //
+    }
+    public void RevisarSiPeonEnemigoLlegó(Vector2Int posicion, PawnEnemyController peonenemigo)
+    {
+        
     }
 }

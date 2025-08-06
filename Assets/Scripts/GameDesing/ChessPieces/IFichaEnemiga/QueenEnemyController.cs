@@ -654,10 +654,14 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
     {
         //
     }
-    
+
     public void RevisarSiCaballoEnemigoLlegó(Vector2Int posicion, KnightEnemyController caballoenemigo)
     {
         //
+    }
+    public void RevisarSiPeonEnemigoLlegó(Vector2Int posicion, PawnEnemyController peonenemigo)
+    {
+        
     }
 
 }

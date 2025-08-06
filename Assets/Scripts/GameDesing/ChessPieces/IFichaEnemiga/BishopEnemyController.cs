@@ -7,10 +7,10 @@ using System.Linq;
 public class BishopEnemyController : MonoBehaviour, IPointerClickHandler, ITileEffect, IPieceWithPosition, IFicha, IFichaEnemiga
 {
     [Header("Jerarquía de ataque")]
-    public int rangoKillZone { get; set; } = 1;
+    public int rangoKillZone { get; set; } = 3;
 
     public bool esInamovible = false;
-    public int rangoRangeZone { get; set; } = 1;
+    public int rangoRangeZone { get; set; } = 5;
 
     [Header("Prefab para zonas peligrosas")]
     public GameObject prefabRojo;
@@ -553,5 +553,9 @@ public class BishopEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
     public void RevisarSiCaballoEnemigoLlegó(Vector2Int posicion, KnightEnemyController caballoenemigo)
     {
         //
+    }
+    public void RevisarSiPeonEnemigoLlegó(Vector2Int posicion, PawnEnemyController peonenemigo)
+    {
+        
     }
 }

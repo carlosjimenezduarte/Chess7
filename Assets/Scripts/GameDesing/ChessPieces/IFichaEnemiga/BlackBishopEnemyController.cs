@@ -395,4 +395,8 @@ public class BlackBishopEnemyController : MonoBehaviour, IPointerClickHandler, I
     {
         //
     }
+    public void RevisarSiPeonEnemigoLlegó(Vector2Int posicion, PawnEnemyController peonenemigo)
+    {
+        
+    }
 }

@@ -265,4 +265,8 @@ public class PotionPA : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPie
     {
         //
     }
+    public void RevisarSiPeonEnemigoLlegó(Vector2Int posicion, PawnEnemyController peonenemigo)
+    {
+        
+    }
 }
