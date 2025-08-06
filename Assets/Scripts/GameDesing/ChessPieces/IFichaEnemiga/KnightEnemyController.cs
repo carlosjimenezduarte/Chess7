@@ -220,6 +220,14 @@ public class KnightEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
     {
         yield return new WaitForSeconds(0.09f);
 
+        if (BoardManagerGlobal.Instance.caballoRojoAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                "♞ Caballo Rojo aborta inspección: ya realizó su ataque este turno."
+            );
+            yield break;
+        }
+
         // 🔹 Verificación jerárquica de prioridad
         if (BoardManagerGlobal.Instance.reinaNegraAtaco)
         {
@@ -289,13 +297,15 @@ public class KnightEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
 
     public void ProcesarMovimientoAliado(Vector2Int posAliada, int idMovimiento)
     {
-
-
-        if (!BoardManagerGlobal.Instance.RegistrarIntentoDeAtaque(this, idMovimiento))
+        if (BoardManagerGlobal.Instance.caballoRojoAtaco) 
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"⛔ {name} no puede atacar: otra ficha ya lo hizo en el movimiento {idMovimiento}.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                $"♞ Peón Roja ignora movimiento {idMovimiento} porque ya atacó este turno."
+            );
             return;
         }
+
+    
 
         RevisarAmenazasEnZona();
     }

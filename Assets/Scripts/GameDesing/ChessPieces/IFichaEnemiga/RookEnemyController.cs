@@ -417,6 +417,14 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
     {
         yield return new WaitForSeconds(0.07f);
 
+        if (BoardManagerGlobal.Instance.torreRojaAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                "♜ Torre Roja aborta inspección: ya realizó su ataque este turno."
+            );
+            yield break;
+        }
+
         if (BoardManagerGlobal.Instance.reinaNegraAtaco)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno("♜ Torre Roja cede: Reina Negra ya atacó.");
@@ -522,15 +530,16 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
 
     public void ProcesarMovimientoAliado(Vector2Int posAliada, int idMovimiento)
     {
-        StartCoroutine(VerificarAmenazaSobre(posAliada));
-
-        if (!BoardManagerGlobal.Instance.RegistrarIntentoDeAtaque(this, idMovimiento))
+        if (BoardManagerGlobal.Instance.torreRojaAtaco) 
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno(
-                $"⛔ {name} no puede atacar: otra ficha ya lo hizo en el movimiento {idMovimiento}."
+                $"♜ Torre Roja ignora movimiento {idMovimiento} porque ya atacó este turno."
             );
             return;
         }
+        StartCoroutine(VerificarAmenazaSobre(posAliada));
+
+        
 
         RevisarAmenazasEnZona();
     }

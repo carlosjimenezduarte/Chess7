@@ -389,6 +389,13 @@ public class BishopEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
     {
         yield return new WaitForSeconds(0.08f);
 
+        if (BoardManagerGlobal.Instance.alfilRojoAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                "♝ Alfil Rojo aborta inspección: ya realizó su ataque este turno."
+            );
+            yield break;
+        }
         // 🔹 Verificación jerárquica de prioridad
         if (BoardManagerGlobal.Instance.reinaNegraAtaco)
         {
@@ -506,13 +513,15 @@ public class BishopEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
 
     public void ProcesarMovimientoAliado(Vector2Int posAliada, int idMovimiento)
     {
-        StartCoroutine(VerificarAmenazaSobre(posAliada));
-
-        if (!BoardManagerGlobal.Instance.RegistrarIntentoDeAtaque(this, idMovimiento))
+        // 1️⃣ Si ya atacó este turno, ignora
+        if (BoardManagerGlobal.Instance.alfilRojoAtaco) 
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"⛔ {name} no puede atacar: otra ficha ya atacó en el movimiento {idMovimiento}.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Alfil Rojo ignora: ya atacó este turno.");
             return;
         }
+
+        StartCoroutine(VerificarAmenazaSobre(posAliada));
+
 
         RevisarAmenazasEnZona();
     }

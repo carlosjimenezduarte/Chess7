@@ -20,7 +20,7 @@ public class BoardManagerGlobal : MonoBehaviour
 
     // 🔁 Control de activaciones por movimiento
     public int idMovimientoActual = 0;
-    private int idUltimoAtaque = -1;
+    //private int idUltimoAtaque = -1;
     private static int offsetFuturoIncierto = 0;
 
     private static int offsetDimensionDivina = 0;
@@ -470,17 +470,31 @@ public class BoardManagerGlobal : MonoBehaviour
             .ToList();
     }
 
-    public bool RegistrarIntentoDeAtaque(IFichaEnemiga ficha, int idMovimiento)
+    public bool RegistrarIntentoDeAtaque(IFichaEnemiga ficha)
     {
-        if (idUltimoAtaque == idMovimiento)
+        if ((ficha is QueenEnemyController && reinaRojaAtaco) ||
+        (ficha is BishopEnemyController && alfilRojoAtaco) ||
+        (ficha is RookEnemyController && torreRojaAtaco) ||
+        (ficha is KnightEnemyController && caballoRojoAtaco) ||
+        (ficha is PawnEnemyController && peonRojoAtaco))
         {
-            AgregarMensajeInterno($"⛔ {((MonoBehaviour)ficha).name} no puede atacar: otra ficha ya lo hizo.");
+            AgregarMensajeInterno($"⛔ {((MonoBehaviour)ficha).name} ya atacó este turno.");
             return false;
         }
 
-        idUltimoAtaque = idMovimiento;
-        AgregarMensajeInterno($"✅ {((MonoBehaviour)ficha).name} autorizado como único atacante del movimiento ID={idMovimiento}");
+        AgregarMensajeInterno($"✅ {((MonoBehaviour)ficha).name} autorizado para atacar.");
         return true;
+
+
+      //  if (idUltimoAtaque == idMovimiento)
+        {
+       //     AgregarMensajeInterno($"⛔ {((MonoBehaviour)ficha).name} no puede atacar: otra ficha ya lo hizo.");
+         //   return false;
+        }
+
+        //idUltimoAtaque = idMovimiento;
+        //AgregarMensajeInterno($"✅ {((MonoBehaviour)ficha).name} autorizado como único atacante del movimiento ID={idMovimiento}");
+        //return true;
     }
 
     public void NotificarMovimientoAliado(Vector2Int posAliada)

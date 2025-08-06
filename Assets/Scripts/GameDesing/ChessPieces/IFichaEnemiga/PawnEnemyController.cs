@@ -22,7 +22,7 @@ public class PawnEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
         if (piecePositioner != null)
         {
             posicionActual = piecePositioner.tileCoords;
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♝ Peón inició en {posicionActual}");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♙ Peón inició en {posicionActual}");
         }
         else
         {
@@ -239,7 +239,7 @@ public class PawnEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
         {
             if (objeto is IObjetoRecoleccionable)
             {
-                BoardManagerGlobal.Instance.AgregarMensajeInterno($"♝ Peón destruye objeto {objeto} porque ficha {ficha} lo trajo encima");
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"♙ Peón destruye objeto {objeto} porque ficha {ficha} lo trajo encima");
                 if (objeto is Potion1PM pocion)
                     pocion.ExiliarADimensionDivina();
 
@@ -294,52 +294,60 @@ public class PawnEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
     {
         yield return new WaitForSeconds(0.1f);
 
+        if (BoardManagerGlobal.Instance.peonRojoAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                "♙ Peón Rojo aborta inspección: ya realizó su ataque este turno."
+            );
+            yield break;
+        }
+
         // 🔹 Verificación jerárquica de prioridad
         if (BoardManagerGlobal.Instance.reinaNegraAtaco)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Peón Rojo cede: Reina Negra ya atacó.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♙ Peón Rojo cede: Reina Negra ya atacó.");
             BoardManagerGlobal.Instance.ReportarFinInspeccionPeonRojo(false);
             yield break;
         }
         if (BoardManagerGlobal.Instance.torreNegraAtaco)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Peón Rojo cede: Torre Negra ya atacó.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♙ Peón Rojo cede: Torre Negra ya atacó.");
             BoardManagerGlobal.Instance.ReportarFinInspeccionPeonRojo(false);
             yield break;
         }
         if (BoardManagerGlobal.Instance.alfilNegraAtaco)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Peón Rojo cede: Alfil Negro ya atacó.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♙ Peón Rojo cede: Alfil Negro ya atacó.");
             BoardManagerGlobal.Instance.ReportarFinInspeccionPeonRojo(false);
             yield break;
         }
         if (BoardManagerGlobal.Instance.caballoNegraAtaco)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Peón Rojo cede: Caballo Negro ya atacó.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♙ Peón Rojo cede: Caballo Negro ya atacó.");
             BoardManagerGlobal.Instance.ReportarFinInspeccionPeonRojo(false);
             yield break;
         }
         if (BoardManagerGlobal.Instance.reinaRojaAtaco)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Peón Rojo cede: Reina Roja ya atacó.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♙ Peón Rojo cede: Reina Roja ya atacó.");
             BoardManagerGlobal.Instance.ReportarFinInspeccionPeonRojo(false);
             yield break;
         }
         if (BoardManagerGlobal.Instance.torreRojaAtaco)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Peón Rojo cede: Torre Roja ya atacó.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♙ Peón Rojo cede: Torre Roja ya atacó.");
             BoardManagerGlobal.Instance.ReportarFinInspeccionPeonRojo(false);
             yield break;
         }
         if (BoardManagerGlobal.Instance.alfilRojoAtaco)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Peón Rojo cede: Alfil Rojo ya atacó.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♙ Peón Rojo cede: Alfil Rojo ya atacó.");
             BoardManagerGlobal.Instance.ReportarFinInspeccionPeonRojo(false);
             yield break;
         }
         if (BoardManagerGlobal.Instance.caballoRojoAtaco)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Peón Rojo cede: Caballo Rojo ya atacó.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♙ Peón Rojo cede: Caballo Rojo ya atacó.");
             BoardManagerGlobal.Instance.ReportarFinInspeccionPeonRojo(false);
             yield break;
         }
@@ -349,7 +357,7 @@ public class PawnEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
         // 🔹 Si no tiene energía letal, solo penaliza
         if (rangoKillZone <= 0)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Peón Rojo no tiene energía letal este turno.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♙ Peón Rojo no tiene energía letal este turno.");
             BoardManagerGlobal.Instance.ReportarFinInspeccionPeonRojo(false);
             yield break;
         }
@@ -408,13 +416,15 @@ public class PawnEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
 
     public void ProcesarMovimientoAliado(Vector2Int posAliada, int idMovimiento)
     {
-
-
-        if (!BoardManagerGlobal.Instance.RegistrarIntentoDeAtaque(this, idMovimiento))
+        if (BoardManagerGlobal.Instance.peonRojoAtaco) 
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"⛔ {name} no puede atacar: otra ficha ya atacó en el movimiento {idMovimiento}.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                $"♙ Peón Roja ignora movimiento {idMovimiento} porque ya atacó este turno."
+            );
             return;
         }
+        
+       
 
         RevisarAmenazasEnZona();
     }

@@ -181,6 +181,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         BoardManagerGlobal.Instance.reinaRojaAtaco = true;
 
         yield return new WaitForSeconds(1f);
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Roja bloqueada para el resto del turno tras su primer ataque.");
     }
 
 
@@ -493,6 +494,14 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
     {
         yield return new WaitForSeconds(0.06f);
 
+        if (BoardManagerGlobal.Instance.reinaRojaAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                "♛ Reina Roja aborta inspección: ya realizó su ataque este turno."
+            );
+            yield break;
+        }
+
         // 🔹 Verificación jerárquica
         if (BoardManagerGlobal.Instance.reinaNegraAtaco)
         {
@@ -610,17 +619,21 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
     public void ProcesarMovimientoAliado(Vector2Int posAliada, int idMovimiento)
     {
+        if (BoardManagerGlobal.Instance.reinaRojaAtaco) 
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                $"♛ Reina Roja ignora movimiento {idMovimiento} porque ya atacó este turno."
+            );
+            return;
+        }
+
         // ✅ Llamamos a la verificación visual con delay y chequeo de supervivencia
         StartCoroutine(VerificarAmenazaSobre(posAliada));
 
+        
+
         // ✅ Solo intenta atacar si nadie más ha atacado en este movimiento
-        if (!BoardManagerGlobal.Instance.RegistrarIntentoDeAtaque(this, idMovimiento))
-        {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno(
-                $"⛔ {name} no puede atacar: otra ficha ya lo hizo en el movimiento {idMovimiento}."
-            );
-            return; // 🚫 No inicia su coroutine de ataque
-        }
+        
 
         // ✅ Si llega aquí, es la atacante autorizada
         RevisarAmenazasEnZona();
