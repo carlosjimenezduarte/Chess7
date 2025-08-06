@@ -495,7 +495,7 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
                         BoardManagerGlobal.Instance.AgregarMensajeInterno($"💥 Torre Roja ejecuta a {((MonoBehaviour)fichaAliada).name} en {paso}");
                         yield return StartCoroutine(MatarPiezaDespuesDelay((MonoBehaviour)fichaAliada, paso));
                         asesinatos++;
-                        rangoKillZone = 0;
+                        //rangoKillZone = 0;
                         BoardManagerGlobal.Instance.ReportarFinInspeccionTorreRoja(true);
                         yield break;
                     }

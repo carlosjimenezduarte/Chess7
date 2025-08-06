@@ -577,7 +577,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
                         BoardManagerGlobal.Instance.AgregarMensajeInterno($"💥 Reina Roja ejecuta a {((MonoBehaviour)fichaAliada).name} en {paso}");
                         yield return StartCoroutine(MatarPiezaDespuesDelay((MonoBehaviour)fichaAliada, paso));
                         asesinatos++;
-                        rangoKillZone = 0; // Solo un asesinato por turno
+                        //rangoKillZone = 0; // Solo un asesinato por turno
                         BoardManagerGlobal.Instance.ReportarFinInspeccionReinaRoja(true);
                         yield break;
                     }

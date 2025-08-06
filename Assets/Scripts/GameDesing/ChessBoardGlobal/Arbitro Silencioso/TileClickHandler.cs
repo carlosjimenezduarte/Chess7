@@ -22,9 +22,8 @@ public class TileClickHandler : MonoBehaviour, IPointerClickHandler
         .Where(obj => obj is IPieceWithPosition)
         .Cast<IPieceWithPosition>();
 
-    // ✅ Nuevo: Si hay una ficha aliada seleccionada, y esta casilla está marcada como ataque...
     if (gameManager.fichaSeleccionadaActual is IFichaAliada fichaActiva)
-    {
+{
     Tile tile = BoardManagerGlobal.Instance.GetTileAt(tileCoords);
     if (tile != null && tile.EsCasillaDeAtaque())
     {
@@ -53,8 +52,9 @@ public class TileClickHandler : MonoBehaviour, IPointerClickHandler
             return;
         }
 
-        // Si agregas más fichas aliadas que pueden atacar, extiende aquí...
+        return; // 🛑 Impedir que se ejecute el foreach de selección
     }
+
     }
 
     foreach (var pieza in piezas)

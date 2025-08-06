@@ -221,7 +221,7 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
                 // ✅ Notificar al Árbitro para autorizar solo 1 ataque enemigo
                 BoardManagerGlobal.Instance.NotificarMovimientoAliado(posicionActual);
-
+                
                 BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
                 return;
             }

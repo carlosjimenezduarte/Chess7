@@ -207,7 +207,7 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
             mostrandoMovimientos = true;
            // ✅ Notificar al Árbitro para autorizar solo 1 ataque enemigo
             BoardManagerGlobal.Instance.NotificarMovimientoAliado(posicionActual);
-
+            
             var reina = FindFirstObjectByType<QueenEnemyController>();
             if (reina != null)
                 reina.VerificarAmenazaSobre(posicionActual);
@@ -278,11 +278,11 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         puntosAccionActual = puntosAccionMax;
         rangoAtaqueKing = 1;
         BoardManagerGlobal.Instance.AgregarMensajeInterno(
-        $"♔ Nuevo turno del Rey → 🧭 PM personales: {puntosMovimientoActual}, 🎖️ PA estratégicos: {puntosAccionActual}."
-    );
+        $"♔ Nuevo turno del Rey → 🧭 PM personales: {puntosMovimientoActual}, 🎖️ PA estratégicos: {puntosAccionActual}.");
         MostrarMovimientoPosible();
         mostrandoMovimientos = true;
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+        BoardManagerGlobal.Instance.ResetearAtaquesEnemigos();
     }
 
     public void GanarPuntoMovimiento(int cantidad)

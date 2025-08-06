@@ -394,7 +394,7 @@ public class PawnEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
                         BoardManagerGlobal.Instance.AgregarMensajeInterno($"💥 Peón Rojo ejecuta a {((MonoBehaviour)fichaAliada).name} en {paso}");
                         yield return StartCoroutine(MatarPiezaDespuesDelay((MonoBehaviour)fichaAliada, paso));
                         asesinatos++;
-                        rangoKillZone = 0; // Solo mata 1 vez por turno
+                        //rangoKillZone = 0; // Solo mata 1 vez por turno
                         BoardManagerGlobal.Instance.ReportarFinInspeccionPeonRojo(true);
                         yield break;
                     }

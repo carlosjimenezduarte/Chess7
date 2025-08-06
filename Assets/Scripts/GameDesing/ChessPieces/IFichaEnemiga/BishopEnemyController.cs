@@ -216,10 +216,17 @@ public class BishopEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
         foreach (Tile tile in BoardManagerGlobal.Instance.tiles)
             tile.ResetColor();
     }
+    
 
-    public void VerificarTurnoActual(int turnoActual) => RevisarAmenazasEnZona();
+    public void VerificarTurnoActual(int turnoActual)
+    {
+        RevisarAmenazasEnZona();
+    }
 
-    public void RevisarAmenazasEnZona() => StartCoroutine(ProcesarAmenazasDesdeArbitro());
+    public void RevisarAmenazasEnZona()
+    {
+        StartCoroutine(ProcesarAmenazasDesdeArbitro());
+    }
 
     private void RevisarObjetosRecoleccionablesEnCasilla()
     {
@@ -476,7 +483,7 @@ public class BishopEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
                         BoardManagerGlobal.Instance.AgregarMensajeInterno($"💥 Alfil Rojo ejecuta a {((MonoBehaviour)fichaAliada).name} en {paso}");
                         yield return StartCoroutine(MatarPiezaDespuesDelay((MonoBehaviour)fichaAliada, paso));
                         asesinatos++;
-                        rangoKillZone = 0; // Solo mata 1 vez por turno
+                        //rangoKillZone = 0; // Solo mata 1 vez por turno
                         BoardManagerGlobal.Instance.ReportarFinInspeccionAlfilRojo(true);
                         yield break;
                     }

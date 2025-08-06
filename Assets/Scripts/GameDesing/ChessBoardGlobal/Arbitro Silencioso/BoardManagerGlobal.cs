@@ -502,11 +502,12 @@ public class BoardManagerGlobal : MonoBehaviour
         idMovimientoActual++;
 
         AgregarMensajeInterno($"♟ Movimiento aliado detectado en {posAliada}. Movimiento ID = {idMovimientoActual}");
-
+        ResetearAtaquesEnemigos();
         foreach (var ficha in fichasEnemigasRegistradas)
         {
             ficha.ProcesarMovimientoAliado(posAliada, idMovimientoActual);
         }
+        
     }
     public void ResetearAtaquesEnemigos()
     {
