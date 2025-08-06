@@ -118,7 +118,7 @@ public class BlackRookEnemyController : MonoBehaviour, IPointerClickHandler, ITi
         StartCoroutine(ProcesarAmenazasDesdeArbitro());
     }
 
-    
+
 
     private IEnumerator MatarPiezaDespuesDelay(MonoBehaviour pieza, Vector2Int posicion)
     {
@@ -346,7 +346,7 @@ public class BlackRookEnemyController : MonoBehaviour, IPointerClickHandler, ITi
     }
 
     public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga)
-    { 
+    {
         //
     }
     public void RevisarSiTorreNegraEnemigaLlegó(Vector2Int posicion, BlackRookEnemyController torrenegraenemiga)
@@ -378,4 +378,9 @@ public class BlackRookEnemyController : MonoBehaviour, IPointerClickHandler, ITi
     public void OcultarRango() => OcultarRangoDeAtaque();
     public bool EsInamovible() => esInamovible;
     public void ReiniciarTurno() { rangoKillZone = 7; rangoRangeZone = 7; }
+    
+    public void RevisarSiCaballoEnemigoLlegó(Vector2Int posicion, KnightEnemyController caballoenemigo)
+    {
+        //
+    }
 }

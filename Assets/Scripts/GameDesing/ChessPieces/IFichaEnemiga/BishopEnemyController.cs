@@ -7,10 +7,10 @@ using System.Linq;
 public class BishopEnemyController : MonoBehaviour, IPointerClickHandler, ITileEffect, IPieceWithPosition, IFicha, IFichaEnemiga
 {
     [Header("Jerarquía de ataque")]
-    public int rangoKillZone { get; set; } = 3;
+    public int rangoKillZone { get; set; } = 1;
 
     public bool esInamovible = false;
-    public int rangoRangeZone { get; set; } = 5;
+    public int rangoRangeZone { get; set; } = 1;
 
     [Header("Prefab para zonas peligrosas")]
     public GameObject prefabRojo;
@@ -385,124 +385,124 @@ public class BishopEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
         return false;
     }
 
-   private IEnumerator ProcesarAmenazasDesdeArbitro()
-{
-    yield return new WaitForSeconds(0.08f);
+    private IEnumerator ProcesarAmenazasDesdeArbitro()
+    {
+        yield return new WaitForSeconds(0.08f);
 
-    // 🔹 Verificación jerárquica de prioridad
-    if (BoardManagerGlobal.Instance.reinaNegraAtaco)
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Alfil Rojo cede: Reina Negra ya atacó.");
-        BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
-        yield break;
-    }
-    if (BoardManagerGlobal.Instance.torreNegraAtaco)
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Alfil Rojo cede: Torre Negra ya atacó.");
-        BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
-        yield break;
-    }
-    if (BoardManagerGlobal.Instance.alfilNegraAtaco)
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Alfil Rojo cede: Alfil Negro ya atacó.");
-        BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
-        yield break;
-    }
-    if (BoardManagerGlobal.Instance.caballoNegraAtaco)
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Alfil Rojo cede: Caballo Negro ya atacó.");
-        BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
-        yield break;
-    }
-    if (BoardManagerGlobal.Instance.reinaRojaAtaco)
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Alfil Rojo cede: Reina Roja ya atacó.");
-        BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
-        yield break;
-    }
-    if (BoardManagerGlobal.Instance.torreRojaAtaco)
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Alfil Rojo cede: Torre Roja ya atacó.");
-        BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
-        yield break;
-    }
+        // 🔹 Verificación jerárquica de prioridad
+        if (BoardManagerGlobal.Instance.reinaNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Alfil Rojo cede: Reina Negra ya atacó.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionAlfilRojo(false);
+            yield break;
+        }
+        if (BoardManagerGlobal.Instance.torreNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Alfil Rojo cede: Torre Negra ya atacó.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionAlfilRojo(false);
+            yield break;
+        }
+        if (BoardManagerGlobal.Instance.alfilNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Alfil Rojo cede: Alfil Negro ya atacó.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionAlfilRojo(false);
+            yield break;
+        }
+        if (BoardManagerGlobal.Instance.caballoNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Alfil Rojo cede: Caballo Negro ya atacó.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionAlfilRojo(false);
+            yield break;
+        }
+        if (BoardManagerGlobal.Instance.reinaRojaAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Alfil Rojo cede: Reina Roja ya atacó.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionAlfilNegro(false);
+            yield break;
+        }
+        if (BoardManagerGlobal.Instance.torreRojaAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Alfil Rojo cede: Torre Roja ya atacó.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionAlfilNegro(false);
+            yield break;
+        }
 
-    int asesinatos = 0;
+        int asesinatos = 0;
 
-    // 🔹 Si no tiene energía letal, solo penaliza
-    if (rangoKillZone <= 0)
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Alfil Rojo no tiene energía letal este turno.");
-        BoardManagerGlobal.Instance.ReportarFinInspeccionReinaRoja(false);
-        yield break;
-    }
+        // 🔹 Si no tiene energía letal, solo penaliza
+        if (rangoKillZone <= 0)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Alfil Rojo no tiene energía letal este turno.");
+            BoardManagerGlobal.Instance.ReportarFinInspeccionAlfilRojo(false);
+            yield break;
+        }
 
-    // 🔹 Solo diagonales
-    Vector2Int[] direcciones = {
+        // 🔹 Solo diagonales
+        Vector2Int[] direcciones = {
         new Vector2Int(1,1), new Vector2Int(-1,1),
         new Vector2Int(1,-1), new Vector2Int(-1,-1)
     };
 
-    foreach (var dir in direcciones)
-    {
-        Vector2Int paso = posicionActual;
-
-        for (int i = 1; i <= rangoRangeZone; i++)
+        foreach (var dir in direcciones)
         {
-            paso += dir;
+            Vector2Int paso = posicionActual;
 
-            // 🚫 Fuera del tablero
-            if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
-                break;
-
-            var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
-            var fichaAliada = objetos.OfType<IFichaAliada>().FirstOrDefault();
-
-            if (fichaAliada != null)
+            for (int i = 1; i <= rangoRangeZone; i++)
             {
-                // ✅ Distancia de casillas diagonales (no euclidiana)
-                int distanciaTablero = Mathf.Abs(paso.x - posicionActual.x); 
+                paso += dir;
 
-                if (distanciaTablero <= rangoKillZone)
+                // 🚫 Fuera del tablero
+                if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
+                    break;
+
+                var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
+                var fichaAliada = objetos.OfType<IFichaAliada>().FirstOrDefault();
+
+                if (fichaAliada != null)
                 {
-                    // 💀 Ataque letal
-                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"💥 Alfil Rojo ejecuta a {((MonoBehaviour)fichaAliada).name} en {paso}");
-                    yield return StartCoroutine(MatarPiezaDespuesDelay((MonoBehaviour)fichaAliada, paso));
-                    asesinatos++;
-                    rangoKillZone = 0; // Solo mata 1 vez por turno
-                    BoardManagerGlobal.Instance.ReportarFinInspeccionReinaRoja(true);
-                    yield break;
-                }
-                else
-                {
-                    // 🔹 Penalización por estar en rango visual
-                    if (fichaAliada is KingController rey)
+                    // ✅ Distancia de casillas diagonales (no euclidiana)
+                    int distanciaTablero = Mathf.Abs(paso.x - posicionActual.x);
+
+                    if (distanciaTablero <= rangoKillZone)
                     {
-                        rey.GanarPuntoMovimiento(-2);
-                        rey.turnosRestantes -= 1;
-                        BoardManagerGlobal.Instance.AgregarMensajeInterno(
-                            $"♝ Alfil Rojo penaliza al Rey en {paso}. PA: {rey.puntosAccionActual}"
-                        );
+                        // 💀 Ataque letal
+                        BoardManagerGlobal.Instance.AgregarMensajeInterno($"💥 Alfil Rojo ejecuta a {((MonoBehaviour)fichaAliada).name} en {paso}");
+                        yield return StartCoroutine(MatarPiezaDespuesDelay((MonoBehaviour)fichaAliada, paso));
+                        asesinatos++;
+                        rangoKillZone = 0; // Solo mata 1 vez por turno
+                        BoardManagerGlobal.Instance.ReportarFinInspeccionAlfilRojo(true);
+                        yield break;
                     }
-                    else if (fichaAliada is PawnController peon)
+                    else
                     {
-                        peon.RecibirPenalizacionAlfil();
+                        // 🔹 Penalización por estar en rango visual
+                        if (fichaAliada is KingController rey)
+                        {
+                            rey.GanarPuntoMovimiento(-2);
+                            rey.turnosRestantes -= 1;
+                            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                                $"♝ Alfil Rojo penaliza al Rey en {paso}. PA: {rey.puntosAccionActual}"
+                            );
+                        }
+                        else if (fichaAliada is PawnController peon)
+                        {
+                            peon.RecibirPenalizacionAlfil();
+                        }
                     }
                 }
+
+                // 🛑 Obstáculo: cualquier ficha o recolectable corta la línea
+                bool hayObstaculo = objetos.Any(obj =>
+                    (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable
+                );
+                if (hayObstaculo) break;
             }
-
-            // 🛑 Obstáculo: cualquier ficha o recolectable corta la línea
-            bool hayObstaculo = objetos.Any(obj =>
-                (obj is IFicha && obj != (object)this) || obj is IObjetoRecoleccionable
-            );
-            if (hayObstaculo) break;
         }
-    }
 
-    BoardManagerGlobal.Instance.ReportarFinInspeccionReinaRoja(asesinatos > 0);
-    RevisarObjetosRecoleccionablesEnCasilla();
-    yield break;
-}
+        BoardManagerGlobal.Instance.ReportarFinInspeccionAlfilRojo(asesinatos > 0);
+        RevisarObjetosRecoleccionablesEnCasilla();
+        yield break;
+    }
 
     public void ProcesarMovimientoAliado(Vector2Int posAliada, int idMovimiento)
     {
@@ -547,6 +547,10 @@ public class BishopEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
     }
 
     public void RevisarSiAlfilEnemigoLlegó(Vector2Int posicion, BishopEnemyController alfilenemigo)
+    {
+        //
+    }
+    public void RevisarSiCaballoEnemigoLlegó(Vector2Int posicion, KnightEnemyController caballoenemigo)
     {
         //
     }

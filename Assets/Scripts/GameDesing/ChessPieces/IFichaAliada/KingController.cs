@@ -220,9 +220,9 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
             if (alfil != null)
                 alfil.VerificarAmenazaSobre(posicionActual);
 
-            var caballo = FindFirstObjectByType<KnightEnemyController>();
-            if (caballo != null)
-                caballo.VerificarAmenazaSobre(posicionActual);
+            //var caballo = FindFirstObjectByType<KnightEnemyController>();
+            //if (caballo != null)
+            //    caballo.VerificarAmenazaSobre(posicionActual);
 
             var peon = FindFirstObjectByType<PawnEnemyController>();
             if (peon != null)

@@ -497,26 +497,26 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         if (BoardManagerGlobal.Instance.reinaNegraAtaco)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Roja cede: Reina Negra ya atacó.");
-            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
+            BoardManagerGlobal.Instance.ReportarFinInspeccionReinaRoja(false);
             yield break;
         }
         if (BoardManagerGlobal.Instance.torreNegraAtaco)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Roja cede: Torre Negra ya atacó.");
-            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
+            BoardManagerGlobal.Instance.ReportarFinInspeccionReinaRoja(false);
             yield break;
         }
         if (BoardManagerGlobal.Instance.alfilNegraAtaco)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Roja cede: Alfil Negro ya atacó.");
-            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
+            BoardManagerGlobal.Instance.ReportarFinInspeccionReinaRoja(false);
             yield break;
         }
 
         if (BoardManagerGlobal.Instance.caballoNegraAtaco)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Roja cede: Alfil Negro ya atacó.");
-            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
+            BoardManagerGlobal.Instance.ReportarFinInspeccionReinaRoja(false);
             yield break;
         }
 
@@ -649,8 +649,13 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
     {
         //
     }
-    
+
     public void RevisarSiAlfilEnemigoLlegó(Vector2Int posicion, BishopEnemyController alfilenemigo)
+    {
+        //
+    }
+    
+    public void RevisarSiCaballoEnemigoLlegó(Vector2Int posicion, KnightEnemyController caballoenemigo)
     {
         //
     }

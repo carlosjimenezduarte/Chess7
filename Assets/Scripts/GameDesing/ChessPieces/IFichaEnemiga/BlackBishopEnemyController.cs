@@ -390,4 +390,9 @@ public class BlackBishopEnemyController : MonoBehaviour, IPointerClickHandler, I
     {
         //
     }
+
+    public void RevisarSiCaballoEnemigoLlegó(Vector2Int posicion, KnightEnemyController caballoenemigo)
+    {
+        //
+    }
 }

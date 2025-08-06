@@ -420,31 +420,31 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
         if (BoardManagerGlobal.Instance.reinaNegraAtaco)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno("♜ Torre Roja cede: Reina Negra ya atacó.");
-            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
+            BoardManagerGlobal.Instance.ReportarFinInspeccionTorreRoja(false);
             yield break;
         }
         if (BoardManagerGlobal.Instance.torreNegraAtaco)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno("♜ Torre Roja cede: Torre Negra ya atacó.");
-            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
+            BoardManagerGlobal.Instance.ReportarFinInspeccionTorreRoja(false);
             yield break;
         }
         if (BoardManagerGlobal.Instance.alfilNegraAtaco)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno("♜ Torre Roja cede: Alfil Negro ya atacó.");
-            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
+            BoardManagerGlobal.Instance.ReportarFinInspeccionTorreRoja(false);
             yield break;
         }
         if (BoardManagerGlobal.Instance.caballoNegraAtaco)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno("♜ Torre Roja cede: Caballo Negro ya atacó.");
-            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
+            BoardManagerGlobal.Instance.ReportarFinInspeccionTorreRoja(false);
             yield break;
         }
         if (BoardManagerGlobal.Instance.reinaRojaAtaco)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno("♜ Torre Roja cede: Reina Roja ya atacó.");
-            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoNegro(false);
+            BoardManagerGlobal.Instance.ReportarFinInspeccionTorreRoja(false);
             yield break;
         }
 
@@ -560,6 +560,11 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
     }
 
     public void RevisarSiAlfilEnemigoLlegó(Vector2Int posicion, BishopEnemyController alfilenemigo)
+    {
+        //
+    }
+
+    public void RevisarSiCaballoEnemigoLlegó(Vector2Int posicion, KnightEnemyController caballoenemigo)
     {
         //
     }

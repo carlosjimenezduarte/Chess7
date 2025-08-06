@@ -343,5 +343,8 @@ public class BlackKnightEnemyController : MonoBehaviour, IPointerClickHandler, I
     {
         //
     }
-
+    public void RevisarSiCaballoEnemigoLlegó(Vector2Int posicion, KnightEnemyController caballoenemigo)
+    {
+        //
+    }
 }

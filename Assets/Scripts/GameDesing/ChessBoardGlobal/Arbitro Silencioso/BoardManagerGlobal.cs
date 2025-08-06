@@ -14,7 +14,6 @@ public class BoardManagerGlobal : MonoBehaviour
     public bool torreRojaAtaco = false;
     public bool alfilRojoAtaco = false;
     public bool caballoRojoAtaco = false;
-
     public bool peonRojoAtaco = false;
 
     private List<IFichaEnemiga> fichasEnemigasRegistradas = new List<IFichaEnemiga>();
