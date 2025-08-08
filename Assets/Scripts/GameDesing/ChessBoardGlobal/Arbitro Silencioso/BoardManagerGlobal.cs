@@ -651,7 +651,7 @@ public class BoardManagerGlobal : MonoBehaviour
     }
     
     public bool EsCasillaAccesiblePorAliado(Vector2Int pos)
-{
+    {
     if (pos.x < 0 || pos.y < 0 || pos.x > 7 || pos.y > 7)
         return false;
 
@@ -664,7 +664,7 @@ public class BoardManagerGlobal : MonoBehaviour
     }
 
     return true;
-}
+    }
 
 
 }

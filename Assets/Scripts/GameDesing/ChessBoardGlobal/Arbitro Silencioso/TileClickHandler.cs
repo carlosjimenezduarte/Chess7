@@ -31,9 +31,20 @@ public class TileClickHandler : MonoBehaviour, IPointerClickHandler
         int dx = Mathf.Abs(origen.x - tileCoords.x);
         int dy = Mathf.Abs(origen.y - tileCoords.y);
 
-        const int rangoMax = 1; // Ataques cuerpo a cuerpo
+        bool ataqueValido = false;
 
-        if (dx > rangoMax || dy > rangoMax)
+        if (gameManager.fichaSeleccionadaActual is KnightController)
+        {
+            // El Caballo ataca en L
+            ataqueValido = (dx == 2 && dy == 1) || (dx == 1 && dy == 2);
+        }
+        else
+        {
+            // Las demás piezas usan ataque adyacente
+            ataqueValido = dx <= 1 && dy <= 1;
+        }
+
+        if (!ataqueValido)
         {
             Debug.Log($"❌ Casilla {tileCoords} está marcada como ataque, pero está fuera del rango real desde {origen}.");
             return;
@@ -41,6 +52,7 @@ public class TileClickHandler : MonoBehaviour, IPointerClickHandler
 
         Debug.Log($"⚔️ Casilla {tileCoords} reconocida como zona de ataque para {gameManager.fichaSeleccionadaActual.name}");
 
+        // Llamar al método de ataque correspondiente según el tipo de ficha
         if (gameManager.fichaSeleccionadaActual is PawnController peon)
         {
             peon.MoverA(tileCoords, gameManager.rey);

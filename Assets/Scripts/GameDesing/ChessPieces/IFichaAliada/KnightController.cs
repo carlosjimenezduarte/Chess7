@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -80,7 +81,7 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
         return;
     }
 
-    BoardManagerGlobal.Instance.AgregarMensajeInterno("🔍 Mostrando posibles movimientos en L del Caballo:");
+    BoardManagerGlobal.Instance.AgregarMensajeInterno("🔍 Mostrando posibles movimientos en L del Caballo (sin enemigos).");
 
     foreach (var delta in movimientosEnL)
     {
@@ -94,20 +95,11 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
         var tile = BoardManagerGlobal.Instance.GetTileAt(destino);
         if (tile == null) continue;
 
-        var objetosEnDestino = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino);
-
-        if (objetosEnDestino.Any(obj => obj is IFichaEnemiga))
-        {
-            tile.HighlightEnemyAttack(true);
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🎯 Enemigo en {destino} marcado como zona de ataque.");
-        }
-        else
-        {
-            tile.HighlightMove(true);
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🟦 Casilla libre o con objeto recoleccionable en {destino} marcada para movimiento.");
-        }
+        // 💚 Solo marcamos como movimiento posible
+        tile.HighlightMove(true);
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🟦 Casilla {destino} marcada como movimiento válido.");
     }
-}
+    }
 
     public void OcultarMovimientos()
     {
@@ -173,6 +165,7 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
         rey.puntosAccionActual--;
         OcultarMovimientos();
         MostrarMovimientoPosible();
+        StartCoroutine(EvaluarCasillasDeAtaque());
         FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
         BoardManagerGlobal.Instance.NotificarMovimientoAliado(posicionActual);
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
@@ -204,7 +197,7 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
     public bool EstaActivo() => juegoActivo;
     public bool EsInamovible() => esInamovible;
 
-  public void RecibirPenalizacionReina()
+    public void RecibirPenalizacionReina()
     {
         var reycaballo = FindFirstObjectByType<KingController>();
         if (reycaballo != null)
@@ -239,22 +232,48 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
             );
         }
     }
-    
+
     public void RecibirPenalizacionAlfil()
     {
-    var reycaballoalfil = FindFirstObjectByType<KingController>();
-    if (reycaballoalfil != null)
+        var reycaballoalfil = FindFirstObjectByType<KingController>();
+        if (reycaballoalfil != null)
+        {
+            reycaballoalfil.puntosAccionActual -= 1;
+
+            // 🔹 Actualizar HUD inmediatamente
+            var gameManager = FindFirstObjectByType<ChessGameManager>();
+            if (gameManager != null)
+                gameManager.ActualizarHUD();
+
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                $"♝ Peón en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reycaballoalfil.puntosAccionActual}"
+            );
+        }
+    }
+    
+    private IEnumerator EvaluarCasillasDeAtaque()
     {
-        reycaballoalfil.puntosAccionActual -= 1;
+    // 🕒 Esperar 0.03 segundos reales antes de evaluar
+    yield return new WaitForSeconds(0.2f);
 
-        // 🔹 Actualizar HUD inmediatamente
-        var gameManager = FindFirstObjectByType<ChessGameManager>();
-        if (gameManager != null)
-            gameManager.ActualizarHUD();
+    BoardManagerGlobal.Instance.AgregarMensajeInterno("🔁 Evaluando casillas de ataque reales del Caballo...");
 
-        BoardManagerGlobal.Instance.AgregarMensajeInterno(
-            $"♝ Peón en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reycaballoalfil.puntosAccionActual}"
-        );
+    foreach (var delta in movimientosEnL)
+    {
+        Vector2Int destino = posicionActual + delta;
+        if (!BoardManagerGlobal.Instance.EsCasillaAccesiblePorAliado(destino))
+            continue;
+
+        var tile = BoardManagerGlobal.Instance.GetTileAt(destino);
+        if (tile == null) continue;
+
+        var objetosEnDestino = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino);
+
+        if (objetosEnDestino.Any(obj => obj is IFichaEnemiga))
+        {
+            tile.HighlightEnemyAttack(true);
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🎯 Casilla {destino} marcada como zona de ataque (post-movimiento).");
+        }
     }
     }
 }
