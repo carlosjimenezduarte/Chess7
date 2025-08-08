@@ -114,6 +114,7 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
         {
             StartCoroutine(ProcesarAmenazasDesdeArbitro());
         });
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
     public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
@@ -122,6 +123,24 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
         {
             StartCoroutine(ProcesarAmenazasDesdeArbitro());
         });
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    }
+
+    public void RevisarSiAlfilLlegó(Vector2Int posicionAlfil, BishopController alfil)
+    {
+        RevisarAmenazaAPieza(posicionAlfil, () =>
+        {
+            StartCoroutine(ProcesarAmenazasDesdeArbitro());
+        });
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    }
+    public void RevisarSiCaballoLlegó(Vector2Int posicionCaballo, KnightController caballo)
+    {
+        RevisarAmenazaAPieza(posicionCaballo, () =>
+        {
+            StartCoroutine(ProcesarAmenazasDesdeArbitro());
+        });
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
     private IEnumerator MatarPiezaDespuesDelay(MonoBehaviour pieza, Vector2Int posicion)
@@ -530,7 +549,7 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
 
     public void ProcesarMovimientoAliado(Vector2Int posAliada, int idMovimiento)
     {
-        if (BoardManagerGlobal.Instance.torreRojaAtaco) 
+        if (BoardManagerGlobal.Instance.torreRojaAtaco)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno(
                 $"♜ Torre Roja ignora movimiento {idMovimiento} porque ya atacó este turno."
@@ -539,7 +558,7 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
         }
         StartCoroutine(VerificarAmenazaSobre(posAliada));
 
-        
+
 
         RevisarAmenazasEnZona();
     }
@@ -579,6 +598,8 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
     }
     public void RevisarSiPeonEnemigoLlegó(Vector2Int posicion, PawnEnemyController peonenemigo)
     {
-        
+        //
     }
+    
+    
 }

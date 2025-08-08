@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 1734527028587898047}
   - component: {fileID: 6533439155558620837}
   - component: {fileID: 2243250832241142952}
-  - component: {fileID: 6446823783304579078}
+  - component: {fileID: 1162244616712132574}
   - component: {fileID: 2062129631136883389}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: KingPiece
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35,11 +35,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 67.5, y: -1432.5}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -472.5, y: -472.5}
   m_SizeDelta: {x: 135, y: 135}
-  m_Pivot: {x: 0.50000006, y: 0.5}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1734527028587898047
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -91,7 +91,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileCoords: {x: 0, y: 0}
---- !u!114 &6446823783304579078
+--- !u!114 &1162244616712132574
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

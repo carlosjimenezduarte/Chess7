@@ -165,7 +165,7 @@ public class ChessGameManager : MonoBehaviour
     }
 
     public void ActualizarHUD()
-    {
+    {        
         pmText.text = rey.puntosMovimientoActual.ToString();
         turnosText.text = rey.turnosRestantes.ToString();
         paText.text = rey.puntosAccionActual.ToString();

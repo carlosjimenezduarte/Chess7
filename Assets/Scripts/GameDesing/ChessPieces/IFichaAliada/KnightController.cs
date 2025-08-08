@@ -1,0 +1,260 @@
+using UnityEngine;
+using UnityEngine.EventSystems;
+using System.Linq;
+using System.Collections.Generic;
+
+public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithPosition, IFicha, IFichaAliada
+{
+    [Header("Rango de Movimiento")]
+    public int rangoMovimientoBase { get; set; } = 1;
+    private int rangoMovimientoExtra = 0;
+    public int rangoAtaque { get; set; } = 1;
+
+    public bool esInamovible = false;
+    public int RangoMovimientoActual => rangoMovimientoBase + rangoMovimientoExtra;
+
+    private Vector2Int posicionActual;
+    private bool juegoActivo = false;
+    public bool mostrandoMovimientos = false;
+
+    private static readonly Vector2Int[] movimientosEnL = new Vector2Int[]
+    {
+        new Vector2Int(2, 1), new Vector2Int(1, 2),
+        new Vector2Int(-1, 2), new Vector2Int(-2, 1),
+        new Vector2Int(-2, -1), new Vector2Int(-1, -2),
+        new Vector2Int(1, -2), new Vector2Int(2, -1)
+    };
+
+    private void Start()
+    {
+        posicionActual = GetComponent<PiecePositioner>()?.tileCoords ?? new Vector2Int(0, 0);
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♘ Caballo inició en {posicionActual}.");
+
+        var objetosEnCasilla = BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual);
+        bool yaRegistrado = objetosEnCasilla.Contains(this);
+
+        if (!yaRegistrado)
+        {
+            BoardManagerGlobal.Instance.RegistrarMovimiento(this, posicionActual);
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"✅ ♘ Caballo registrado manualmente en {posicionActual}.");
+        }
+        else
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"ℹ️ ♘ Caballo ya estaba registrado.");
+        }
+
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    }
+
+    public void SetPosicionActual(Vector2Int nuevaPos)
+    {
+        posicionActual = nuevaPos;
+
+        GetComponent<MovableTileObject>().tileCoords = nuevaPos;
+        GetComponent<PiecePositioner>().tileCoords = nuevaPos;
+
+        BoardManagerGlobal.Instance?.RegistrarMovimiento(this, nuevaPos);
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♘ Caballo movido a {nuevaPos}.");
+    }
+
+    public Vector2Int GetPosicionActual() => posicionActual;
+
+    public void ActivarJuego()
+    {
+        juegoActivo = true;
+        MostrarMovimientoPosible();
+        mostrandoMovimientos = true;
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    }
+
+    public void MostrarMovimientoPosible()
+    {
+    if (!juegoActivo) return;
+
+    var rey = FindFirstObjectByType<KingController>();
+    if (rey == null || rey.puntosAccionActual <= 0)
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("⚠️ Rey sin PA, Caballo no puede moverse.");
+        OcultarMovimientos();
+        mostrandoMovimientos = false;
+        return;
+    }
+
+    BoardManagerGlobal.Instance.AgregarMensajeInterno("🔍 Mostrando posibles movimientos en L del Caballo:");
+
+    foreach (var delta in movimientosEnL)
+    {
+        Vector2Int destino = posicionActual + delta;
+        if (!BoardManagerGlobal.Instance.EsCasillaAccesiblePorAliado(destino))
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"⛔ Casilla {destino} no accesible para el Caballo.");
+            continue;
+        }
+
+        var tile = BoardManagerGlobal.Instance.GetTileAt(destino);
+        if (tile == null) continue;
+
+        var objetosEnDestino = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino);
+
+        if (objetosEnDestino.Any(obj => obj is IFichaEnemiga))
+        {
+            tile.HighlightEnemyAttack(true);
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🎯 Enemigo en {destino} marcado como zona de ataque.");
+        }
+        else
+        {
+            tile.HighlightMove(true);
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🟦 Casilla libre o con objeto recoleccionable en {destino} marcada para movimiento.");
+        }
+    }
+}
+
+    public void OcultarMovimientos()
+    {
+        foreach (Tile tile in BoardManagerGlobal.Instance.tiles)
+            tile.HighlightMove(false);
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        var gameManager = FindFirstObjectByType<ChessGameManager>();
+        bool esNuevaSeleccion = gameManager.fichaSeleccionadaActual != this;
+        gameManager.fichaSeleccionadaActual = this;
+
+        var rey = FindFirstObjectByType<KingController>();
+        if (rey != null && rey != this)
+            rey.OcultarMovimientos();
+
+        if (esNuevaSeleccion || !mostrandoMovimientos)
+        {
+            mostrandoMovimientos = true;
+            MostrarMovimientoPosible();
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("🟢 Mostrando previsualización automática del Caballo.");
+        }
+        else
+        {
+            mostrandoMovimientos = false;
+            OcultarMovimientos();
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("🔴 Ocultando previsualización del Caballo.");
+        }
+
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    }
+
+    public void MoverA(Vector2Int nuevaPos, KingController rey)
+    {
+        if (!juegoActivo) return;
+
+        Vector2Int desplazamiento = nuevaPos - posicionActual;
+        if (!movimientosEnL.Contains(desplazamiento))
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🚫 Movimiento inválido para el Caballo desde {posicionActual} a {nuevaPos}.");
+            return;
+        }
+
+        var objetosEnDestino = BoardManagerGlobal.Instance.ObtenerObjetosEn(nuevaPos);
+        var enemigo = objetosEnDestino.FirstOrDefault(o => o is IFichaEnemiga);
+
+        SetPosicionActual(nuevaPos);
+        transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(nuevaPos);
+
+        if (enemigo != null)
+        {
+            if (enemigo is IPieceWithPosition enemigoPos)
+                enemigoPos.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
+
+            Destroy(((MonoBehaviour)enemigo).gameObject);
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"💀 Caballo eliminó a un enemigo en {nuevaPos}.");
+        }
+
+        foreach (ITileEffect efecto in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ITileEffect>())
+            efecto.RevisarSiCaballoLlegó(nuevaPos, null);
+
+        rey.puntosAccionActual--;
+        OcultarMovimientos();
+        MostrarMovimientoPosible();
+        FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
+        BoardManagerGlobal.Instance.NotificarMovimientoAliado(posicionActual);
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    }
+
+    public void AumentarRangoMovimiento(int cantidad)
+    {
+        rangoMovimientoExtra += cantidad;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🏇 Caballo ganó +{cantidad} de rango temporal. Total: {RangoMovimientoActual}.");
+        MostrarMovimientoPosible();
+        mostrandoMovimientos = true;
+    }
+
+    public void DesactivarJuego() => juegoActivo = false;
+    public void MostrarRango() => MostrarMovimientoPosible();
+    public void OcultarRango() => OcultarMovimientos();
+    public void ReiniciarTurno()
+    {
+        rangoMovimientoBase = 1;
+        rangoAtaque = 1;
+    }
+
+    public void AumentarRangoMovimientoSilencioso(int cantidad)
+    {
+        rangoMovimientoExtra += cantidad;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Caballo ganó +{cantidad} de rango temporal en modo silencioso. Total: {RangoMovimientoActual}.");
+    }
+
+    public bool EstaActivo() => juegoActivo;
+    public bool EsInamovible() => esInamovible;
+
+  public void RecibirPenalizacionReina()
+    {
+        var reycaballo = FindFirstObjectByType<KingController>();
+        if (reycaballo != null)
+        {
+            reycaballo.puntosAccionActual -= 1;
+
+            // 🔹 Actualizar HUD inmediatamente
+            var gameManager = FindFirstObjectByType<ChessGameManager>();
+            if (gameManager != null)
+                gameManager.ActualizarHUD();
+
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                $"♛ Peón en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reycaballo.puntosAccionActual}"
+            );
+        }
+    }
+
+    public void RecibirPenalizacionTorre()
+    {
+        var reycaballotorre = FindFirstObjectByType<KingController>();
+        if (reycaballotorre != null)
+        {
+            reycaballotorre.puntosAccionActual -= 1;
+
+            // 🔹 Actualizar HUD inmediatamente
+            var gameManager = FindFirstObjectByType<ChessGameManager>();
+            if (gameManager != null)
+                gameManager.ActualizarHUD();
+
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                $"♜ Peón en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reycaballotorre.puntosAccionActual}"
+            );
+        }
+    }
+    
+    public void RecibirPenalizacionAlfil()
+    {
+    var reycaballoalfil = FindFirstObjectByType<KingController>();
+    if (reycaballoalfil != null)
+    {
+        reycaballoalfil.puntosAccionActual -= 1;
+
+        // 🔹 Actualizar HUD inmediatamente
+        var gameManager = FindFirstObjectByType<ChessGameManager>();
+        if (gameManager != null)
+            gameManager.ActualizarHUD();
+
+        BoardManagerGlobal.Instance.AgregarMensajeInterno(
+            $"♝ Peón en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reycaballoalfil.puntosAccionActual}"
+        );
+    }
+    }
+}

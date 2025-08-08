@@ -267,6 +267,15 @@ public class PotionPA : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPie
     }
     public void RevisarSiPeonEnemigoLlegó(Vector2Int posicion, PawnEnemyController peonenemigo)
     {
-        
+        //   
     }
+
+    public void RevisarSiAlfilLlegó(Vector2Int posicionAlfil, BishopController alfil)
+    {
+        //
+    }
+    public void RevisarSiCaballoLlegó(Vector2Int posicionCaballo, KnightController caballo)
+    {
+        //
+    } 
 }

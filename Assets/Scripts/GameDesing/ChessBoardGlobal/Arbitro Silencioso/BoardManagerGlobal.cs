@@ -486,10 +486,10 @@ public class BoardManagerGlobal : MonoBehaviour
         return true;
 
 
-      //  if (idUltimoAtaque == idMovimiento)
+        //  if (idUltimoAtaque == idMovimiento)
         {
-       //     AgregarMensajeInterno($"⛔ {((MonoBehaviour)ficha).name} no puede atacar: otra ficha ya lo hizo.");
-         //   return false;
+            //     AgregarMensajeInterno($"⛔ {((MonoBehaviour)ficha).name} no puede atacar: otra ficha ya lo hizo.");
+            //   return false;
         }
 
         //idUltimoAtaque = idMovimiento;
@@ -503,11 +503,14 @@ public class BoardManagerGlobal : MonoBehaviour
 
         AgregarMensajeInterno($"♟ Movimiento aliado detectado en {posAliada}. Movimiento ID = {idMovimientoActual}");
         ResetearAtaquesEnemigos();
+        fichasEnemigasRegistradas = fichasEnemigasRegistradas
+        .Where(f => f != null && ((MonoBehaviour)f) != null)
+        .ToList();
         foreach (var ficha in fichasEnemigasRegistradas)
         {
             ficha.ProcesarMovimientoAliado(posAliada, idMovimientoActual);
         }
-        
+
     }
     public void ResetearAtaquesEnemigos()
     {
@@ -646,4 +649,22 @@ public class BoardManagerGlobal : MonoBehaviour
             AgregarMensajeInterno("♙ Árbitro: Peón Rojo atacó. Ciclo completado.");
         }
     }
+    
+    public bool EsCasillaAccesiblePorAliado(Vector2Int pos)
+{
+    if (pos.x < 0 || pos.y < 0 || pos.x > 7 || pos.y > 7)
+        return false;
+
+    var objetos = ObtenerObjetosEn(pos);
+
+    foreach (var obj in objetos)
+    {
+        if (obj is IFichaAliada || obj is IFichaInmovil)
+            return false;
+    }
+
+    return true;
+}
+
+
 }

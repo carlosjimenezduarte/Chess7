@@ -58,7 +58,7 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         if (posicionador != null) posicionador.tileCoords = nuevaPos;
 
         BoardManagerGlobal.Instance?.RegistrarMovimiento(this, nuevaPos);
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♟️ Peón movido a {nuevaPos}.");
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♙ Peón movido a {nuevaPos}.");
     }
 
     public Vector2Int GetPosicionActual() => posicionActual;
@@ -295,10 +295,6 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
-
-
-
-
     public void RevisarObjetosEnCasilla()
     {
         foreach (var objeto in BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual))
@@ -383,7 +379,7 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
                 gameManager.ActualizarHUD();
 
             BoardManagerGlobal.Instance.AgregarMensajeInterno(
-                $"♛ Peón en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reytorre.puntosAccionActual}"
+                $"♜ Peón en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reytorre.puntosAccionActual}"
             );
         }
     }
@@ -401,9 +397,9 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
             gameManager.ActualizarHUD();
 
         BoardManagerGlobal.Instance.AgregarMensajeInterno(
-            $"♛ Peón en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reyalfil.puntosAccionActual}"
+            $"♝ Peón en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reyalfil.puntosAccionActual}"
         );
     }
     }
-    
+   
 }

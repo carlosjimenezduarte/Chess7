@@ -5,8 +5,8 @@ using System.Linq;
 public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPosition, IFicha, IFichaAliada
 {
     public int puntosMovimientoMax = 3;
-    
-    public int rangoAtaqueKing  = 1; // 🔺 Rango de ataque fijo del Rey (igual que el Peón)
+
+    public int rangoAtaqueKing = 1; // 🔺 Rango de ataque fijo del Rey (igual que el Peón)
     public int puntosAccionMax = 5;
 
     public bool esInamovible = false;
@@ -22,46 +22,48 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
     private void Start()
     {
-    PiecePositioner piecePositioner = GetComponent<PiecePositioner>();
-    if (piecePositioner != null)
-    {
-        posicionActual = piecePositioner.tileCoords;
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♔ Rey inició en {posicionActual}");
-    }
-    else
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("⚠️ No hay PiecePositioner en el Rey. Usando (0,0).");
-        posicionActual = new Vector2Int(0, 0);
-    }
 
-    // 🔍 Verificar si el Rey ya fue registrado en el tablero
-    var objetosEnCasilla = BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual);
-    bool yaRegistrado = objetosEnCasilla.Contains(this);
+        puntosMovimientoActual = 3;
+        PiecePositioner piecePositioner = GetComponent<PiecePositioner>();
+        if (piecePositioner != null)
+        {
+            posicionActual = piecePositioner.tileCoords;
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♔ Rey inició en {posicionActual}");
+        }
+        else
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("⚠️ No hay PiecePositioner en el Rey. Usando (0,0).");
+            posicionActual = new Vector2Int(0, 0);
+        }
 
-    if (!yaRegistrado)
-    {
-        BoardManagerGlobal.Instance.RegistrarMovimiento(this, posicionActual);
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"✅ ♔ Rey registrado manualmente en {posicionActual}.");
-    }
-    else
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"ℹ️ ♔ Rey ya estaba registrado.");
-    }
+        // 🔍 Verificar si el Rey ya fue registrado en el tablero
+        var objetosEnCasilla = BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual);
+        bool yaRegistrado = objetosEnCasilla.Contains(this);
 
-    BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+        if (!yaRegistrado)
+        {
+            BoardManagerGlobal.Instance.RegistrarMovimiento(this, posicionActual);
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"✅ ♔ Rey registrado manualmente en {posicionActual}.");
+        }
+        else
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"ℹ️ ♔ Rey ya estaba registrado.");
+        }
+
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
 
     public void SetPosicionActual(Vector2Int nuevaPos)
     {
-         #if UNITY_EDITOR
+#if UNITY_EDITOR
         if (!Application.isPlaying)
         {
             posicionActual = nuevaPos;
             return;
         }
-        #endif
-        
+#endif
+
         posicionActual = nuevaPos;
 
         var movible = GetComponent<MovableTileObject>();
@@ -205,9 +207,9 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
             MostrarMovimientoPosible();
             mostrandoMovimientos = true;
-           // ✅ Notificar al Árbitro para autorizar solo 1 ataque enemigo
+            // ✅ Notificar al Árbitro para autorizar solo 1 ataque enemigo
             BoardManagerGlobal.Instance.NotificarMovimientoAliado(posicionActual);
-            
+
             var reina = FindFirstObjectByType<QueenEnemyController>();
             if (reina != null)
                 reina.VerificarAmenazaSobre(posicionActual);
@@ -425,5 +427,8 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         get => 0; // El Rey no usa esta propiedad
         set { }   // Ignora cualquier intento de modificarla
     }
+    
+    
+
 
 }

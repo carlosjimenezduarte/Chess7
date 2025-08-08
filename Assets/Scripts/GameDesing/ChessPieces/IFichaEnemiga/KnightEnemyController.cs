@@ -113,6 +113,24 @@ public class KnightEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
         RevisarAmenazaAPieza(posicionPeon, () => StartCoroutine(ProcesarAmenazasDesdeArbitro()));
     }
 
+    public void RevisarSiAlfilLlegó(Vector2Int posicionAlfil, BishopController alfil)
+    {
+        RevisarAmenazaAPieza(posicionAlfil, () =>
+        {
+            StartCoroutine(ProcesarAmenazasDesdeArbitro());
+        });
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    }
+
+    public void RevisarSiCaballoLlegó(Vector2Int posicionCaballo, KnightController caballo)
+    {
+        RevisarAmenazaAPieza(posicionCaballo, () =>
+        {
+            StartCoroutine(ProcesarAmenazasDesdeArbitro());
+        });
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    }
+
     private IEnumerator MatarPiezaDespuesDelay(MonoBehaviour pieza, Vector2Int posicion)
     {
         SetPosicionActual(posicion);

@@ -51,6 +51,26 @@ public class TileClickHandler : MonoBehaviour, IPointerClickHandler
             rey.IntentarAtacar(tileCoords);
             return;
         }
+        else if (gameManager.fichaSeleccionadaActual is BishopController alfil)
+        {
+            alfil.MoverA(tileCoords, gameManager.rey);
+            return;
+        }
+        else if (gameManager.fichaSeleccionadaActual is KnightController caballo)
+        {
+            caballo.MoverA(tileCoords, gameManager.rey);
+            return;
+        }
+     //   else if (gameManager.fichaSeleccionadaActual is RookController torre)
+     //   {
+     //       torre.MoverA(tileCoords, gameManager.rey);
+     //       return;
+     //   }
+     //   else if (gameManager.fichaSeleccionadaActual is QueenController reina)
+     //   {
+     //       reina.MoverA(tileCoords, gameManager.rey);
+     //       return;
+     //   }
 
         return; // 🛑 Impedir que se ejecute el foreach de selección
     }
@@ -119,24 +139,40 @@ public class TileClickHandler : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    // Si no hay pieza en esta casilla pero hay una ficha seleccionada, intenta mover
-    if (gameManager.fichaSeleccionadaActual != null)
-    {
-        var ficha = gameManager.fichaSeleccionadaActual;
+        // Si no hay pieza en esta casilla pero hay una ficha seleccionada, intenta mover
+        if (gameManager.fichaSeleccionadaActual != null)
+        {
+            var ficha = gameManager.fichaSeleccionadaActual;
 
-        if (ficha is KingController rey)
-        {
-            rey.MoverA(tileCoords);
+            if (ficha is KingController rey)
+            {
+                rey.MoverA(tileCoords);
+            }
+            else if (ficha is PawnController peon)
+            {
+                peon.MoverA(tileCoords, gameManager.rey);
+            }
+            else if (ficha is BishopController alfil)
+            {
+                alfil.MoverA(tileCoords, gameManager.rey);
+            }
+           else if (ficha is KnightController caballo)
+            {
+                caballo.MoverA(tileCoords, gameManager.rey);
+            }
+         //   else if (ficha is RookController torre)
+         //   {
+         //       torre.MoverA(tileCoords, gameManager.rey);
+         //   }
+         //   else if (ficha is QueenController reina)
+         //   {
+         //       reina.MoverA(tileCoords, gameManager.rey);
+         //   }
         }
-        else if (ficha is PawnController peon)
+        else
         {
-            peon.MoverA(tileCoords, gameManager.rey);
+            Debug.Log("🚫 No hay ficha seleccionada actualmente para mover.");
         }
-    }
-    else
-    {
-        Debug.Log("🚫 No hay ficha seleccionada actualmente para mover.");
-    }
     }
 
 }
