@@ -9,9 +9,9 @@ public interface ITileEffect
 
     void RevisarSiAlfilLlegó(Vector2Int posicionAlfil, BishopController alfil);
 
-    //void RevisarSiTorreLlegó(Vector2Int posicionTorre, RookController torre);
+    void RevisarSiTorreLlegó(Vector2Int posicionTorre, RookController torre);
 
-    //void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina);
+    void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina);
 
     void RevisarSiFichaLlegó(Vector2Int posicionFicha, IFicha ficha);
 

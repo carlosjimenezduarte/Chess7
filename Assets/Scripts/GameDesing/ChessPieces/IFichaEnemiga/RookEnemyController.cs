@@ -143,6 +143,15 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
+    public void RevisarSiTorreLlegó(Vector2Int posicionTorre, RookController torre)
+    {
+        RevisarAmenazaAPieza(posicionTorre, () =>
+        {
+            StartCoroutine(ProcesarAmenazasDesdeArbitro());
+        });
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    } 
+
     private IEnumerator MatarPiezaDespuesDelay(MonoBehaviour pieza, Vector2Int posicion)
     {
         SetPosicionActual(posicion);
@@ -600,6 +609,9 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
     {
         //
     }
-    
+    public void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina)
+    {
+      //
+    }
     
 }

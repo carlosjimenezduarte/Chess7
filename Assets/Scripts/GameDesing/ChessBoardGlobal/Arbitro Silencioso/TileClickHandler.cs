@@ -32,15 +32,37 @@ public class TileClickHandler : MonoBehaviour, IPointerClickHandler
         int dy = Mathf.Abs(origen.y - tileCoords.y);
 
         bool ataqueValido = false;
+        
+        bool EsLineaRecta = dx == 0 || dy == 0;
+        bool EsDiagonal = dx == dy;
+        bool hayObstaculo = BoardManagerGlobal.Instance.HayObstaculoEntreAliado(origen, tileCoords, fichaActiva);
 
         if (gameManager.fichaSeleccionadaActual is KnightController)
         {
-            // El Caballo ataca en L
+            // ♘ Caballo: en L
             ataqueValido = (dx == 2 && dy == 1) || (dx == 1 && dy == 2);
+        }
+        else if (gameManager.fichaSeleccionadaActual is RookController)
+        {
+            // ♜ Torre: línea recta hasta 3 y sin obstáculos
+            int distancia = dx + dy; // recta
+            ataqueValido = EsLineaRecta && distancia <= 3 && !hayObstaculo;
+        }
+        else if (gameManager.fichaSeleccionadaActual is BishopController)
+        {
+            // ♝ Alfil: diagonal hasta 3 y sin obstáculos
+            int distancia = dx; // = dy
+            ataqueValido = EsDiagonal && distancia <= 3 && !hayObstaculo;
+        }
+        else if (gameManager.fichaSeleccionadaActual is QueenController)
+        {
+            // ♛ Reina: recta o diagonal hasta 3 y sin obstáculos
+            int distancia = Mathf.Max(dx, dy);
+            ataqueValido = (EsLineaRecta || EsDiagonal) && distancia <= 3 && !hayObstaculo;
         }
         else
         {
-            // Las demás piezas usan ataque adyacente
+            // Resto (Rey, Peón…): cuerpo a cuerpo
             ataqueValido = dx <= 1 && dy <= 1;
         }
 
@@ -73,16 +95,16 @@ public class TileClickHandler : MonoBehaviour, IPointerClickHandler
             caballo.MoverA(tileCoords, gameManager.rey);
             return;
         }
-     //   else if (gameManager.fichaSeleccionadaActual is RookController torre)
-     //   {
-     //       torre.MoverA(tileCoords, gameManager.rey);
-     //       return;
-     //   }
-     //   else if (gameManager.fichaSeleccionadaActual is QueenController reina)
-     //   {
-     //       reina.MoverA(tileCoords, gameManager.rey);
-     //       return;
-     //   }
+        else if (gameManager.fichaSeleccionadaActual is RookController torre)
+        {
+            torre.MoverA(tileCoords, gameManager.rey);
+            return;
+        }
+        else if (gameManager.fichaSeleccionadaActual is QueenController reina)
+        {
+            reina.MoverA(tileCoords, gameManager.rey);
+            return;
+        }
 
         return; // 🛑 Impedir que se ejecute el foreach de selección
     }
@@ -172,14 +194,14 @@ public class TileClickHandler : MonoBehaviour, IPointerClickHandler
             {
                 caballo.MoverA(tileCoords, gameManager.rey);
             }
-         //   else if (ficha is RookController torre)
-         //   {
-         //       torre.MoverA(tileCoords, gameManager.rey);
-         //   }
-         //   else if (ficha is QueenController reina)
-         //   {
-         //       reina.MoverA(tileCoords, gameManager.rey);
-         //   }
+            else if (ficha is RookController torre)
+            {
+                torre.MoverA(tileCoords, gameManager.rey);
+            }
+            else if (ficha is QueenController reina)
+            {
+                reina.MoverA(tileCoords, gameManager.rey);
+            }
         }
         else
         {

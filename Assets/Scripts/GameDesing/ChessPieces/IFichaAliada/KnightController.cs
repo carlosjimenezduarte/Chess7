@@ -82,7 +82,13 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
     }
 
     BoardManagerGlobal.Instance.AgregarMensajeInterno("🔍 Mostrando posibles movimientos en L del Caballo (sin enemigos).");
-
+    // 🔵 Iluminar la casilla actual del Caballo
+    var casillaActual = BoardManagerGlobal.Instance.GetTileAt(posicionActual);
+    if (casillaActual != null)
+    {
+        casillaActual.HighlightMove(true);
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔵 Casilla central del Caballo ({posicionActual}) marcada como centro.");
+    }
     foreach (var delta in movimientosEnL)
     {
         Vector2Int destino = posicionActual + delta;
@@ -186,6 +192,7 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
     {
         rangoMovimientoBase = 1;
         rangoAtaque = 1;
+        StartCoroutine(EvaluarCasillasDeAtaque());
     }
 
     public void AumentarRangoMovimientoSilencioso(int cantidad)

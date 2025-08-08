@@ -649,21 +649,64 @@ public class BoardManagerGlobal : MonoBehaviour
             AgregarMensajeInterno("♙ Árbitro: Peón Rojo atacó. Ciclo completado.");
         }
     }
-    
+
     public bool EsCasillaAccesiblePorAliado(Vector2Int pos)
     {
-    if (pos.x < 0 || pos.y < 0 || pos.x > 7 || pos.y > 7)
-        return false;
-
-    var objetos = ObtenerObjetosEn(pos);
-
-    foreach (var obj in objetos)
-    {
-        if (obj is IFichaAliada || obj is IFichaInmovil)
+        if (pos.x < 0 || pos.y < 0 || pos.x > 7 || pos.y > 7)
             return false;
+
+        var objetos = ObtenerObjetosEn(pos);
+
+        foreach (var obj in objetos)
+        {
+            if (obj is IFichaAliada || obj is IFichaInmovil)
+                return false;
+        }
+
+        return true;
     }
 
-    return true;
+    public bool EsCasillaValidaYAccesible(Vector2Int coords)
+    {
+        if (coords.x < 0 || coords.y < 0 || coords.x > 7 || coords.y > 7)
+            return false;
+
+        return true;
+    }
+
+    public bool HayObstaculoEntreAliado(Vector2Int origen, Vector2Int destino, object origenFicha = null)
+{
+    int dx = destino.x - origen.x;
+    int dy = destino.y - origen.y;
+
+    if (!(dx == 0 || dy == 0 || Mathf.Abs(dx) == Mathf.Abs(dy)))
+        return false;
+
+    Vector2Int direccion = new Vector2Int(
+        dx == 0 ? 0 : (dx > 0 ? 1 : -1),
+        dy == 0 ? 0 : (dy > 0 ? 1 : -1)
+    );
+
+    Vector2Int paso = origen + direccion;
+    while (paso != destino)
+    {
+        if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
+            break;
+
+        var objetos = ObtenerObjetosEn(paso);
+        bool hayObstaculo = objetos.Any(obj =>
+            obj != origenFicha && (obj is IFicha || obj is IFichaInmovil || obj is IObjetoRecoleccionable));
+
+        if (hayObstaculo)
+        {
+            AgregarMensajeInterno($"🔰 Obstáculo detectado en {paso}. Línea bloqueada.");
+            return true;
+        }
+
+        paso += direccion;
+    }
+
+    return false;
     }
 
 

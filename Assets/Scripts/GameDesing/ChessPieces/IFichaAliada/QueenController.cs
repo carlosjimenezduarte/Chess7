@@ -4,7 +4,7 @@ using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 
-public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithPosition, IFicha, IFichaAliada
+public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPosition, IFicha, IFichaAliada
 {
     [Header("Rangos")]
     public int rangoMovimientoBase { get; set; } = 5;
@@ -21,19 +21,17 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
     private void Start()
     {
         posicionActual = GetComponent<PiecePositioner>()?.tileCoords ?? new Vector2Int(0, 0);
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♝ Alfil inició en {posicionActual}.");
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ Reina inició en {posicionActual}.");
 
         var objetosEnCasilla = BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual);
-        bool yaRegistrado = objetosEnCasilla.Contains(this);
-
-        if (!yaRegistrado)
+        if (!objetosEnCasilla.Contains(this))
         {
             BoardManagerGlobal.Instance.RegistrarMovimiento(this, posicionActual);
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"✅ ♝ Alfil registrado manualmente en {posicionActual}.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"✅ ♛ Reina registrada manualmente en {posicionActual}.");
         }
         else
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"ℹ️ ♝ Alfil ya estaba registrado.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"ℹ️ ♛ Reina ya estaba registrada.");
         }
 
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
@@ -45,7 +43,7 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
         GetComponent<MovableTileObject>().tileCoords = nuevaPos;
         GetComponent<PiecePositioner>().tileCoords = nuevaPos;
         BoardManagerGlobal.Instance?.RegistrarMovimiento(this, nuevaPos);
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♝ Alfil movido a {nuevaPos}.");
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ Reina movida a {nuevaPos}.");
     }
 
     public Vector2Int GetPosicionActual() => posicionActual;
@@ -65,26 +63,25 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
         var rey = FindFirstObjectByType<KingController>();
         if (rey == null || rey.puntosAccionActual <= 0)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("⚠️ Rey sin PA, Alfil no puede moverse.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("⚠️ Rey sin PA, Reina no puede moverse.");
             OcultarMovimientos();
             mostrandoMovimientos = false;
             return;
         }
 
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("🔍 Mostrando posibles movimientos diagonales del Alfil:");
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("🔍 Mostrando posibles movimientos de la Reina (diagonales y ortogonales):");
 
         Vector2Int[] direcciones = new Vector2Int[]
         {
-            new Vector2Int(1,1), new Vector2Int(-1,1),
-            new Vector2Int(1,-1), new Vector2Int(-1,-1)
+            Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right,
+            new Vector2Int(1,1), new Vector2Int(-1,1), new Vector2Int(1,-1), new Vector2Int(-1,-1)
         };
 
-        // 🔵 Centro
         var casillaActual = BoardManagerGlobal.Instance.GetTileAt(posicionActual);
         if (casillaActual != null)
         {
             casillaActual.HighlightMove(true);
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔵 Casilla central del Alfil ({posicionActual}) marcada como centro.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔵 Casilla central de la Reina ({posicionActual}) marcada como centro.");
         }
 
         foreach (var dir in direcciones)
@@ -92,14 +89,13 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
             for (int i = 1; i <= RangoMovimientoActual; i++)
             {
                 Vector2Int destino = posicionActual + dir * i;
-
-                // ⛔ corta si hay obstáculo (aliado, inmóvil o recoleccionable) antes de destino
                 if (BoardManagerGlobal.Instance.HayObstaculoEntreAliado(posicionActual, destino, this))
+                {
                     break;
-
+                }
                 if (!BoardManagerGlobal.Instance.EsCasillaAccesiblePorAliado(destino))
                 {
-                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"⛔ Casilla {destino} no accesible o fuera del tablero.");
+                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"⛔ Casilla {destino} no accesible.");
                     break;
                 }
 
@@ -136,13 +132,13 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
         {
             mostrandoMovimientos = true;
             MostrarMovimientoPosible();
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("🟢 Mostrando previsualización automática del Alfil.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("🟢 Mostrando previsualización de la Reina.");
         }
         else
         {
             mostrandoMovimientos = false;
             OcultarMovimientos();
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("🔴 Ocultando previsualización del Alfil.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("🔴 Ocultando previsualización de la Reina.");
         }
 
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
@@ -151,25 +147,21 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
     public void MoverA(Vector2Int nuevaPos, KingController rey)
     {
     if (!juegoActivo) return;
-    if (rey.puntosAccionActual <= 0)
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("🚫 Movimiento inválido. Rey sin PA.");
-        return;
-    }
 
     Vector2Int delta = nuevaPos - posicionActual;
     bool esDiagonal = Mathf.Abs(delta.x) == Mathf.Abs(delta.y);
-    int distancia = Mathf.Abs(delta.x); // = Mathf.Abs(delta.y)
+    bool esOrtogonales = delta.x == 0 || delta.y == 0;
+    int distancia = Mathf.Max(Mathf.Abs(delta.x), Mathf.Abs(delta.y));
 
-    // 1) Patrón + rango
-    if (!esDiagonal || distancia > RangoMovimientoActual)
+    // 1) Validación de patrón y rango
+    if (!(esDiagonal || esOrtogonales) || distancia > RangoMovimientoActual)
     {
         BoardManagerGlobal.Instance.AgregarMensajeInterno(
-            $"🚫 Movimiento inválido para el Alfil desde {posicionActual} a {nuevaPos} (patrón/rango).");
+            $"🚫 Movimiento inválido para la Reina desde {posicionActual} a {nuevaPos} (patrón/rango).");
         return;
     }
 
-    // 2) Obstáculo en trayecto (aliado / inmóvil / recoleccionable bloquea)
+    // 2) Bloquear si hay obstáculos entre origen y destino (incluye recoleccionables)
     if (BoardManagerGlobal.Instance.HayObstaculoEntreAliado(posicionActual, nuevaPos, this))
     {
         BoardManagerGlobal.Instance.AgregarMensajeInterno(
@@ -177,48 +169,29 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
         return;
     }
 
-    // 3) Analizar destino (enemigo/recoleccionable permitido)
+    // 3) Evaluar destino (enemigo o recoleccionable es válido)
     var objetosEnDestino = BoardManagerGlobal.Instance.ObtenerObjetosEn(nuevaPos);
     var enemigo = objetosEnDestino.FirstOrDefault(o => o is IFichaEnemiga);
 
-    // 4) Simular recorrido SOLO para efectos (no mover todavía)
-    Vector2Int cursor = posicionActual;
-    int stepX = (nuevaPos.x > cursor.x) ? 1 : -1;
-    int stepY = (nuevaPos.y > cursor.y) ? 1 : -1;
-    while (cursor != nuevaPos)
-    {
-        cursor.x += stepX;
-        cursor.y += stepY;
-
-        // Disparar efectos en cada casilla intermedia/destino
-        foreach (ITileEffect efecto in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ITileEffect>())
-            efecto.RevisarSiAlfilLlegó(cursor, this);
-    }
-
-    // 5) Mover una sola vez (coherente con Torre/Reina)
+    // 4) Mover
     SetPosicionActual(nuevaPos);
     transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(nuevaPos);
 
-    // 6) Resolver combate si hay enemigo
+    // 5) Resolver combate si hay enemigo en destino
     if (enemigo != null)
     {
         if (enemigo is IPieceWithPosition enemigoPos)
             enemigoPos.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
 
         Destroy(((MonoBehaviour)enemigo).gameObject);
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"💀 Alfil eliminó a un enemigo en {nuevaPos}.");
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"💀 Reina eliminó a un enemigo en {nuevaPos}.");
     }
 
-    // 7) Ajuste de rango temporal si se usó más que el base
-    if (distancia > rangoMovimientoBase)
-    {
-        int extraUsado = distancia - rangoMovimientoBase;
-        rangoMovimientoExtra = Mathf.Max(0, rangoMovimientoExtra - extraUsado);
-        BoardManagerGlobal.Instance.AgregarMensajeInterno(
-            $"🧪 Rango temporal reducido en {extraUsado}. Rango restante: {RangoMovimientoActual}.");
-    }
+    // 6) Disparar efectos (incluye recoger pociones/llaves si tu ITileEffect lo maneja)
+    foreach (ITileEffect efecto in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ITileEffect>())
+        efecto.RevisarSiReinaLlegó(nuevaPos, null);
 
-    // 8) Coste y refrescos
+    // 7) Coste y refrescos
     rey.puntosAccionActual--;
     OcultarMovimientos();
     MostrarMovimientoPosible();
@@ -228,16 +201,17 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
     BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
+
     private IEnumerator EvaluarCasillasDeAtaque()
     {
     yield return new WaitForSeconds(0.2f);
 
-    BoardManagerGlobal.Instance.AgregarMensajeInterno("🔁 Evaluando casillas de ataque reales del Alfil...");
+    BoardManagerGlobal.Instance.AgregarMensajeInterno("🔁 Evaluando casillas de ataque reales de la Reina...");
 
     Vector2Int[] direcciones = new Vector2Int[]
     {
-        new Vector2Int(1,1), new Vector2Int(-1,1),
-        new Vector2Int(1,-1), new Vector2Int(-1,-1)
+        Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right,
+        new Vector2Int(1,1), new Vector2Int(-1,1), new Vector2Int(1,-1), new Vector2Int(-1,-1)
     };
 
     foreach (var dir in direcciones)
@@ -250,7 +224,7 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
             if (destino.x < 0 || destino.y < 0 || destino.x > 7 || destino.y > 7)
                 break;
 
-            // 🧱 Si hay obstáculo ENTRE origen y destino, cortar la línea
+            // 🧱 Si hay obstáculo ENTRE origen y destino, no seguimos en esta dirección
             if (BoardManagerGlobal.Instance.HayObstaculoEntreAliado(posicionActual, destino, this))
                 break;
 
@@ -263,15 +237,11 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
             if (objetos.Any(obj => obj is IFichaAliada || obj is IFichaInmovil))
                 break;
 
-            // 🎒 Recoleccionable en destino también bloquea (no “mires” más allá)
-            if (objetos.Any(obj => obj is IObjetoRecoleccionable))
-                break;
-
             // 🎯 Enemigo en destino: marcar y cortar la línea
             if (objetos.Any(obj => obj is IFichaEnemiga))
             {
                 tile.HighlightEnemyAttack(true);
-                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🎯 Casilla {destino} marcada como zona de ataque (post-movimiento).");
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🎯 Casilla {destino} marcada como zona de ataque.");
                 break;
             }
 
@@ -283,7 +253,7 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
     public void AumentarRangoMovimiento(int cantidad)
     {
         rangoMovimientoExtra += cantidad;
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"📏 Alfil ganó +{cantidad} de rango temporal. Total: {RangoMovimientoActual}.");
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"📏 Reina ganó +{cantidad} de rango temporal. Total: {RangoMovimientoActual}.");
         MostrarMovimientoPosible();
         mostrandoMovimientos = true;
     }
@@ -301,7 +271,7 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
     public void AumentarRangoMovimientoSilencioso(int cantidad)
     {
         rangoMovimientoExtra += cantidad;
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Alfil ganó +{cantidad} de rango temporal en modo silencioso. Total: {RangoMovimientoActual}.");
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Reina ganó +{cantidad} de rango en silencio. Total: {RangoMovimientoActual}.");
     }
 
     public bool EstaActivo() => juegoActivo;
@@ -309,34 +279,36 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
 
     public void RecibirPenalizacionReina()
     {
-        var reyalfil = FindFirstObjectByType<KingController>();
-        if (reyalfil != null)
+        var reyreina = FindFirstObjectByType<KingController>();
+        if (reyreina != null)
         {
-            reyalfil.puntosAccionActual -= 1;
+            reyreina.puntosAccionActual -= 1;
             FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ Alfil en {posicionActual} penalizado: -1 PA.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ Reina en {posicionActual} penalizada: -1 PA.");
         }
     }
 
     public void RecibirPenalizacionTorre()
     {
-        var reyalfiltorre = FindFirstObjectByType<KingController>();
-        if (reyalfiltorre != null)
+        var reyreinatorre = FindFirstObjectByType<KingController>();
+        if (reyreinatorre != null)
         {
-            reyalfiltorre.puntosAccionActual -= 1;
+            reyreinatorre.puntosAccionActual -= 1;
             FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♜ Alfil en {posicionActual} penalizado: -1 PA.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♜ Reina en {posicionActual} penalizada por Torre: -1 PA.");
         }
     }
 
     public void RecibirPenalizacionAlfil()
     {
-        var reyalfilalfil = FindFirstObjectByType<KingController>();
-        if (reyalfilalfil != null)
+        var reyreinaalfil = FindFirstObjectByType<KingController>();
+        if (reyreinaalfil != null)
         {
-            reyalfilalfil.puntosAccionActual -= 1;
+            reyreinaalfil.puntosAccionActual -= 1;
             FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♝ Alfil en {posicionActual} penalizado: -1 PA.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♝ Reina en {posicionActual} penalizada por Alfil: -1 PA.");
         }
     }
+
+    
 }

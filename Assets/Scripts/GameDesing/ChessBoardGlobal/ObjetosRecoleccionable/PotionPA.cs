@@ -277,5 +277,13 @@ public class PotionPA : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPie
     public void RevisarSiCaballoLlegó(Vector2Int posicionCaballo, KnightController caballo)
     {
         //
+    }
+    public void RevisarSiTorreLlegó(Vector2Int posicionTorre, RookController torre)
+    {
+        //
     } 
+    public void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina)
+    {
+      //
+    }
 }

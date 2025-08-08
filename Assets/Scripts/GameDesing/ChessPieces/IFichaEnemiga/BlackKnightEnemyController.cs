@@ -142,6 +142,24 @@ public class BlackKnightEnemyController : MonoBehaviour, IPointerClickHandler, I
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
+    public void RevisarSiTorreLlegó(Vector2Int posicionTorre, RookController torre)
+    {
+        RevisarAmenazaAPieza(posicionTorre, () =>
+        {
+            StartCoroutine(ProcesarAmenazasDesdeArbitro());
+        });
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    }
+
+    public void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina)
+    {
+        RevisarAmenazaAPieza(posicionReina, () =>
+        {
+            StartCoroutine(ProcesarAmenazasDesdeArbitro());
+        });
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    } 
+
     private IEnumerator MatarPiezaDespuesDelay(MonoBehaviour pieza, Vector2Int posicion)
     {
         SetPosicionActual(posicion);

@@ -287,4 +287,14 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPi
     {
         //
     }
+
+    public void RevisarSiTorreLlegó(Vector2Int posicionTorre, RookController torre)
+    {
+        //
+    } 
+    
+    public void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina)
+    {
+      //
+    }
 }

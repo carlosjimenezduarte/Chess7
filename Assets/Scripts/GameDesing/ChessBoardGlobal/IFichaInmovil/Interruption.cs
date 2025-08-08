@@ -159,4 +159,13 @@ public class Interruption : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, I
     {
         //
     }
+    public void RevisarSiTorreLlegó(Vector2Int posicionTorre, RookController torre)
+    {
+        //
+    } 
+    
+    public void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina)
+    {
+      //
+    }
 }
