@@ -166,6 +166,26 @@ public class KnightEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
             peon.OcultarMovimientos();
             peon.mostrandoMovimientos = false;
         }
+        if (pieza is RookController torre)
+        {
+            torre.OcultarMovimientos();
+            torre.mostrandoMovimientos = false;
+        }
+        if (pieza is BishopController alfil)
+        {
+            alfil.OcultarMovimientos();
+            alfil.mostrandoMovimientos = false;
+        }
+        if (pieza is KnightController caballo)
+        {
+            caballo.OcultarMovimientos();
+            caballo.mostrandoMovimientos = false;
+        }
+        if (pieza is QueenController reina)
+        {
+            reina.OcultarMovimientos();
+            reina.mostrandoMovimientos = false;
+        }
 
         Destroy(pieza.gameObject);
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"💀 {pieza.name} ejecutado por el Caballo en {posicion}");

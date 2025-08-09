@@ -666,14 +666,7 @@ public class BoardManagerGlobal : MonoBehaviour
         return true;
     }
 
-    public bool EsCasillaValidaYAccesible(Vector2Int coords)
-    {
-        if (coords.x < 0 || coords.y < 0 || coords.x > 7 || coords.y > 7)
-            return false;
-
-        return true;
-    }
-
+    
     public bool HayObstaculoEntreAliado(Vector2Int origen, Vector2Int destino, object origenFicha = null)
 {
     int dx = destino.x - origen.x;

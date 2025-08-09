@@ -209,7 +209,7 @@ public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
 
     private IEnumerator EvaluarCasillasDeAtaque()
-{
+    {
     yield return new WaitForSeconds(0.2f);
 
     BoardManagerGlobal.Instance.AgregarMensajeInterno("🔁 Evaluando casillas de ataque reales de la Torre...");
@@ -257,7 +257,7 @@ public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
             // Sin enemigo: continuar explorando hasta rangoAtaque
         }
     }
-}
+    }
 
 
     public void AumentarRangoMovimiento(int cantidad)

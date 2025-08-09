@@ -199,6 +199,26 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
             peon.OcultarMovimientos();
             peon.mostrandoMovimientos = false;
         }
+        if (pieza is RookController torre)
+        {
+            torre.OcultarMovimientos();
+            torre.mostrandoMovimientos = false;
+        }
+        if (pieza is BishopController alfil)
+        {
+            alfil.OcultarMovimientos();
+            alfil.mostrandoMovimientos = false;
+        }
+        if (pieza is KnightController caballo)
+        {
+            caballo.OcultarMovimientos();
+            caballo.mostrandoMovimientos = false;
+        }
+        if (pieza is QueenController reina)
+        {
+            reina.OcultarMovimientos();
+            reina.mostrandoMovimientos = false;
+        }
 
         Destroy(pieza.gameObject);
 
