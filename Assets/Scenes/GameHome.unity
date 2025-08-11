@@ -2933,7 +2933,7 @@ GameObject:
   - component: {fileID: 94245501}
   - component: {fileID: 94245500}
   m_Layer: 5
-  m_Name: KeyIcon29
+  m_Name: TrophyGreen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2978,7 +2978,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d0fb90467f1e5bc44bc7ae6a2baf5f58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: cfbaf25a90fb8114d9aab3608da78819, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3083,7 +3083,7 @@ GameObject:
   - component: {fileID: 105147723}
   - component: {fileID: 105147722}
   m_Layer: 5
-  m_Name: KeyIcon6
+  m_Name: Parchment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3128,7 +3128,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d0fb90467f1e5bc44bc7ae6a2baf5f58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2cae909b684cca14299787b4dcf24394, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4249,7 +4249,7 @@ GameObject:
   - component: {fileID: 143314432}
   - component: {fileID: 143314431}
   m_Layer: 5
-  m_Name: KeyIcon60
+  m_Name: Medal6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4294,7 +4294,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d0fb90467f1e5bc44bc7ae6a2baf5f58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7f1afd6326507454fb1c03cc90ef2c4e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6562,7 +6562,7 @@ GameObject:
   - component: {fileID: 230945424}
   - component: {fileID: 230945423}
   m_Layer: 5
-  m_Name: KeyIcon49
+  m_Name: Parchment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6607,7 +6607,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d0fb90467f1e5bc44bc7ae6a2baf5f58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2cae909b684cca14299787b4dcf24394, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -8826,7 +8826,7 @@ GameObject:
   - component: {fileID: 310501070}
   - component: {fileID: 310501069}
   m_Layer: 5
-  m_Name: KeyIcon59
+  m_Name: Medal5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8871,7 +8871,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d0fb90467f1e5bc44bc7ae6a2baf5f58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 293e6dcdcfe0074448305e1b0c87ef31, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -9149,6 +9149,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7492159680449588785, guid: c7262c8da0f03c34db10bb9e59422a40, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1631133932}
+    - targetCorrespondingSourceObject: {fileID: 7492159680449588785, guid: c7262c8da0f03c34db10bb9e59422a40, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 420668160}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 51733214830382906, guid: c7262c8da0f03c34db10bb9e59422a40, type: 3}
       insertIndex: -1
@@ -9849,7 +9852,7 @@ GameObject:
   - component: {fileID: 361938098}
   - component: {fileID: 361938097}
   m_Layer: 5
-  m_Name: KeyIcon39
+  m_Name: Medal1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9864,7 +9867,7 @@ RectTransform:
   m_GameObject: {fileID: 361938095}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2071251299}
@@ -9894,7 +9897,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d0fb90467f1e5bc44bc7ae6a2baf5f58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1925b69577bfb12478e19c7b663d0f06, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -11412,6 +11415,81 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 51733214830382906, guid: c7262c8da0f03c34db10bb9e59422a40, type: 3}
   m_PrefabInstance: {fileID: 471290525}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &420668159
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 420668160}
+  - component: {fileID: 420668162}
+  - component: {fileID: 420668161}
+  m_Layer: 5
+  m_Name: CloseDoor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &420668160
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 420668159}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 317787489}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &420668161
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 420668159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 529f5b68f4619ac42b0ddc77939da3fe, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &420668162
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 420668159}
+  m_CullTransparentMesh: 1
 --- !u!1 &421816669
 GameObject:
   m_ObjectHideFlags: 0
@@ -12164,7 +12242,7 @@ PrefabInstance:
     - target: {fileID: 2591835017537445500, guid: 5c49bb08e91e8ca4d9980da3c05434ad, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: d0fb90467f1e5bc44bc7ae6a2baf5f58, type: 3}
+      objectReference: {fileID: 6109954238716515793, guid: 581746b3b0b667e4dbbe8afd005f5c8f, type: 3}
     - target: {fileID: 5593312135406741877, guid: 5c49bb08e91e8ca4d9980da3c05434ad, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -19336,7 +19414,7 @@ GameObject:
   - component: {fileID: 776393856}
   - component: {fileID: 776393855}
   m_Layer: 5
-  m_Name: KeyIcon14
+  m_Name: Parchment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19381,7 +19459,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d0fb90467f1e5bc44bc7ae6a2baf5f58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2cae909b684cca14299787b4dcf24394, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -21361,7 +21439,7 @@ GameObject:
   - component: {fileID: 824010953}
   - component: {fileID: 824010952}
   m_Layer: 5
-  m_Name: KeyIcon24
+  m_Name: TrophyBlue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21406,7 +21484,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d0fb90467f1e5bc44bc7ae6a2baf5f58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 944198efd38859c45b9081be6c326afe, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -23980,7 +24058,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &912813723
 RectTransform:
   m_ObjectHideFlags: 0
@@ -25814,7 +25892,7 @@ GameObject:
   - component: {fileID: 969344115}
   - component: {fileID: 969344114}
   m_Layer: 5
-  m_Name: KeyIcon44
+  m_Name: Parchment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25859,7 +25937,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d0fb90467f1e5bc44bc7ae6a2baf5f58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2cae909b684cca14299787b4dcf24394, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -32538,7 +32616,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 5000
+  m_text: 500.000
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5cb4fe607617d814197a0edd1d3c0331, type: 2}
   m_sharedMaterial: {fileID: 3636752808091423724, guid: 5cb4fe607617d814197a0edd1d3c0331, type: 2}
@@ -32565,8 +32643,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 50
-  m_fontSizeBase: 50
+  m_fontSize: 35
+  m_fontSizeBase: 35
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -33336,7 +33414,7 @@ GameObject:
   - component: {fileID: 1222719860}
   - component: {fileID: 1222719859}
   m_Layer: 5
-  m_Name: KeyIcon61
+  m_Name: Crown of the Key
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33381,7 +33459,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d0fb90467f1e5bc44bc7ae6a2baf5f58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2ba56cad3f6fb9b49ab1c5ae7fdafdf4, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -34822,7 +34900,7 @@ GameObject:
   - component: {fileID: 1285927175}
   - component: {fileID: 1285927174}
   m_Layer: 5
-  m_Name: KeyIcon53
+  m_Name: Parchment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -34867,7 +34945,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d0fb90467f1e5bc44bc7ae6a2baf5f58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2cae909b684cca14299787b4dcf24394, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -35457,7 +35535,7 @@ GameObject:
   - component: {fileID: 1304803739}
   - component: {fileID: 1304803738}
   m_Layer: 5
-  m_Name: KeyIcon63
+  m_Name: Tooth of the Kingdom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35502,7 +35580,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d0fb90467f1e5bc44bc7ae6a2baf5f58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 27fb800ca1b989a4c9f35c0459284417, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -36901,7 +36979,7 @@ GameObject:
   - component: {fileID: 1374700091}
   - component: {fileID: 1374700090}
   m_Layer: 5
-  m_Name: KeyIcon63
+  m_Name: Trophy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -36946,7 +37024,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d0fb90467f1e5bc44bc7ae6a2baf5f58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1065617df07e91c43b707d6780e44fc5, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -40244,7 +40322,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1560342288
 RectTransform:
   m_ObjectHideFlags: 0
@@ -40633,7 +40711,7 @@ GameObject:
   - component: {fileID: 1586499653}
   - component: {fileID: 1586499652}
   m_Layer: 5
-  m_Name: KeyIcon49
+  m_Name: Parchment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -40678,7 +40756,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d0fb90467f1e5bc44bc7ae6a2baf5f58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2cae909b684cca14299787b4dcf24394, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -41402,7 +41480,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d0fb90467f1e5bc44bc7ae6a2baf5f58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2cae909b684cca14299787b4dcf24394, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -41873,7 +41951,7 @@ GameObject:
   - component: {fileID: 1631133934}
   - component: {fileID: 1631133933}
   m_Layer: 5
-  m_Name: KeyIcon0
+  m_Name: Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -42459,7 +42537,7 @@ GameObject:
   - component: {fileID: 1659672947}
   - component: {fileID: 1659672946}
   m_Layer: 5
-  m_Name: KeyIcon16
+  m_Name: Medal4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -42504,7 +42582,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d0fb90467f1e5bc44bc7ae6a2baf5f58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 359e96b865eb5554397da2a812b8c06b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -42654,7 +42732,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d0fb90467f1e5bc44bc7ae6a2baf5f58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2cae909b684cca14299787b4dcf24394, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -43672,7 +43750,7 @@ GameObject:
   - component: {fileID: 1708385974}
   - component: {fileID: 1708385973}
   m_Layer: 5
-  m_Name: KeyIcon62
+  m_Name: Soul Column
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -43717,7 +43795,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d0fb90467f1e5bc44bc7ae6a2baf5f58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2199985a9c804c04ea69924d3f014381, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -46561,7 +46639,7 @@ GameObject:
   - component: {fileID: 1819458661}
   - component: {fileID: 1819458660}
   m_Layer: 5
-  m_Name: KeyIcon5
+  m_Name: Parchment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46606,7 +46684,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d0fb90467f1e5bc44bc7ae6a2baf5f58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2cae909b684cca14299787b4dcf24394, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -47068,7 +47146,7 @@ GameObject:
   - component: {fileID: 1842497181}
   - component: {fileID: 1842497180}
   m_Layer: 5
-  m_Name: KeyIcon39
+  m_Name: Parchment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47113,7 +47191,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d0fb90467f1e5bc44bc7ae6a2baf5f58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2cae909b684cca14299787b4dcf24394, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -47659,7 +47737,7 @@ GameObject:
   - component: {fileID: 1867046802}
   - component: {fileID: 1867046801}
   m_Layer: 5
-  m_Name: KeyIcon59
+  m_Name: Medal2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47704,7 +47782,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d0fb90467f1e5bc44bc7ae6a2baf5f58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 46e3536d4d5be7046bee4cb65efb9f44, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -47779,7 +47857,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Condecoraciones
+  m_text: Notifications
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 20c8d30884a9e7141becd0a024d35605, type: 2}
   m_sharedMaterial: {fileID: 598931680454013891, guid: 20c8d30884a9e7141becd0a024d35605, type: 2}
@@ -49228,7 +49306,7 @@ GameObject:
   - component: {fileID: 1973892417}
   - component: {fileID: 1973892416}
   m_Layer: 5
-  m_Name: KeyIcon26
+  m_Name: TrophyRed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -49273,7 +49351,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d0fb90467f1e5bc44bc7ae6a2baf5f58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f8beebf14227499448bf1b82077b268d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -51569,7 +51647,7 @@ GameObject:
   - component: {fileID: 2063086192}
   - component: {fileID: 2063086191}
   m_Layer: 5
-  m_Name: KeyIcon35
+  m_Name: Medal3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -51614,7 +51692,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d0fb90467f1e5bc44bc7ae6a2baf5f58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d57184f2d4c7cf74cbcf104a176faaaa, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

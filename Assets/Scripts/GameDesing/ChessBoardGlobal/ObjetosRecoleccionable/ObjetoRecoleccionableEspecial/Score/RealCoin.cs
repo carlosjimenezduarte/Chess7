@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Linq;
 
 
-public class Key : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRecoleccionableEspecial, IPieceWithPosition
+public class RealCoin : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRecoleccionableEspecial, IPieceWithPosition
 {
     public Vector2Int tileCoords;
     public bool esInamovible = false;
@@ -29,7 +29,7 @@ public class Key : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRe
         if (movable != null) movable.activoEnTablero = true;
 
         BoardManagerGlobal.Instance?.RegistrarMovimiento(this, tileCoords);
-        BoardManagerGlobal.Instance?.AgregarMensajeInterno($"🗝️ Llave posicionada en {tileCoords}.");
+        BoardManagerGlobal.Instance?.AgregarMensajeInterno($"💰 Moneda posicionada en {tileCoords}.");
     }
 
     public void RevisarSiFichaAliadaLlegó(Vector2Int posicion, IFichaAliada ficha)
@@ -37,7 +37,7 @@ public class Key : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRe
         if (yaRecolectado || tileCoords != posicion) return;
 
         yaRecolectado = true;
-        BoardManagerGlobal.Instance?.AgregarMensajeInterno($"🔑 Llave recolectada por {ficha.GetType().Name} en {posicion}.");
+        BoardManagerGlobal.Instance?.AgregarMensajeInterno($"💰 Moneda recolectada por {ficha.GetType().Name} en {posicion}.");
 
         // Puntaje
         var score = FindFirstObjectByType<PlayerScore>();
@@ -54,11 +54,7 @@ public class Key : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRe
     public void RevisarSiReyLlegó(Vector2Int posicion, KingController rey) =>
         RevisarSiFichaAliadaLlegó(posicion, rey);
 
-    public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga)
-    {
-        //RevisarSiReinaEnemigaLlegó(posicion, rey);
-    }
-
+    
     public void RevisarSiFichaLlegó(Vector2Int posicion, IFicha ficha)
     {
         if (ficha is IFichaAliada aliada)
@@ -67,12 +63,12 @@ public class Key : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRe
 
     public void VerificarTurnoActual(int turnoActual)
     {
-        // Nada que hacer: la llave no viene del futuro
+        // Nada que hacer: la Moneda no viene del futuro
     }
 
     public bool EsInamovible() => esInamovible;
 
-    public int ObtenerValorPuntaje() => 100; // Valor configurable
+    public int ObtenerValorPuntaje() => 5; // Valor configurable
 
     public void SetPosicionActual(Vector2Int nuevaPos)
     {
@@ -99,9 +95,29 @@ public class Key : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRe
 
     public bool EstaRealmenteEnTablero() =>
         tileCoords.x >= 0 && tileCoords.y >= 0 && tileCoords.x <= 7 && tileCoords.y <= 7;
+
+     public void RevisarSiAlfilLlegó(Vector2Int posicionAlfil, BishopController alfil)
+    {
+        //
+    }
+
+    public void RevisarSiCaballoLlegó(Vector2Int posicionCaballo, KnightController caballo)
+    {
+        //
+    }
+
+    public void RevisarSiTorreLlegó(Vector2Int posicionTorre, RookController torre)
+    {
+        //
+    } 
+    
+    public void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina)
+    {
+      //
+    }
     public void RevisarSiReinaNegraEnemigaLlegó(Vector2Int posicion, BlackQueenEnemyController reinaenemiga)
     {
-        //RevisarSiReinaEnemigaLlegó(posicion, rey);
+        //
     }
 
     public void RevisarSiTorreNegraEnemigaLlegó(Vector2Int posicion, BlackRookEnemyController torrenegraenemiga)
@@ -117,6 +133,11 @@ public class Key : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRe
     {
         //
 
+    }
+
+    public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga)
+    {
+        //RevisarSiReinaEnemigaLlegó(posicion, rey);
     }
 
     public void RevisarSiTorreEnemigaLlegó(Vector2Int posicion, RookEnemyController torreenemiga)
@@ -139,23 +160,5 @@ public class Key : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRe
         //   
     }
 
-    public void RevisarSiAlfilLlegó(Vector2Int posicionAlfil, BishopController alfil)
-    {
-        //
-    }
-
-    public void RevisarSiCaballoLlegó(Vector2Int posicionCaballo, KnightController caballo)
-    {
-        //
-    }
-
-    public void RevisarSiTorreLlegó(Vector2Int posicionTorre, RookController torre)
-    {
-        //
-    } 
-    
-    public void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina)
-    {
-      //
-    }
+   
 }
