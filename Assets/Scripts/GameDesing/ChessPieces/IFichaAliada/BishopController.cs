@@ -176,9 +176,15 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
             $"🛑 Movimiento bloqueado: hay un obstáculo entre {posicionActual} y {nuevaPos}.");
         return;
     }
+    
+    if (rey.puntosAccionActual <= 0)
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("🚫 Movimiento inválido. Rey sin PA.");
+        return;
+    }
 
     // 3) Analizar destino (enemigo/recoleccionable permitido)
-    var objetosEnDestino = BoardManagerGlobal.Instance.ObtenerObjetosEn(nuevaPos);
+        var objetosEnDestino = BoardManagerGlobal.Instance.ObtenerObjetosEn(nuevaPos);
     var enemigo = objetosEnDestino.FirstOrDefault(o => o is IFichaEnemiga);
 
     // 4) Simular recorrido SOLO para efectos (no mover todavía)

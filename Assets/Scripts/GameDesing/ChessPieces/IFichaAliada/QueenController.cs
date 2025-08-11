@@ -168,9 +168,15 @@ public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPo
             $"🛑 Movimiento bloqueado: hay un obstáculo entre {posicionActual} y {nuevaPos}.");
         return;
     }
+    
+    if (rey.puntosAccionActual <= 0)
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("🚫 Movimiento inválido. Rey sin PA.");
+        return;
+    }
 
     // 3) Evaluar destino (enemigo o recoleccionable es válido)
-    var objetosEnDestino = BoardManagerGlobal.Instance.ObtenerObjetosEn(nuevaPos);
+        var objetosEnDestino = BoardManagerGlobal.Instance.ObtenerObjetosEn(nuevaPos);
     var enemigo = objetosEnDestino.FirstOrDefault(o => o is IFichaEnemiga);
 
     // 4) Mover

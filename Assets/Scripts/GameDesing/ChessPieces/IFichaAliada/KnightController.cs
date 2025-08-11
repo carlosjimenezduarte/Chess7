@@ -149,12 +149,18 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"🚫 Movimiento inválido para el Caballo desde {posicionActual} a {nuevaPos}.");
             return;
         }
+        if (rey.puntosAccionActual <= 0)
+        {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("🚫 Movimiento inválido. Rey sin PA.");
+        return;
+        }
 
         var objetosEnDestino = BoardManagerGlobal.Instance.ObtenerObjetosEn(nuevaPos);
         var enemigo = objetosEnDestino.FirstOrDefault(o => o is IFichaEnemiga);
 
         SetPosicionActual(nuevaPos);
         transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(nuevaPos);
+        
 
         if (enemigo != null)
         {
