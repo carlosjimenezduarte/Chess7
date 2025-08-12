@@ -185,10 +185,19 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
 
     public void AumentarRangoMovimiento(int cantidad)
     {
-        rangoMovimientoBase += cantidad;
+        var reycaballoPA = FindFirstObjectByType<KingController>();
+        reycaballoPA.puntosAccionActual += cantidad;
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"🏇 Caballo ganó +{cantidad} de rango temporal. Total: {RangoMovimientoActual}.");
         MostrarMovimientoPosible();
         mostrandoMovimientos = true;
+        // 🔹 Actualizar HUD inmediatamente
+            var gameManager = FindFirstObjectByType<ChessGameManager>();
+            if (gameManager != null)
+                gameManager.ActualizarHUD();
+
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                $"♛ Caballo en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reycaballoPA.puntosAccionActual}"
+            );
     }
 
     public void DesactivarJuego() => juegoActivo = false;
@@ -203,8 +212,17 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
 
     public void AumentarRangoMovimientoSilencioso(int cantidad)
     {
-        rangoMovimientoBase += cantidad;
+        var reycaballoPASilencioso = FindFirstObjectByType<KingController>();
+        reycaballoPASilencioso.puntosAccionActual += cantidad;
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Caballo ganó +{cantidad} de rango temporal en modo silencioso. Total: {RangoMovimientoActual}.");
+        // 🔹 Actualizar HUD inmediatamente
+            var gameManager = FindFirstObjectByType<ChessGameManager>();
+            if (gameManager != null)
+                gameManager.ActualizarHUD();
+
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                $"♛ Caballo en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reycaballoPASilencioso.puntosAccionActual}"
+            );
     }
 
     public bool EstaActivo() => juegoActivo;
@@ -223,7 +241,7 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
                 gameManager.ActualizarHUD();
 
             BoardManagerGlobal.Instance.AgregarMensajeInterno(
-                $"♛ Peón en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reycaballo.puntosAccionActual}"
+                $"♛ Caballo en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reycaballo.puntosAccionActual}"
             );
         }
     }
@@ -241,7 +259,7 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
                 gameManager.ActualizarHUD();
 
             BoardManagerGlobal.Instance.AgregarMensajeInterno(
-                $"♜ Peón en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reycaballotorre.puntosAccionActual}"
+                $"♜ Caballo en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reycaballotorre.puntosAccionActual}"
             );
         }
     }
@@ -259,7 +277,7 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
                 gameManager.ActualizarHUD();
 
             BoardManagerGlobal.Instance.AgregarMensajeInterno(
-                $"♝ Peón en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reycaballoalfil.puntosAccionActual}"
+                $"♝ Caballo en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reycaballoalfil.puntosAccionActual}"
             );
         }
     }
