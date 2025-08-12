@@ -185,7 +185,7 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
 
     public void AumentarRangoMovimiento(int cantidad)
     {
-        rangoMovimientoExtra += cantidad;
+        rangoMovimientoBase += cantidad;
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"🏇 Caballo ganó +{cantidad} de rango temporal. Total: {RangoMovimientoActual}.");
         MostrarMovimientoPosible();
         mostrandoMovimientos = true;
@@ -203,7 +203,7 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
 
     public void AumentarRangoMovimientoSilencioso(int cantidad)
     {
-        rangoMovimientoExtra += cantidad;
+        rangoMovimientoBase += cantidad;
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Caballo ganó +{cantidad} de rango temporal en modo silencioso. Total: {RangoMovimientoActual}.");
     }
 

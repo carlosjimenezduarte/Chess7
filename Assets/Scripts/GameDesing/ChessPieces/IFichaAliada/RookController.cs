@@ -269,7 +269,7 @@ public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
     public void AumentarRangoMovimiento(int cantidad)
     {
-        rangoMovimientoExtra += cantidad;
+        rangoMovimientoBase += cantidad;
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"📏 Torre ganó +{cantidad} de rango temporal. Total: {RangoMovimientoActual}.");
         MostrarMovimientoPosible();
         mostrandoMovimientos = true;
@@ -287,7 +287,7 @@ public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
     public void AumentarRangoMovimientoSilencioso(int cantidad)
     {
-        rangoMovimientoExtra += cantidad;
+        rangoMovimientoBase += cantidad;
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Torre ganó +{cantidad} de rango temporal en modo silencioso. Total: {RangoMovimientoActual}.");
     }
 

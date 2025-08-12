@@ -127,14 +127,25 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPi
 
     public void RevisarSiFichaAliadaLlegó(Vector2Int posicionFicha, IFichaAliada ficha)
     {
-        if (tileCoords != posicionFicha || desactivado) return;
-        if (ficha is KingController) return;
+    if (tileCoords != posicionFicha || desactivado) return;
+    if ((ficha as Object) == null) return; // Unity-null (o destruido)
+    if (ficha is KingController) return;
 
-        desactivado = true;
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧪 {name} detecta ficha aliada ({ficha.GetType().Name}) encima. Bonus de rango aplicado.");
+    desactivado = true; // evitamos doble aplicación en el mismo frame
 
-        MethodInfo metodo = ficha.GetType().GetMethod("AumentarRangoMovimientoSilencioso")
-                     ?? ficha.GetType().GetMethod("AumentarRangoMovimiento");
+    // Nombre seguro sin arriesgar NRE
+    string nombreFicha = "FichaAliada";
+    try { nombreFicha = ficha.GetType().Name; } catch { }
+
+    BoardManagerGlobal.Instance?.AgregarMensajeInterno(
+        $"🧪 {name} detecta ficha aliada ({nombreFicha}) encima. Bonus de rango aplicado."
+    );
+
+    try
+    {
+        var tipo = ficha.GetType();
+        var metodo = tipo.GetMethod("AumentarRangoMovimientoSilencioso", new[] { typeof(int) })
+                  ?? tipo.GetMethod("AumentarRangoMovimiento",          new[] { typeof(int) });
 
         if (metodo != null)
         {
@@ -142,10 +153,19 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPi
         }
         else
         {
-            Debug.LogWarning($"⚠️ {ficha.GetType().Name} no implementa AumentarRangoMovimiento ni su versión silenciosa.");
+            Debug.LogWarning($"⚠️ {nombreFicha} no implementa AumentarRangoMovimiento ni su versión silenciosa.");
         }
+    }
+    catch (TargetInvocationException ex)
+    {
+        Debug.LogError($"💥 Error interno al aplicar bonus a {nombreFicha}: {ex.InnerException?.Message}");
+    }
+    catch (System.Exception ex)
+    {
+        Debug.LogError($"💥 Error al invocar método de bonus en {nombreFicha}: {ex.Message}");
+    }
 
-        Destroy(gameObject);
+    Destroy(gameObject);
     }
 
     public void ExiliarADimensionDivina()
@@ -280,21 +300,21 @@ public class Potion1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPi
 
     public void RevisarSiAlfilLlegó(Vector2Int posicionAlfil, BishopController alfil)
     {
-        //
+        RevisarSiFichaAliadaLlegó(posicionAlfil, alfil);
     }
 
     public void RevisarSiCaballoLlegó(Vector2Int posicionCaballo, KnightController caballo)
     {
-        //
+        RevisarSiFichaAliadaLlegó(posicionCaballo, caballo);
     }
 
     public void RevisarSiTorreLlegó(Vector2Int posicionTorre, RookController torre)
     {
-        //
+        RevisarSiFichaAliadaLlegó(posicionTorre, torre);
     } 
     
     public void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina)
     {
-      //
+       RevisarSiFichaAliadaLlegó(posicionReina, reina);
     }
 }

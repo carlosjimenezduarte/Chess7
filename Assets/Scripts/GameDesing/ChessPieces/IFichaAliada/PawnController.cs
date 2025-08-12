@@ -198,7 +198,7 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
     }
 
     public void MoverA(Vector2Int nuevaPos, KingController rey)
-{
+    {
     if (!juegoActivo) return;
 
     // ⚔️ PRIORIDAD: Ataque diagonal a 1 casilla
@@ -283,7 +283,7 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(siguiente);
 
         // Aliado o inmóvil → bloquea
-        if (objetos.Any(o => o is IFichaAliada || o is IFichaInmovil))
+        if (objetos.Any(o => o is IFichaAliada))
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛑 Movimiento bloqueado por aliado/obstáculo en {siguiente}.");
             return;

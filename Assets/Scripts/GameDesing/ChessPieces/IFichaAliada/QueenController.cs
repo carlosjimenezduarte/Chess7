@@ -199,7 +199,7 @@ public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPo
 
     // 7) Coste y refrescos
     rey.puntosAccionActual--;
-    rangoMovimientoBase -= 1;
+    rangoMovimientoBase--;  
     OcultarMovimientos();
     MostrarMovimientoPosible();
     StartCoroutine(EvaluarCasillasDeAtaque());
@@ -259,7 +259,7 @@ public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPo
 
     public void AumentarRangoMovimiento(int cantidad)
     {
-        rangoMovimientoExtra += cantidad;
+        rangoMovimientoBase += cantidad;
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"📏 Reina ganó +{cantidad} de rango temporal. Total: {RangoMovimientoActual}.");
         MostrarMovimientoPosible();
         mostrandoMovimientos = true;
@@ -277,7 +277,7 @@ public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPo
 
     public void AumentarRangoMovimientoSilencioso(int cantidad)
     {
-        rangoMovimientoExtra += cantidad;
+        rangoMovimientoBase += cantidad;
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Reina ganó +{cantidad} de rango en silencio. Total: {RangoMovimientoActual}.");
     }
 

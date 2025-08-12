@@ -234,7 +234,7 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(siguiente);
 
         // Aliado o inmóvil → bloquea
-        if (objetos.Any(o => o is IFichaAliada || o is IFichaInmovil))
+        if (objetos.Any(o => o is IFichaAliada))
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛑 Movimiento bloqueado por aliado/obstáculo en {siguiente}.");
             return;
