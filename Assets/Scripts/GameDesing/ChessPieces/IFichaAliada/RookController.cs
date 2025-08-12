@@ -108,7 +108,7 @@ public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
                 // Detener si hay objeto recoleccionable o enemigo (no se puede pasar a través)
                 var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino);
-                if (objetos.Any(obj => obj is IFicha || obj is IFichaInmovil))
+                if (objetos.Any(obj => obj is IFicha))
                     break;
             }
         }
@@ -205,65 +205,89 @@ public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
     // 7) Coste y refrescos
     rey.puntosAccionActual--;
-    rangoMovimientoBase -= 1;
+    rangoMovimientoBase--;
     OcultarMovimientos();
     MostrarMovimientoPosible();
+    RevisarObjetosEnCasilla();
     StartCoroutine(EvaluarCasillasDeAtaque());
     FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
     BoardManagerGlobal.Instance.NotificarMovimientoAliado(posicionActual);
+
+        if (posicionActual == new Vector2Int(7, 7))
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♕ Torre coronada en H8. Bonificaciones aplicadas.");
+            rey.puntosAccionActual += 7;
+            rey.puntosMovimientoActual += 7;
+            rey.GanarVida(3);
+            FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
+            OcultarMovimientos();
+            Destroy(gameObject);
+        }
+
     BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();  
     }
 
+    public void RevisarObjetosEnCasilla()
+    {
+        foreach (var objeto in BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual))
+        {
+            if (objeto is ITileEffect efecto)
+            {
+                efecto.RevisarSiTorreLlegó(posicionActual, this);
+                MostrarMovimientoPosible();
+            }
+        }
+    }
 
     private IEnumerator EvaluarCasillasDeAtaque()
     {
-    yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.2f);
 
-    BoardManagerGlobal.Instance.AgregarMensajeInterno("🔁 Evaluando casillas de ataque reales de la Torre...");
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("🔁 Evaluando casillas de ataque reales de la Torre...");
 
-    Vector2Int[] direcciones = new Vector2Int[]
-    {
-        Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right
-    };
-
-    foreach (var dir in direcciones)
-    {
-        for (int i = 1; i <= rangoAtaque; i++)
+        Vector2Int[] direcciones = new Vector2Int[]
         {
-            Vector2Int destino = posicionActual + dir * i;
+        Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right
+        };
 
-            // ⛔ Bordes del tablero
-            if (destino.x < 0 || destino.y < 0 || destino.x > 7 || destino.y > 7)
-                break;
-
-            // 🧱 Obstáculo ENTRE origen y destino bloquea la línea
-            if (BoardManagerGlobal.Instance.HayObstaculoEntreAliado(posicionActual, destino, this))
-                break;
-
-            var tile = BoardManagerGlobal.Instance.GetTileAt(destino);
-            if (tile == null) break;
-
-            var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino);
-
-            // 👥 Aliado / Inmóvil en destino: bloquea (no es atacable)
-            if (objetos.Any(obj => obj is IFichaAliada || obj is IFichaInmovil))
-                break;
-
-            // 🎒 Recoleccionable en destino: también bloquea (no mirar más allá)
-            if (objetos.Any(obj => obj is IObjetoRecoleccionable))
-                break;
-
-            // 🎯 Enemigo en destino: marcar y cortar la línea
-            if (objetos.Any(obj => obj is IFichaEnemiga))
+        foreach (var dir in direcciones)
+        {
+            for (int i = 1; i <= rangoAtaque; i++)
             {
-                tile.HighlightEnemyAttack(true);
-                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🎯 Casilla {destino} marcada como zona de ataque (post-movimiento).");
-                break;
-            }
+                Vector2Int destino = posicionActual + dir * i;
 
-            // Sin enemigo: continuar explorando hasta rangoAtaque
+                // ⛔ Bordes del tablero
+                if (destino.x < 0 || destino.y < 0 || destino.x > 7 || destino.y > 7)
+                    break;
+
+                // 🧱 Obstáculo ENTRE origen y destino bloquea la línea
+                if (BoardManagerGlobal.Instance.HayObstaculoEntreAliado(posicionActual, destino, this))
+                    break;
+
+                var tile = BoardManagerGlobal.Instance.GetTileAt(destino);
+                if (tile == null) break;
+
+                var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino);
+
+                // 👥 Aliado / Inmóvil en destino: bloquea (no es atacable)
+                if (objetos.Any(obj => obj is IFichaAliada || obj is IFichaInmovil))
+                    break;
+
+                // 🎒 Recoleccionable en destino: también bloquea (no mirar más allá)
+                if (objetos.Any(obj => obj is IObjetoRecoleccionable))
+                    break;
+
+                // 🎯 Enemigo en destino: marcar y cortar la línea
+                if (objetos.Any(obj => obj is IFichaEnemiga))
+                {
+                    tile.HighlightEnemyAttack(true);
+                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"🎯 Casilla {destino} marcada como zona de ataque (post-movimiento).");
+                    break;
+                }
+
+                // Sin enemigo: continuar explorando hasta rangoAtaque
+            }
         }
-    }
     }
 
 

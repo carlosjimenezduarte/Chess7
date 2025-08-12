@@ -151,8 +151,8 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
         }
         if (rey.puntosAccionActual <= 0)
         {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("🚫 Movimiento inválido. Rey sin PA.");
-        return;
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("🚫 Movimiento inválido. Rey sin PA.");
+            return;
         }
 
         var objetosEnDestino = BoardManagerGlobal.Instance.ObtenerObjetosEn(nuevaPos);
@@ -160,7 +160,7 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
 
         SetPosicionActual(nuevaPos);
         transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(nuevaPos);
-        
+
 
         if (enemigo != null)
         {
@@ -181,6 +181,17 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
         FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
         BoardManagerGlobal.Instance.NotificarMovimientoAliado(posicionActual);
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+        
+        if (posicionActual == new Vector2Int(7, 7))
+        {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("♕ Caballo coronado en H8. Bonificaciones aplicadas.");
+        rey.puntosAccionActual += 7;
+        rey.puntosMovimientoActual += 7;
+        rey.GanarVida(3);
+        FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
+        OcultarMovimientos();
+        Destroy(gameObject);
+        }
     }
 
     public void AumentarRangoMovimiento(int cantidad)

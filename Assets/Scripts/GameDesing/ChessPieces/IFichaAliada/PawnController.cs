@@ -342,6 +342,7 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         rey.puntosMovimientoActual += 7;
         rey.GanarVida(3);
         FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
+        OcultarMovimientos();
         Destroy(gameObject);
     }
 

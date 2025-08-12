@@ -226,65 +226,90 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
 
     // 8) Coste y refrescos
     rey.puntosAccionActual--;
-    rangoMovimientoBase -= 1;
     OcultarMovimientos();
+    rangoMovimientoBase -= 1;
     MostrarMovimientoPosible();
+    RevisarObjetosEnCasilla();
     StartCoroutine(EvaluarCasillasDeAtaque());
     FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
     BoardManagerGlobal.Instance.NotificarMovimientoAliado(posicionActual);
+
+    if (posicionActual == new Vector2Int(7, 7))
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("♕ Alfil coronado en H8. Bonificaciones aplicadas.");
+        rey.puntosAccionActual += 7;
+        rey.puntosMovimientoActual += 7;
+        rey.GanarVida(3);
+        FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
+        OcultarMovimientos();
+        Destroy(gameObject);
+    }
+
     BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    }
+    
+    public void RevisarObjetosEnCasilla()
+    {
+        foreach (var objeto in BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual))
+        {
+            if (objeto is ITileEffect efecto)
+            {
+                efecto.RevisarSiAlfilLlegó(posicionActual, this);
+                MostrarMovimientoPosible();
+            }
+        }
     }
 
     private IEnumerator EvaluarCasillasDeAtaque()
     {
-    yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.2f);
 
-    BoardManagerGlobal.Instance.AgregarMensajeInterno("🔁 Evaluando casillas de ataque reales del Alfil...");
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("🔁 Evaluando casillas de ataque reales del Alfil...");
 
-    Vector2Int[] direcciones = new Vector2Int[]
-    {
+        Vector2Int[] direcciones = new Vector2Int[]
+        {
         new Vector2Int(1,1), new Vector2Int(-1,1),
         new Vector2Int(1,-1), new Vector2Int(-1,-1)
-    };
+        };
 
-    foreach (var dir in direcciones)
-    {
-        for (int i = 1; i <= rangoAtaque; i++)
+        foreach (var dir in direcciones)
         {
-            Vector2Int destino = posicionActual + dir * i;
-
-            // ⛔ Bordes del tablero
-            if (destino.x < 0 || destino.y < 0 || destino.x > 7 || destino.y > 7)
-                break;
-
-            // 🧱 Si hay obstáculo ENTRE origen y destino, cortar la línea
-            if (BoardManagerGlobal.Instance.HayObstaculoEntreAliado(posicionActual, destino, this))
-                break;
-
-            var tile = BoardManagerGlobal.Instance.GetTileAt(destino);
-            if (tile == null) break;
-
-            var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino);
-
-            // 👥 Aliado o inmóvil en destino bloquea (no es casilla de ataque)
-            if (objetos.Any(obj => obj is IFichaAliada || obj is IFichaInmovil))
-                break;
-
-            // 🎒 Recoleccionable en destino también bloquea (no “mires” más allá)
-            if (objetos.Any(obj => obj is IObjetoRecoleccionable))
-                break;
-
-            // 🎯 Enemigo en destino: marcar y cortar la línea
-            if (objetos.Any(obj => obj is IFichaEnemiga))
+            for (int i = 1; i <= rangoAtaque; i++)
             {
-                tile.HighlightEnemyAttack(true);
-                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🎯 Casilla {destino} marcada como zona de ataque (post-movimiento).");
-                break;
-            }
+                Vector2Int destino = posicionActual + dir * i;
 
-            // Si no hay enemigo, seguimos buscando hasta rangoAtaque (sin pintar)
+                // ⛔ Bordes del tablero
+                if (destino.x < 0 || destino.y < 0 || destino.x > 7 || destino.y > 7)
+                    break;
+
+                // 🧱 Si hay obstáculo ENTRE origen y destino, cortar la línea
+                if (BoardManagerGlobal.Instance.HayObstaculoEntreAliado(posicionActual, destino, this))
+                    break;
+
+                var tile = BoardManagerGlobal.Instance.GetTileAt(destino);
+                if (tile == null) break;
+
+                var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino);
+
+                // 👥 Aliado o inmóvil en destino bloquea (no es casilla de ataque)
+                if (objetos.Any(obj => obj is IFichaAliada || obj is IFichaInmovil))
+                    break;
+
+                // 🎒 Recoleccionable en destino también bloquea (no “mires” más allá)
+                if (objetos.Any(obj => obj is IObjetoRecoleccionable))
+                    break;
+
+                // 🎯 Enemigo en destino: marcar y cortar la línea
+                if (objetos.Any(obj => obj is IFichaEnemiga))
+                {
+                    tile.HighlightEnemyAttack(true);
+                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"🎯 Casilla {destino} marcada como zona de ataque (post-movimiento).");
+                    break;
+                }
+
+                // Si no hay enemigo, seguimos buscando hasta rangoAtaque (sin pintar)
+            }
         }
-    }
     }
 
     public void AumentarRangoMovimiento(int cantidad)
