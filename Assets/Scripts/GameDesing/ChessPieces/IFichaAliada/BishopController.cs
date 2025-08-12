@@ -226,6 +226,7 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
 
     // 8) Coste y refrescos
     rey.puntosAccionActual--;
+    rangoMovimientoBase -= 1;
     OcultarMovimientos();
     MostrarMovimientoPosible();
     StartCoroutine(EvaluarCasillasDeAtaque());

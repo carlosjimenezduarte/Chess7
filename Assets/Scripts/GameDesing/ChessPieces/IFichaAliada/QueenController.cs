@@ -199,6 +199,7 @@ public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPo
 
     // 7) Coste y refrescos
     rey.puntosAccionActual--;
+    rangoMovimientoBase -= 1;
     OcultarMovimientos();
     MostrarMovimientoPosible();
     StartCoroutine(EvaluarCasillasDeAtaque());
