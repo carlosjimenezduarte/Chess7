@@ -3586,9 +3586,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UnityPlayerLogin, Assembly-CSharp
-        m_MethodName: OnLoginButtonClicked
+      - m_Target: {fileID: 772718117}
+        m_TargetAssemblyTypeName: LevelResultUI, Assembly-CSharp
+        m_MethodName: OnBackToHomeClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7482,9 +7482,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UnityPlayerLogin, Assembly-CSharp
-        m_MethodName: OnLoginButtonClicked
+      - m_Target: {fileID: 772718117}
+        m_TargetAssemblyTypeName: LevelResultUI, Assembly-CSharp
+        m_MethodName: OnTryAgainClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -11722,11 +11722,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2957827519241667343, guid: 6827525acea145e48a4153c5a1b7d103, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 202.5
+      value: 742.5
       objectReference: {fileID: 0}
     - target: {fileID: 2957827519241667343, guid: 6827525acea145e48a4153c5a1b7d103, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -742.5
+      value: -202.5
       objectReference: {fileID: 0}
     - target: {fileID: 2957827519241667343, guid: 6827525acea145e48a4153c5a1b7d103, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -11750,11 +11750,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6119706278773528034, guid: 6827525acea145e48a4153c5a1b7d103, type: 3}
       propertyPath: tileCoords.x
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6119706278773528034, guid: 6827525acea145e48a4153c5a1b7d103, type: 3}
       propertyPath: tileCoords.y
-      value: 2
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6716028131665348417, guid: 6827525acea145e48a4153c5a1b7d103, type: 3}
       propertyPath: mostrandoMovimientos
@@ -11766,7 +11766,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8455176439168668971, guid: 6827525acea145e48a4153c5a1b7d103, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8791524645445745211, guid: 6827525acea145e48a4153c5a1b7d103, type: 3}
       propertyPath: esInamovible
@@ -11774,11 +11774,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8791524645445745211, guid: 6827525acea145e48a4153c5a1b7d103, type: 3}
       propertyPath: tileCoords.x
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8791524645445745211, guid: 6827525acea145e48a4153c5a1b7d103, type: 3}
       propertyPath: tileCoords.y
-      value: 2
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8791524645445745211, guid: 6827525acea145e48a4153c5a1b7d103, type: 3}
       propertyPath: activoEnTablero
@@ -16316,9 +16316,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UnityPlayerLogin, Assembly-CSharp
-        m_MethodName: OnLoginButtonClicked
+      - m_Target: {fileID: 772718117}
+        m_TargetAssemblyTypeName: LevelResultUI, Assembly-CSharp
+        m_MethodName: OnNextLevelClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

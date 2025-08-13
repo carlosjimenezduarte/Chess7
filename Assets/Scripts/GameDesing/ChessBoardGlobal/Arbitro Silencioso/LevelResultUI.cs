@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class LevelResultUI : MonoBehaviour
 {
@@ -122,5 +123,24 @@ public class LevelResultUI : MonoBehaviour
             cg.interactable = visible;
             cg.blocksRaycasts = visible;
         }
+    }
+
+    public void OnTryAgainClicked()
+    {
+        // Recarga la escena actual
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void OnBackToHomeClicked()
+    {
+        // Carga la escena del menú principal
+        SceneManager.LoadScene("GameHome"); // Asegúrate que el nombre coincide en Build Settings
+    }
+
+    public void OnNextLevelClicked()
+    {
+        // Ejemplo: cargar siguiente nivel según índice
+        //int currentIndex = SceneManager.GetActiveScene().buildIndex;
+        //SceneManager.LoadScene(currentIndex + 1);
     }
 }
