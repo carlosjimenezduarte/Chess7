@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Linq;
 using System.Reflection;
 
-public class Less1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPieceWithPosition
+public class Less5PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPieceWithPosition
 {
 
     [Header("Configuración general")]
@@ -120,7 +120,7 @@ public class Less1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPiec
         if (tileCoords == posicionRey)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧪 {name} detecta al Rey encima. Se activa.");
-            rey.GanarPuntoMovimiento(-1);
+            rey.GanarPuntoMovimiento(-5);
             Destroy(gameObject);
         }
     }
@@ -144,12 +144,12 @@ public class Less1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPiec
     try
     {
         var tipo = ficha.GetType();
-        var metodo = tipo.GetMethod("AumentarRangoMovimientoSilencioso", new[] { typeof(int) })
-                  ?? tipo.GetMethod("AumentarRangoMovimiento",          new[] { typeof(int) });
+        var metodo = tipo.GetMethod("RestarRangoMovimientoSilencioso", new[] { typeof(int) })
+                  ?? tipo.GetMethod("RestarRangoMovimiento",          new[] { typeof(int) });
 
         if (metodo != null)
         {
-            metodo.Invoke(ficha, new object[] { -1 });
+            metodo.Invoke(ficha, new object[] { 5 });
         }
         else
         {
@@ -196,7 +196,7 @@ public class Less1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPiec
             else if (obj is IPieceWithPosition pieza)
                 pos = pieza.GetPosicionActual();
 
-            if (obj.TryGetComponent<Less1PM>(out var otro))
+            if (obj.TryGetComponent<Less5PM>(out var otro))
             {
                 turnoOtro = otro.turnoAparece;
                 estaActivo = otro.IsVisible();

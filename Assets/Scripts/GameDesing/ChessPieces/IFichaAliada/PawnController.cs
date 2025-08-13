@@ -368,6 +368,25 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         MostrarMovimientoPosible();
         mostrandoMovimientos = true;
     }
+    
+    public void AumentarRangoMovimientoSilencioso(int cantidad)
+    {
+        rangoMovimientoExtra += cantidad;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Peón ganó +{cantidad} de rango temporal en modo silencioso. Total: {RangoMovimientoActual}.");
+    }
+
+    public void RestarRangoMovimiento(int cantidad)
+    {
+
+        rangoMovimientoExtra -= cantidad;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"📏 Reina perdió +{cantidad} de rango temporal. Total: {RangoMovimientoActual}.");
+
+    }
+    public void RestarRangoMovimientoSilencioso(int cantidad)
+    {    
+        rangoMovimientoExtra -= cantidad;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Reina perdió +{cantidad} de rango en silencio. Total: {RangoMovimientoActual}.");
+    }
 
     public void AumentarVida(int cantidad)
     {
@@ -398,13 +417,10 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
     {
         rangoMovimientoBase = 1;
         rangoAtaque = 1;
+        rangoMovimientoExtra = 0;
     }
 
-    public void AumentarRangoMovimientoSilencioso(int cantidad)
-    {
-        rangoMovimientoExtra += cantidad;
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Peón ganó +{cantidad} de rango temporal en modo silencioso. Total: {RangoMovimientoActual}.");
-    }
+    
     public bool EstaActivo() => juegoActivo;
     public bool EsInamovible() => esInamovible;
 

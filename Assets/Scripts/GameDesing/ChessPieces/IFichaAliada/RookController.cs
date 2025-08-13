@@ -299,6 +299,20 @@ public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         mostrandoMovimientos = true;
     }
 
+    public void RestarRangoMovimiento(int cantidad)
+    {
+    
+        rangoMovimientoExtra -= cantidad;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"📏 Reina perdió +{cantidad} de rango temporal. Total: {RangoMovimientoActual}.");
+        
+    }
+    public void RestarRangoMovimientoSilencioso(int cantidad)
+    {    
+        rangoMovimientoExtra -= cantidad;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Reina perdió +{cantidad} de rango en silencio. Total: {RangoMovimientoActual}.");
+    }
+
+
     public void AumentarVida(int cantidad)
     {
         var reyUP = FindFirstObjectByType<KingController>();
@@ -320,6 +334,7 @@ public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
     {
         rangoMovimientoBase = 5;
         rangoAtaque = 3;
+        rangoMovimientoExtra = 0;
         StartCoroutine(EvaluarCasillasDeAtaque());
     }
 

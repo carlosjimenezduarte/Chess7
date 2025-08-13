@@ -293,19 +293,18 @@ public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPo
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Reina ganó +{cantidad} de rango en silencio. Total: {RangoMovimientoActual}.");
     }
 
-    /*public void RestarRangoMovimiento(int cantidad)
+    public void RestarRangoMovimiento(int cantidad)
     {
-        rangoMovimientoBase += cantidad;
-        rangoMovimientoBase -= cantidad;
+    
+        rangoMovimientoExtra -= cantidad;
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"📏 Reina perdió +{cantidad} de rango temporal. Total: {RangoMovimientoActual}.");
         
     }
     public void RestarRangoMovimientoSilencioso(int cantidad)
-    {
-        rangoMovimientoBase -= cantidad;
+    {    
         rangoMovimientoExtra -= cantidad;
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Reina perdió +{cantidad} de rango en silencio. Total: {RangoMovimientoActual}.");
-    }*/
+    }
 
 
     
@@ -330,6 +329,7 @@ public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPo
     {
         rangoMovimientoBase = 5;
         rangoAtaque = 3;
+        rangoMovimientoExtra = 0;
         StartCoroutine(EvaluarCasillasDeAtaque());
     }
 

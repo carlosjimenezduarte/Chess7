@@ -82,29 +82,29 @@ public class ChessGameManager : MonoBehaviour
         rey.ActivarJuego();
         Invoke(nameof(MostrarRangoInicialRey), 0.02f);
 
-    var aliadas = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-    .OfType<IFichaAliada>();
+        var aliadas = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+        .OfType<IFichaAliada>();
 
-    foreach (var ficha in aliadas)
-    {
-    ficha.ActivarJuego();
-
-    if (ficha is IPieceWithPosition pieza)
-    {
-        var tile = BoardManagerGlobal.Instance.GetTileAt(pieza.GetPosicionActual());
-        if (tile != null)
+        foreach (var ficha in aliadas)
         {
-            tile.HighlightMove(false); // Opcional: oculta movimientos al inicio
-        }
-    }
+            ficha.ActivarJuego();
 
-    if (ficha is MonoBehaviour mb)
-    {
-        var mostrarFlag = mb.GetType().GetField("mostrandoMovimientos");
-        if (mostrarFlag != null)
-            mostrarFlag.SetValue(mb, false);
-    }
-    }
+            if (ficha is IPieceWithPosition pieza)
+            {
+                var tile = BoardManagerGlobal.Instance.GetTileAt(pieza.GetPosicionActual());
+                if (tile != null)
+                {
+                    tile.HighlightMove(false); // Opcional: oculta movimientos al inicio
+                }
+            }
+
+            if (ficha is MonoBehaviour mb)
+            {
+                var mostrarFlag = mb.GetType().GetField("mostrandoMovimientos");
+                if (mostrarFlag != null)
+                    mostrarFlag.SetValue(mb, false);
+            }
+        }
 
         ActualizarHUD();
         NotificarEfectosTurno();
@@ -118,40 +118,40 @@ public class ChessGameManager : MonoBehaviour
 
 
     private void PasarTurno()
-{
-    Debug.Log("¡Pasando turno!");
-    tiempoRestante = turnoDuration;
-    turnoActual++;
-
-    // 🔁 Reiniciar fichas aliadas
-    var aliadas = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-        .OfType<IFichaAliada>();
-    foreach (var aliada in aliadas)
     {
-        aliada.ReiniciarTurno();
+        Debug.Log("¡Pasando turno!");
+        tiempoRestante = turnoDuration;
+        turnoActual++;
+
+        // 🔁 Reiniciar fichas aliadas
+        var aliadas = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+            .OfType<IFichaAliada>();
+        foreach (var aliada in aliadas)
+        {
+            aliada.ReiniciarTurno();
+        }
+
+        // 🔁 Reiniciar fichas enemigas
+        var enemigas = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+            .OfType<IFichaEnemiga>();
+        foreach (var enemiga in enemigas)
+        {
+            enemiga.ReiniciarTurno();
+        }
+
+        // ♔ El Rey también reinicia su turno
+        rey.ReiniciarTurno();
+        rey.RestarTurno();
+
+        // 🔄 Rango visible si una ficha sigue seleccionada
+        if (fichaSeleccionadaActual is IFichaAliada fichaAliada)
+        {
+            fichaAliada.MostrarRango();
+        }
+
+        NotificarEfectosTurno();
+        ActualizarHUD();
     }
-
-    // 🔁 Reiniciar fichas enemigas
-    var enemigas = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-        .OfType<IFichaEnemiga>();
-    foreach (var enemiga in enemigas)
-    {
-        enemiga.ReiniciarTurno();
-    }
-
-    // ♔ El Rey también reinicia su turno
-    rey.ReiniciarTurno();
-    rey.RestarTurno();
-
-    // 🔄 Rango visible si una ficha sigue seleccionada
-    if (fichaSeleccionadaActual is IFichaAliada fichaAliada)
-    {
-        fichaAliada.MostrarRango();
-    }
-
-    NotificarEfectosTurno();
-    ActualizarHUD();
-}
 
     private void NotificarEfectosTurno()
     {
@@ -166,7 +166,7 @@ public class ChessGameManager : MonoBehaviour
     }
 
     public void ActualizarHUD()
-    {        
+    {
         pmText.text = rey.puntosMovimientoActual.ToString();
         turnosText.text = rey.turnosRestantes.ToString();
         paText.text = rey.puntosAccionActual.ToString();
@@ -214,12 +214,13 @@ public class ChessGameManager : MonoBehaviour
         SceneManager.LoadScene("GameHome");
     }
     public void NotifyBoardChanged()
-{
-    var reinas = FindObjectsByType<QueenEnemyController>(FindObjectsSortMode.None);
-    foreach (var reina in reinas)
     {
-        reina.RevisarAmenazasEnZona();
-    }
+        var reinas = FindObjectsByType<QueenEnemyController>(FindObjectsSortMode.None);
+        foreach (var reina in reinas)
+        {
+            reina.RevisarAmenazasEnZona();
+        }
     }
     
+ 
 }

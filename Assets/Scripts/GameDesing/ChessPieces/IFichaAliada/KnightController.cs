@@ -224,6 +224,37 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
                 $"♛ Caballo en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reycaballoPASilencioso.puntosAccionActual}"
             );
     }
+    
+    public void RestarRangoMovimiento(int cantidad)
+    {
+        var reycaballoPASilencioso = FindFirstObjectByType<KingController>();
+        reycaballoPASilencioso.puntosAccionActual -= cantidad;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Caballo ganó +{cantidad} de rango temporal en modo silencioso. Total: {RangoMovimientoActual}.");
+        // 🔹 Actualizar HUD inmediatamente
+            var gameManager = FindFirstObjectByType<ChessGameManager>();
+            if (gameManager != null)
+                gameManager.ActualizarHUD();
+
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                $"♛ Caballo en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reycaballoPASilencioso.puntosAccionActual}"
+            );
+        
+    }
+    public void RestarRangoMovimientoSilencioso(int cantidad)
+    {    
+        var reycaballoPASilencioso = FindFirstObjectByType<KingController>();
+        reycaballoPASilencioso.puntosAccionActual -= cantidad;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Caballo ganó +{cantidad} de rango temporal en modo silencioso. Total: {RangoMovimientoActual}.");
+        // 🔹 Actualizar HUD inmediatamente
+            var gameManager = FindFirstObjectByType<ChessGameManager>();
+            if (gameManager != null)
+                gameManager.ActualizarHUD();
+
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                $"♛ Caballo en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reycaballoPASilencioso.puntosAccionActual}"
+            );
+    }
+
 
     public void AumentarVida(int cantidad)
     {
@@ -231,9 +262,9 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
         reyUP.turnosRestantes += cantidad;
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Reina ganó +{cantidad} de rango en silencio. Total: {RangoMovimientoActual}.");
         // 🔹 Actualizar HUD inmediatamente
-            var gameManager = FindFirstObjectByType<ChessGameManager>();
-            if (gameManager != null)
-                gameManager.ActualizarHUD();
+        var gameManager = FindFirstObjectByType<ChessGameManager>();
+        if (gameManager != null)
+            gameManager.ActualizarHUD();
 
     }
 

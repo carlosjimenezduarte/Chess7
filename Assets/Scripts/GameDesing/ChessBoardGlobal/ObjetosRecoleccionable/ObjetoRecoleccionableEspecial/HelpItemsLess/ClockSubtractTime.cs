@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 
-public class TimePickup : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPieceWithPosition
+public class ClockSubtractTime : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPieceWithPosition
 {
     [Header("Configuración general")]
     [SerializeField] public bool vieneDelFuturo = false;
@@ -111,8 +111,8 @@ public class TimePickup : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IP
         if (tileCoords == posicionRey && !desactivado)
         {
             desactivado = true;
-            BoardManagerGlobal.Instance?.AgregarMensajeInterno($"⏳ Tiempo recogido por Rey en {posicionRey}. +15s al turno.");
-            FindFirstObjectByType<ChessGameManager>()?.AgregarTiempoAlTurno(15f);
+            BoardManagerGlobal.Instance?.AgregarMensajeInterno($"⏳ Tiempo Negativo recogido por Rey en {posicionRey}. -15s al turno.");
+            FindFirstObjectByType<ChessGameManager>()?.AgregarTiempoAlTurno(-15f);
             Destroy(gameObject);
         }
     }
@@ -128,8 +128,8 @@ public class TimePickup : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IP
         string nombreFicha = "FichaAliada";
         try { nombreFicha = ficha.GetType().Name; } catch { }
 
-        BoardManagerGlobal.Instance?.AgregarMensajeInterno($"⏳ Tiempo recogido por {nombreFicha} en {posicionFicha}. +15s al turno.");
-        FindFirstObjectByType<ChessGameManager>()?.AgregarTiempoAlTurno(15f);
+        BoardManagerGlobal.Instance?.AgregarMensajeInterno($"⏳ Tiempo Negativo recogido por {nombreFicha} en {posicionFicha}. -15s al turno.");
+        FindFirstObjectByType<ChessGameManager>()?.AgregarTiempoAlTurno(-15f);
         Destroy(gameObject);
     }
 

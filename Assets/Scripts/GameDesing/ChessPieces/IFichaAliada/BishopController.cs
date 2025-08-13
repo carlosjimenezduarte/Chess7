@@ -325,6 +325,20 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Alfil ganó +{cantidad} de rango temporal en modo silencioso. Total: {RangoMovimientoActual}.");
     }
 
+    public void RestarRangoMovimiento(int cantidad)
+    {
+    
+        rangoMovimientoExtra -= cantidad;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"📏 Reina perdió +{cantidad} de rango temporal. Total: {RangoMovimientoActual}.");
+        
+    }
+    public void RestarRangoMovimientoSilencioso(int cantidad)
+    {    
+        rangoMovimientoExtra -= cantidad;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Reina perdió +{cantidad} de rango en silencio. Total: {RangoMovimientoActual}.");
+    }
+
+
     public void AumentarVida(int cantidad)
     {
         var reyUP = FindFirstObjectByType<KingController>();
@@ -346,6 +360,7 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
     {
         rangoMovimientoBase = 5;
         rangoAtaque = 3;
+        rangoMovimientoExtra = 0;
         StartCoroutine(EvaluarCasillasDeAtaque());
     }
 
