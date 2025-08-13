@@ -210,17 +210,6 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
                 $"♛ Caballo en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reycaballoPA.puntosAccionActual}"
             );
     }
-
-    public void DesactivarJuego() => juegoActivo = false;
-    public void MostrarRango() => MostrarMovimientoPosible();
-    public void OcultarRango() => OcultarMovimientos();
-    public void ReiniciarTurno()
-    {
-        rangoMovimientoBase = 1;
-        rangoAtaque = 1;
-        StartCoroutine(EvaluarCasillasDeAtaque());
-    }
-
     public void AumentarRangoMovimientoSilencioso(int cantidad)
     {
         var reycaballoPASilencioso = FindFirstObjectByType<KingController>();
@@ -235,6 +224,42 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
                 $"♛ Caballo en {posicionActual} penalizado: -1 PA. PA actual del Rey: {reycaballoPASilencioso.puntosAccionActual}"
             );
     }
+
+    public void AumentarVida(int cantidad)
+    {
+        var reyUP = FindFirstObjectByType<KingController>();
+        reyUP.turnosRestantes += cantidad;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Reina ganó +{cantidad} de rango en silencio. Total: {RangoMovimientoActual}.");
+        // 🔹 Actualizar HUD inmediatamente
+            var gameManager = FindFirstObjectByType<ChessGameManager>();
+            if (gameManager != null)
+                gameManager.ActualizarHUD();
+
+    }
+
+    public void AumentarPA(int cantidad)
+    {
+        var reyPA = FindFirstObjectByType<KingController>();
+        reyPA.puntosAccionActual += cantidad;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Reina ganó +{cantidad} de rango en silencio. Total: {RangoMovimientoActual}.");
+        // 🔹 Actualizar HUD inmediatamente
+            var gameManager = FindFirstObjectByType<ChessGameManager>();
+            if (gameManager != null)
+                gameManager.ActualizarHUD();
+
+    }
+
+    public void DesactivarJuego() => juegoActivo = false;
+    public void MostrarRango() => MostrarMovimientoPosible();
+    public void OcultarRango() => OcultarMovimientos();
+    public void ReiniciarTurno()
+    {
+        rangoMovimientoBase = 1;
+        rangoAtaque = 1;
+        StartCoroutine(EvaluarCasillasDeAtaque());
+    }
+
+    
 
     public bool EstaActivo() => juegoActivo;
     public bool EsInamovible() => esInamovible;

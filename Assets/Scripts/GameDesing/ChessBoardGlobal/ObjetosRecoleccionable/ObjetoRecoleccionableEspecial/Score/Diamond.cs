@@ -45,6 +45,7 @@ public class Diamond : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObje
             score.AgregarPuntaje(ObtenerValorPuntaje());
 
         // Recolectar y destruir
+        LevelProgress.Instance?.Diamond();
         Destroy(gameObject);
     }
 
@@ -54,7 +55,25 @@ public class Diamond : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObje
     public void RevisarSiReyLlegó(Vector2Int posicion, KingController rey) =>
         RevisarSiFichaAliadaLlegó(posicion, rey);
 
-    
+    public void RevisarSiReinaLlegó(Vector2Int posicion, QueenController reina)
+    {
+      RevisarSiFichaAliadaLlegó(posicion, reina);
+    }
+    public void RevisarSiAlfilLlegó(Vector2Int posicion, BishopController alfil)
+    {
+        RevisarSiFichaAliadaLlegó(posicion, alfil);
+    }
+
+    public void RevisarSiCaballoLlegó(Vector2Int posicion, KnightController caballo)
+    {
+        RevisarSiFichaAliadaLlegó(posicion, caballo);
+    }
+
+    public void RevisarSiTorreLlegó(Vector2Int posicion, RookController torre)
+    {
+        RevisarSiFichaAliadaLlegó(posicion, torre);
+    } 
+
     public void RevisarSiFichaLlegó(Vector2Int posicion, IFicha ficha)
     {
         if (ficha is IFichaAliada aliada)
@@ -96,25 +115,6 @@ public class Diamond : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObje
     public bool EstaRealmenteEnTablero() =>
         tileCoords.x >= 0 && tileCoords.y >= 0 && tileCoords.x <= 7 && tileCoords.y <= 7;
 
-     public void RevisarSiAlfilLlegó(Vector2Int posicionAlfil, BishopController alfil)
-    {
-        //
-    }
-
-    public void RevisarSiCaballoLlegó(Vector2Int posicionCaballo, KnightController caballo)
-    {
-        //
-    }
-
-    public void RevisarSiTorreLlegó(Vector2Int posicionTorre, RookController torre)
-    {
-        //
-    } 
-    
-    public void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina)
-    {
-      //
-    }
     public void RevisarSiReinaNegraEnemigaLlegó(Vector2Int posicion, BlackQueenEnemyController reinaenemiga)
     {
         //

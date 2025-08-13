@@ -319,6 +319,25 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
         MostrarMovimientoPosible();
         mostrandoMovimientos = true;
     }
+    public void AumentarRangoMovimientoSilencioso(int cantidad)
+    {
+        rangoMovimientoBase += cantidad;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Alfil ganó +{cantidad} de rango temporal en modo silencioso. Total: {RangoMovimientoActual}.");
+    }
+
+    public void AumentarVida(int cantidad)
+    {
+        var reyUP = FindFirstObjectByType<KingController>();
+        reyUP.turnosRestantes += cantidad;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Reina ganó +{cantidad} de rango en silencio. Total: {RangoMovimientoActual}.");
+    }
+
+    public void AumentarPA(int cantidad)
+    {
+        var reyPA = FindFirstObjectByType<KingController>();
+        reyPA.puntosAccionActual += cantidad;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Reina ganó +{cantidad} de rango en silencio. Total: {RangoMovimientoActual}.");
+    }
 
     public void DesactivarJuego() => juegoActivo = false;
     public void MostrarRango() => MostrarMovimientoPosible();
@@ -330,11 +349,7 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
         StartCoroutine(EvaluarCasillasDeAtaque());
     }
 
-    public void AumentarRangoMovimientoSilencioso(int cantidad)
-    {
-        rangoMovimientoBase += cantidad;
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Alfil ganó +{cantidad} de rango temporal en modo silencioso. Total: {RangoMovimientoActual}.");
-    }
+    
 
     public bool EstaActivo() => juegoActivo;
     public bool EsInamovible() => esInamovible;

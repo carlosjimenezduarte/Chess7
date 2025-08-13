@@ -287,6 +287,41 @@ public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPo
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"📏 Reina ganó +{cantidad} de rango temporal. Total: {RangoMovimientoActual}.");
         
     }
+    public void AumentarRangoMovimientoSilencioso(int cantidad)
+    {
+        rangoMovimientoBase += cantidad;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Reina ganó +{cantidad} de rango en silencio. Total: {RangoMovimientoActual}.");
+    }
+
+    /*public void RestarRangoMovimiento(int cantidad)
+    {
+        rangoMovimientoBase += cantidad;
+        rangoMovimientoBase -= cantidad;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"📏 Reina perdió +{cantidad} de rango temporal. Total: {RangoMovimientoActual}.");
+        
+    }
+    public void RestarRangoMovimientoSilencioso(int cantidad)
+    {
+        rangoMovimientoBase -= cantidad;
+        rangoMovimientoExtra -= cantidad;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Reina perdió +{cantidad} de rango en silencio. Total: {RangoMovimientoActual}.");
+    }*/
+
+
+    
+
+    public void AumentarVida(int cantidad)
+    {
+        var reyUP = FindFirstObjectByType<KingController>();
+        reyUP.turnosRestantes += cantidad;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Reina ganó +{cantidad} de rango en silencio. Total: {RangoMovimientoActual}.");
+    }
+    public void AumentarPA(int cantidad)
+    {
+        var reyPA = FindFirstObjectByType<KingController>();
+        reyPA.puntosAccionActual += cantidad;
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Reina ganó +{cantidad} de rango en silencio. Total: {RangoMovimientoActual}.");
+    }
 
     public void DesactivarJuego() => juegoActivo = false;
     public void MostrarRango() => MostrarMovimientoPosible();
@@ -298,11 +333,7 @@ public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPo
         StartCoroutine(EvaluarCasillasDeAtaque());
     }
 
-    public void AumentarRangoMovimientoSilencioso(int cantidad)
-    {
-        rangoMovimientoBase += cantidad;
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🤫 Reina ganó +{cantidad} de rango en silencio. Total: {RangoMovimientoActual}.");
-    }
+    
 
     public bool EstaActivo() => juegoActivo;
     public bool EsInamovible() => esInamovible;

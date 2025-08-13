@@ -3,19 +3,19 @@ using UnityEngine.UI;
 using System.Linq;
 using System.Reflection;
 
-public class PotionPA : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPieceWithPosition
+public class Less1PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPieceWithPosition
 {
+
     [Header("Configuración general")]
-    public bool vieneDelFuturo = false;
+    [SerializeField] public bool vieneDelFuturo = false;
 
     [Header("Turno y posiciones")]
-    public int turnoAparece = 1;
-    public Vector2Int posicionReal = new Vector2Int(0, 0);
-
-    public bool esInamovible = false;
-    public Vector2Int tileCoordsFuturosInciertos = new Vector2Int(100, 100);
+    [SerializeField] public int turnoAparece = 1;
+    [SerializeField] public Vector2Int posicionReal = new Vector2Int(0, 0);
+    [SerializeField] public Vector2Int tileCoordsFuturosInciertos = new Vector2Int(100, 100);
 
     private Vector2Int tileCoords;
+    public bool esInamovible = false;
     private bool activadoEnJuego = false;
     private bool desactivado = false;
 
@@ -119,29 +119,53 @@ public class PotionPA : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPie
     {
         if (tileCoords == posicionRey)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔷 {name} detecta al Rey encima. +1 PA aplicado.");
-            rey.puntosAccionActual += 1;
-            FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧪 {name} detecta al Rey encima. Se activa.");
+            rey.GanarPuntoMovimiento(-1);
             Destroy(gameObject);
         }
     }
 
     public void RevisarSiFichaAliadaLlegó(Vector2Int posicionFicha, IFichaAliada ficha)
     {
-        if (tileCoords != posicionFicha || desactivado) return;
-        if (ficha is KingController) return;
+    if (tileCoords != posicionFicha || desactivado) return;
+    if ((ficha as Object) == null) return; // Unity-null (o destruido)
+    if (ficha is KingController) return;
 
-        desactivado = true;
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔷 {name} recogido por {ficha.GetType().Name}. +1 PA otorgado al Rey.");
+    desactivado = true; // evitamos doble aplicación en el mismo frame
 
-        var rey = FindFirstObjectByType<KingController>();
-        if (rey != null)
+    // Nombre seguro sin arriesgar NRE
+    string nombreFicha = "FichaAliada";
+    try { nombreFicha = ficha.GetType().Name; } catch { }
+
+    BoardManagerGlobal.Instance?.AgregarMensajeInterno(
+        $"🧪 {name} detecta ficha aliada ({nombreFicha}) encima. Bonus de rango aplicado."
+    );
+
+    try
+    {
+        var tipo = ficha.GetType();
+        var metodo = tipo.GetMethod("AumentarRangoMovimientoSilencioso", new[] { typeof(int) })
+                  ?? tipo.GetMethod("AumentarRangoMovimiento",          new[] { typeof(int) });
+
+        if (metodo != null)
         {
-            rey.puntosAccionActual += 1;
-            FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
+            metodo.Invoke(ficha, new object[] { -1 });
         }
+        else
+        {
+            Debug.LogWarning($"⚠️ {nombreFicha} no implementa AumentarRangoMovimiento ni su versión silenciosa.");
+        }
+    }
+    catch (TargetInvocationException ex)
+    {
+        Debug.LogError($"💥 Error interno al aplicar bonus a {nombreFicha}: {ex.InnerException?.Message}");
+    }
+    catch (System.Exception ex)
+    {
+        Debug.LogError($"💥 Error al invocar método de bonus en {nombreFicha}: {ex.Message}");
+    }
 
-        Destroy(gameObject);
+    Destroy(gameObject);
     }
 
     public void ExiliarADimensionDivina()
@@ -172,7 +196,7 @@ public class PotionPA : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPie
             else if (obj is IPieceWithPosition pieza)
                 pos = pieza.GetPosicionActual();
 
-            if (obj.TryGetComponent<PotionPA>(out var otro))
+            if (obj.TryGetComponent<Less1PM>(out var otro))
             {
                 turnoOtro = otro.turnoAparece;
                 estaActivo = otro.IsVisible();
@@ -180,6 +204,11 @@ public class PotionPA : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPie
 
             if (pos == coords)
             {
+                if (obj is IObjetoRecoleccionableEspecial)
+                {
+                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"🚫 {name} no puede reemplazar a {obj.name} porque es Especial.");
+                    return false;
+                }
                 if (estaActivo || turnoOtro <= turnoAparece)
                 {
                     BoardManagerGlobal.Instance.AgregarMensajeInterno($"💥 {name} destruye a {obj.name} en {coords}");
@@ -220,18 +249,19 @@ public class PotionPA : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPie
 
     public void RevisarSiFichaLlegó(Vector2Int posicionFicha, IFicha ficha)
     {
-        // No reacciona a fichas enemigas directamente.
-    }
-
-    public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reina)
-    {
-        //RevisarSiReinaEnemigaLlegó(posicion, rey);
+        // Este objeto no reacciona a fichas enemigas directamente.
     }
 
     public bool EsInamovible()
     {
         return esInamovible;
     }
+
+    public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga)
+    {
+        //RevisarSiReinaEnemigaLlegó(posicion, rey);
+    }
+
     public void RevisarSiReinaNegraEnemigaLlegó(Vector2Int posicion, BlackQueenEnemyController reinaenemiga)
     {
         //RevisarSiReinaEnemigaLlegó(posicion, rey);
@@ -250,12 +280,10 @@ public class PotionPA : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPie
     {
         //
     }
-
     public void RevisarSiTorreEnemigaLlegó(Vector2Int posicion, RookEnemyController torreenemiga)
     {
         //
     }
-
     public void RevisarSiAlfilEnemigoLlegó(Vector2Int posicion, BishopEnemyController alfilenemigo)
     {
         //
@@ -267,23 +295,26 @@ public class PotionPA : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPie
     }
     public void RevisarSiPeonEnemigoLlegó(Vector2Int posicion, PawnEnemyController peonenemigo)
     {
-        //   
+        //
     }
 
     public void RevisarSiAlfilLlegó(Vector2Int posicionAlfil, BishopController alfil)
     {
-        //
+        RevisarSiFichaAliadaLlegó(posicionAlfil, alfil);
     }
+
     public void RevisarSiCaballoLlegó(Vector2Int posicionCaballo, KnightController caballo)
     {
-        //
+        RevisarSiFichaAliadaLlegó(posicionCaballo, caballo);
     }
+
     public void RevisarSiTorreLlegó(Vector2Int posicionTorre, RookController torre)
     {
-        //
+        RevisarSiFichaAliadaLlegó(posicionTorre, torre);
     } 
+    
     public void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina)
     {
-      //
+       RevisarSiFichaAliadaLlegó(posicionReina, reina);
     }
 }
