@@ -8,6 +8,14 @@ public class LevelProgress : MonoBehaviour
     public int keysCollected = 0;
     public bool hasDiamond = false;
 
+    public bool hasParchment = false;
+
+     public bool hasTrophy = false;
+
+     public bool hasMedal = false;
+
+     public int MasterKey3 = 0;
+
     private void Awake()
     {
         if (Instance == null)
@@ -46,7 +54,34 @@ public class LevelProgress : MonoBehaviour
     public void Talisman()
     {
     hasDiamond = false;
-        Debug.Log($"💎 ¡Diamante perdido!");
+    Debug.Log($"💎 ¡Diamante perdido!");
+    }
+
+    public void Parchment()
+    {
+    hasParchment = true;
+    Debug.Log($"💎 ¡Pergamino obtenido!");
+    }
+
+    public void Trophy()
+    {
+    hasTrophy = true;
+    Debug.Log($"💎 ¡Pergamino obtenido!");
+    }
+
+    public void Medal()
+    {
+    hasMedal = true;
+    Debug.Log($"💎 ¡Pergamino obtenido!");
+    }
+
+    public void MasterKey()
+    {
+        if (MasterKey3 < 3)
+        {
+            keysCollected++;
+            Debug.Log($"🗝️ Fragmento de llave recogido: {MasterKey3}");
+        }
     }
 
 

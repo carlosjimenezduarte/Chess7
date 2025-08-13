@@ -35,7 +35,7 @@ public class ChessGameManager : MonoBehaviour
         passTurnButton.gameObject.SetActive(false);
         startButton.onClick.AddListener(IniciarJuego);
         passTurnButton.onClick.AddListener(PasarTurno);
-        LevelProgress.Instance.ResetProgress();
+        //LevelProgress.Instance.ResetProgress();
 
         // 🔥 NUEVOS listeners para los botones
         if (restartButton != null)

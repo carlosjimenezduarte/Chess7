@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Linq;
 using System.Reflection;
 
-public class Less15PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPieceWithPosition
+public class Menos15PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPieceWithPosition
 {
 
     [Header("Configuración general")]
@@ -196,7 +196,7 @@ public class Less15PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPie
             else if (obj is IPieceWithPosition pieza)
                 pos = pieza.GetPosicionActual();
 
-            if (obj.TryGetComponent<Less15PM>(out var otro))
+            if (obj.TryGetComponent<Menos15PM>(out var otro))
             {
                 turnoOtro = otro.turnoAparece;
                 estaActivo = otro.IsVisible();

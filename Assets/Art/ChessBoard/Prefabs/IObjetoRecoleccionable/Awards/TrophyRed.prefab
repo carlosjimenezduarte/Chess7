@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6008658396105280057
+--- !u!1 &1089872252293187197
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,27 +8,27 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8244727033579464716}
-  - component: {fileID: 3598236899658203811}
-  - component: {fileID: 8550244262598493962}
-  - component: {fileID: 4767072464399255642}
-  - component: {fileID: -8821758125932706312}
-  - component: {fileID: -3933704576167750769}
+  - component: {fileID: 7653579997762317828}
+  - component: {fileID: 3246834791129884344}
+  - component: {fileID: 2059721364262886514}
+  - component: {fileID: -1538154819460014042}
+  - component: {fileID: -5780486490803744058}
+  - component: {fileID: -466942662648674467}
   m_Layer: 5
-  m_Name: Less3PM
+  m_Name: TrophyRed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &8244727033579464716
+--- !u!224 &7653579997762317828
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6008658396105280057}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_GameObject: {fileID: 1089872252293187197}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -40,21 +40,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 135, y: 135}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &3598236899658203811
+--- !u!222 &3246834791129884344
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6008658396105280057}
+  m_GameObject: {fileID: 1089872252293187197}
   m_CullTransparentMesh: 1
---- !u!114 &8550244262598493962
+--- !u!114 &2059721364262886514
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6008658396105280057}
+  m_GameObject: {fileID: 1089872252293187197}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
@@ -68,7 +68,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: c60a7c30103a6d447a677c984e5fee59, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f8beebf14227499448bf1b82077b268d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -78,48 +78,45 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &4767072464399255642
+--- !u!114 &-1538154819460014042
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6008658396105280057}
+  m_GameObject: {fileID: 1089872252293187197}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 74e5e04f83e472a4281766b56f53ad24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileCoords: {x: 1, y: 1}
---- !u!114 &-8821758125932706312
+  tileCoords: {x: 0, y: 0}
+--- !u!114 &-5780486490803744058
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6008658396105280057}
+  m_GameObject: {fileID: 1089872252293187197}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2dcad6d238197b140b2bfdc800d308e4, type: 3}
+  m_Script: {fileID: 11500000, guid: 955c468ab1c7ed642a1145a3fdbb01ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vieneDelFuturo: 0
-  turnoAparece: 1
-  posicionReal: {x: 0, y: 0}
-  tileCoordsFuturosInciertos: {x: 100, y: 100}
+  tileCoords: {x: 0, y: 0}
   esInamovible: 0
---- !u!114 &-3933704576167750769
+--- !u!114 &-466942662648674467
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6008658396105280057}
+  m_GameObject: {fileID: 1089872252293187197}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 33d1fb08166c8ac48b559443f7486744, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileCoords: {x: 1, y: 1}
-  activoEnTablero: 1
+  tileCoords: {x: 0, y: 0}
+  activoEnTablero: 0
   esInamovible: 0
