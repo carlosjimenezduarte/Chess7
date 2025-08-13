@@ -55,9 +55,9 @@ public class Diamond : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObje
     public void RevisarSiReyLlegó(Vector2Int posicion, KingController rey) =>
         RevisarSiFichaAliadaLlegó(posicion, rey);
 
-    public void RevisarSiReinaLlegó(Vector2Int posicion, QueenController reina)
+    public void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina)
     {
-      RevisarSiFichaAliadaLlegó(posicion, reina);
+      RevisarSiFichaAliadaLlegó(posicionReina, reina);
     }
     public void RevisarSiAlfilLlegó(Vector2Int posicion, BishopController alfil)
     {

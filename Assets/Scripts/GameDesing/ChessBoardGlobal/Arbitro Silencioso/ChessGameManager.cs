@@ -35,6 +35,7 @@ public class ChessGameManager : MonoBehaviour
         passTurnButton.gameObject.SetActive(false);
         startButton.onClick.AddListener(IniciarJuego);
         passTurnButton.onClick.AddListener(PasarTurno);
+        LevelProgress.Instance.ResetProgress();
 
         // 🔥 NUEVOS listeners para los botones
         if (restartButton != null)
@@ -204,6 +205,7 @@ public class ChessGameManager : MonoBehaviour
     {
         Debug.Log("🔄 Reiniciando nivel...");
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        LevelProgress.Instance.ResetProgress();
     }
 
     public void Exit()

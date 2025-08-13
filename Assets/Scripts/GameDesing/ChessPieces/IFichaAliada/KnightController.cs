@@ -172,7 +172,7 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
         }
 
         foreach (ITileEffect efecto in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ITileEffect>())
-            efecto.RevisarSiCaballoLlegó(nuevaPos, null);
+            efecto.RevisarSiCaballoLlegó(nuevaPos, this);
 
         rey.puntosAccionActual--;
         OcultarMovimientos();

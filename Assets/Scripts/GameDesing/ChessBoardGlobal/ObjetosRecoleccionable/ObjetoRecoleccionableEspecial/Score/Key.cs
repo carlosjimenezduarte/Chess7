@@ -57,7 +57,7 @@ public class Key : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRe
 
     public void RevisarSiReinaLlegó(Vector2Int posicion, QueenController reina)
     {
-      RevisarSiFichaAliadaLlegó(posicion, reina);
+      RevisarSiFichaAliadaLlegó(posicion, reina); 
     }
     public void RevisarSiAlfilLlegó(Vector2Int posicion, BishopController alfil)
     {

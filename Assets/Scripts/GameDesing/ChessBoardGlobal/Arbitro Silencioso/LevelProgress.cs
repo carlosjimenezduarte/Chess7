@@ -22,19 +22,25 @@ public class LevelProgress : MonoBehaviour
 
     public void Key()
     {
-         if (keysCollected < 3)
+        if (keysCollected < 3)
         {
-        keysCollected++;
-        Debug.Log($"🗝️ Llaves recogidas: {keysCollected}");
+            keysCollected++;
+            Debug.Log($"🗝️ Llaves recogidas: {keysCollected}");
         }
     }
 
     public void Diamond()
     {
         if (!hasDiamond)
-    {
-        hasDiamond = true;
-        Debug.Log($"💎 ¡Diamante recogido!");
+        {
+            hasDiamond = true;
+            Debug.Log($"💎 ¡Diamante recogido!");
+        }
     }
+    
+    public void ResetProgress()
+    {
+    keysCollected = 0;
+    hasDiamond = false;
     }
 }

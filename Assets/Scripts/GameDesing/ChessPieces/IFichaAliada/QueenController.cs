@@ -195,7 +195,7 @@ public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPo
 
         // 6) Disparar efectos (incluye recoger pociones/llaves si tu ITileEffect lo maneja)
         foreach (ITileEffect efecto in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ITileEffect>())
-            efecto.RevisarSiReinaLlegó(nuevaPos, null);
+            efecto.RevisarSiReinaLlegó(nuevaPos, this);
 
         // 7) Coste y refrescos
         rey.puntosAccionActual--;
@@ -369,9 +369,5 @@ public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPo
             FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"♝ Reina en {posicionActual} penalizada por Alfil: -1 PA.");
         }
-    }
-    
-    
-
-    
+    }   
 }

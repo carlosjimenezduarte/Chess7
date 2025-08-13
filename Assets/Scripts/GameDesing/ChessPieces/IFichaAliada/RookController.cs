@@ -201,7 +201,7 @@ public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
     // 6) Disparar efectos de casilla (recolecciones, trampas, etc.)
     foreach (ITileEffect efecto in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ITileEffect>())
-        efecto.RevisarSiTorreLlegó(nuevaPos, null);
+        efecto.RevisarSiTorreLlegó(nuevaPos, this);
 
     // 7) Coste y refrescos
     rey.puntosAccionActual--;
