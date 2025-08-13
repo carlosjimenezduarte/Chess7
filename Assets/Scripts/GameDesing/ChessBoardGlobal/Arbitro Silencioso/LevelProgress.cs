@@ -14,7 +14,7 @@ public class LevelProgress : MonoBehaviour
 
      public bool hasMedal = false;
 
-     public int MasterKey3 = 0;
+     public bool MasterKey3 = false;
 
     private void Awake()
     {
@@ -77,11 +77,9 @@ public class LevelProgress : MonoBehaviour
 
     public void MasterKey()
     {
-        if (MasterKey3 < 3)
-        {
-            keysCollected++;
-            Debug.Log($"🗝️ Fragmento de llave recogido: {MasterKey3}");
-        }
+        MasterKey3 = true;
+        Debug.Log($"🗝️ Fragmento de llave recogido: {MasterKey3}");
+        
     }
 
 
