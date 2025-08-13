@@ -37,10 +37,23 @@ public class LevelProgress : MonoBehaviour
             Debug.Log($"💎 ¡Diamante recogido!");
         }
     }
+    public void Padlock()
+    {
+    keysCollected--; // Permitir valores negativos
+    Debug.Log($"🔒 Llaves después de candado: {keysCollected}");
+    }
+
+    public void Talisman()
+    {
+    hasDiamond = false;
+        Debug.Log($"💎 ¡Diamante perdido!");
+    }
+
+
     
     public void ResetProgress()
     {
-    keysCollected = 0;
-    hasDiamond = false;
+        keysCollected = 0;
+        hasDiamond = false;
     }
 }
