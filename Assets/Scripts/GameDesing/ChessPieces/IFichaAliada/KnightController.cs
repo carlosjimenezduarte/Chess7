@@ -49,6 +49,13 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
 
     public void SetPosicionActual(Vector2Int nuevaPos)
     {
+        #if UNITY_EDITOR
+                if (!Application.isPlaying)
+                {
+                    posicionActual = nuevaPos;
+                    return;
+                }
+        #endif
         posicionActual = nuevaPos;
 
         GetComponent<MovableTileObject>().tileCoords = nuevaPos;
@@ -127,6 +134,7 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
         {
             mostrandoMovimientos = true;
             MostrarMovimientoPosible();
+            StartCoroutine(EvaluarCasillasDeAtaque());
             BoardManagerGlobal.Instance.AgregarMensajeInterno("🟢 Mostrando previsualización automática del Caballo.");
         }
         else
@@ -135,7 +143,7 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
             OcultarMovimientos();
             BoardManagerGlobal.Instance.AgregarMensajeInterno("🔴 Ocultando previsualización del Caballo.");
         }
-
+        
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
@@ -353,6 +361,10 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
     {
     // 🕒 Esperar 0.03 segundos reales antes de evaluar
     yield return new WaitForSeconds(0.2f);
+
+    var gameManager = FindFirstObjectByType<ChessGameManager>();
+    if (gameManager == null || gameManager.fichaSeleccionadaActual != this)
+    yield break;
 
     BoardManagerGlobal.Instance.AgregarMensajeInterno("🔁 Evaluando casillas de ataque reales del Caballo...");
 

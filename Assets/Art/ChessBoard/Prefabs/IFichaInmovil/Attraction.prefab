@@ -13,13 +13,14 @@ GameObject:
   - component: {fileID: 5648719854872359445}
   - component: {fileID: 6357381015755929238}
   - component: {fileID: 5812075223474779182}
+  - component: {fileID: 3834085338377375200}
   m_Layer: 5
   m_Name: Attraction
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &246842337369830522
 RectTransform:
   m_ObjectHideFlags: 0
@@ -89,7 +90,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74e5e04f83e472a4281766b56f53ad24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileCoords: {x: 3, y: 2}
+  tileCoords: {x: 2, y: 2}
 --- !u!114 &5812075223474779182
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102,4 +103,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34f28a517af1edf46a9016ad40c8f75f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileCoords: {x: 3, y: 2}
+  tileCoords: {x: 2, y: 2}
+--- !u!114 &3834085338377375200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3858556083208143485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33d1fb08166c8ac48b559443f7486744, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileCoords: {x: 0, y: 0}
+  activoEnTablero: 1
+  esInamovible: 1

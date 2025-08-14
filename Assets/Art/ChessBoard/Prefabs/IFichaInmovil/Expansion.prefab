@@ -20,7 +20,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6057851418976827080
 RectTransform:
   m_ObjectHideFlags: 0
@@ -90,7 +90,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74e5e04f83e472a4281766b56f53ad24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileCoords: {x: 0, y: 0}
+  tileCoords: {x: 3, y: 3}
 --- !u!114 &7955535128729293919
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,7 +103,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6529946d58ea7ba46af43754dccc619c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileCoords: {x: 0, y: 0}
+  tileCoords: {x: 2, y: 3}
 --- !u!114 &5063730917596140073
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116,6 +116,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33d1fb08166c8ac48b559443f7486744, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileCoords: {x: 0, y: 0}
-  activoEnTablero: 0
+  tileCoords: {x: 3, y: 3}
+  activoEnTablero: 1
   esInamovible: 1

@@ -41,6 +41,14 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
 
     public void SetPosicionActual(Vector2Int nuevaPos)
     {
+        #if UNITY_EDITOR
+        if (!Application.isPlaying)
+        {
+            posicionActual = nuevaPos;
+            return;
+        }
+        #endif
+        
         posicionActual = nuevaPos;
         GetComponent<MovableTileObject>().tileCoords = nuevaPos;
         GetComponent<PiecePositioner>().tileCoords = nuevaPos;
@@ -136,6 +144,7 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
         {
             mostrandoMovimientos = true;
             MostrarMovimientoPosible();
+            StartCoroutine(EvaluarCasillasDeAtaque());
             BoardManagerGlobal.Instance.AgregarMensajeInterno("🟢 Mostrando previsualización automática del Alfil.");
         }
         else
@@ -144,7 +153,7 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
             OcultarMovimientos();
             BoardManagerGlobal.Instance.AgregarMensajeInterno("🔴 Ocultando previsualización del Alfil.");
         }
-
+        
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
@@ -263,6 +272,10 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
     private IEnumerator EvaluarCasillasDeAtaque()
     {
         yield return new WaitForSeconds(0.2f);
+
+        var gameManager = FindFirstObjectByType<ChessGameManager>();
+        if (gameManager == null || gameManager.fichaSeleccionadaActual != this)
+        yield break;
 
         BoardManagerGlobal.Instance.AgregarMensajeInterno("🔁 Evaluando casillas de ataque reales del Alfil...");
 

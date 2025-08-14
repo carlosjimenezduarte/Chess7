@@ -248,7 +248,9 @@ public class BoardManagerGlobal : MonoBehaviour
         {
             var pieza = ficha as MonoBehaviour;
 
-            if (pieza is Expansion || pieza is Interruption)
+            if (pieza is Expansion || pieza is Interruption ||
+                pieza is PusherUp || pieza is PusherRight || pieza is PusherDown
+                || pieza is PusherLeft || pieza is Attraction || pieza is Vortex)
             {
                 AgregarMensajeInterno($"⛔ {pieza.name} es un Expansion. No se registrará como ficha.");
                 continue;
@@ -543,7 +545,7 @@ public class BoardManagerGlobal : MonoBehaviour
         else
         {
             // Si atacó, la prioridad natural sigue; no reiniciamos porque ya actuó
-            AgregarMensajeInterno("♛ Árbitro: Torre Negra atacó. Ciclo completado.");
+            AgregarMensajeInterno("♜ Árbitro: Torre Negra atacó. Ciclo completado.");
         }
     }
     public void ReportarFinInspeccionAlfilNegro(bool ataco)
@@ -666,41 +668,333 @@ public class BoardManagerGlobal : MonoBehaviour
         return true;
     }
 
-    
+
     public bool HayObstaculoEntreAliado(Vector2Int origen, Vector2Int destino, object origenFicha = null)
-{
-    int dx = destino.x - origen.x;
-    int dy = destino.y - origen.y;
-
-    if (!(dx == 0 || dy == 0 || Mathf.Abs(dx) == Mathf.Abs(dy)))
-        return false;
-
-    Vector2Int direccion = new Vector2Int(
-        dx == 0 ? 0 : (dx > 0 ? 1 : -1),
-        dy == 0 ? 0 : (dy > 0 ? 1 : -1)
-    );
-
-    Vector2Int paso = origen + direccion;
-    while (paso != destino)
     {
-        if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
-            break;
+        int dx = destino.x - origen.x;
+        int dy = destino.y - origen.y;
 
-        var objetos = ObtenerObjetosEn(paso);
-        bool hayObstaculo = objetos.Any(obj =>
-            obj != origenFicha && (obj is IFicha || obj is IFichaInmovil || obj is IObjetoRecoleccionable));
+        if (!(dx == 0 || dy == 0 || Mathf.Abs(dx) == Mathf.Abs(dy)))
+            return false;
 
-        if (hayObstaculo)
+        Vector2Int direccion = new Vector2Int(
+            dx == 0 ? 0 : (dx > 0 ? 1 : -1),
+            dy == 0 ? 0 : (dy > 0 ? 1 : -1)
+        );
+
+        Vector2Int paso = origen + direccion;
+        while (paso != destino)
         {
-            AgregarMensajeInterno($"🔰 Obstáculo detectado en {paso}. Línea bloqueada.");
-            return true;
+            if (paso.x < 0 || paso.y < 0 || paso.x > 7 || paso.y > 7)
+                break;
+
+            var objetos = ObtenerObjetosEn(paso);
+            bool hayObstaculo = objetos.Any(obj =>
+                obj != origenFicha && (obj is IFicha || obj is IFichaInmovil || obj is IObjetoRecoleccionable));
+
+            if (hayObstaculo)
+            {
+                AgregarMensajeInterno($"🔰 Obstáculo detectado en {paso}. Línea bloqueada.");
+                return true;
+            }
+
+            paso += direccion;
         }
 
-        paso += direccion;
+        return false;
     }
 
-    return false;
+    public Vector2Int CalcularCasillaSeguraParaVortex(KingController rey)
+    {
+        List<Vector2Int> posibles = new List<Vector2Int>();
+        for (int x = 0; x <= 7; x++)
+        {
+            for (int y = 0; y <= 7; y++)
+                posibles.Add(new Vector2Int(x, y));
+        }
+
+        posibles = posibles
+            .OrderBy(p => Vector2Int.Distance(Vector2Int.zero, p))
+            .ThenByDescending(p => Vector2Int.Distance(new Vector2Int(7, 7), p))
+            .ToList();
+
+        foreach (var pos in posibles)
+        {
+            if (!EstaCasillaOcupada(pos, rey))
+                return pos;
+        }
+
+        return rey.GetPosicionActual(); // si no hay nada libre
     }
+
+    public void EfectoPusherUp(IPieceWithPosition pieza)
+    {
+        if (pieza == null)
+        {
+            AgregarMensajeInterno("⚠️ EfectoPusherUp: pieza no válida.");
+            return;
+        }
+
+        Vector2Int posActual = pieza.GetPosicionActual();
+        Vector2Int direccion = Vector2Int.up; // mover hacia arriba
+        int pasosMax = 3;
+        Vector2Int destinoFinal = posActual;
+
+        for (int i = 1; i <= pasosMax; i++)
+        {
+            Vector2Int siguiente = posActual + direccion * i;
+
+            // Bordes del tablero
+            if (siguiente.x < 0 || siguiente.y < 0 || siguiente.x > 7 || siguiente.y > 7)
+            {
+                AgregarMensajeInterno($"🛑 PusherUp: borde del tablero alcanzado en {siguiente}.");
+                break;
+            }
+
+            var objetos = ObtenerObjetosEn(siguiente);
+
+            // Bloqueo por aliados o enemigos
+            if (objetos.Any(o => o is IFichaAliada || o is IFichaEnemiga))
+            {
+                AgregarMensajeInterno($"🛑 PusherUp: bloqueado por ficha en {siguiente}.");
+                break;
+            }
+
+            // Bloqueo por recolectable
+            if (objetos.Any(o => o is IObjetoRecoleccionable))
+            {
+                AgregarMensajeInterno($"🛑 PusherUp: objeto recolectable en {siguiente}. Se detiene.");
+                break;
+            }
+
+            destinoFinal = siguiente;
+        }
+
+        // Si hay un nuevo destino, mover la pieza
+        if (destinoFinal != posActual)
+        {
+            AgregarMensajeInterno($"✅ PusherUp: moviendo a {pieza} de {posActual} a {destinoFinal}.");
+
+            if (pieza is KingController rey)
+            {
+                rey.TeletransportarA(destinoFinal);
+            }
+            else if (pieza is PawnController peon)
+            {
+                peon.TeletransportarA(destinoFinal);
+            }
+
+            NotificarMovimientoAliado(destinoFinal);
+        }
+        else
+        {
+            AgregarMensajeInterno("ℹ️ PusherUp: no se movió la pieza.");
+        }
+    }
+
+    public void EfectoPusherLeft(IPieceWithPosition pieza)
+    {
+        if (pieza == null)
+        {
+            AgregarMensajeInterno("⚠️ EfectoPusherLeft: pieza no válida.");
+            return;
+        }
+
+        Vector2Int posActual = pieza.GetPosicionActual();
+        Vector2Int direccion = Vector2Int.left; // mover hacia la izquierda
+        int pasosMax = 3;
+        Vector2Int destinoFinal = posActual;
+
+        for (int i = 1; i <= pasosMax; i++)
+        {
+            Vector2Int siguiente = posActual + direccion * i;
+
+            // Bordes del tablero
+            if (siguiente.x < 0 || siguiente.y < 0 || siguiente.x > 7 || siguiente.y > 7)
+            {
+                AgregarMensajeInterno($"🛑 PusherLeft: borde del tablero alcanzado en {siguiente}.");
+                break;
+            }
+
+            var objetos = ObtenerObjetosEn(siguiente);
+
+            // Bloqueo por aliados o enemigos
+            if (objetos.Any(o => o is IFichaAliada || o is IFichaEnemiga))
+            {
+                AgregarMensajeInterno($"🛑 PusherLeft: bloqueado por ficha en {siguiente}.");
+                break;
+            }
+
+            // Bloqueo por recolectable
+            if (objetos.Any(o => o is IObjetoRecoleccionable))
+            {
+                AgregarMensajeInterno($"🛑 PusherLeft: objeto recolectable en {siguiente}. Se detiene.");
+                break;
+            }
+
+            destinoFinal = siguiente;
+        }
+
+        // Si hay un nuevo destino, mover la pieza
+        if (destinoFinal != posActual)
+        {
+            AgregarMensajeInterno($"✅ PusherLeft: moviendo a {pieza} de {posActual} a {destinoFinal}.");
+
+            if (pieza is KingController rey)
+            {
+                rey.TeletransportarA(destinoFinal);
+            }
+            else if (pieza is PawnController peon)
+            {
+                peon.TeletransportarA(destinoFinal);
+            }
+
+            NotificarMovimientoAliado(destinoFinal);
+        }
+        else
+        {
+            AgregarMensajeInterno("ℹ️ PusherLeft: no se movió la pieza.");
+        }
+    }
+
+    public void EfectoPusherRight(IPieceWithPosition pieza)
+    {
+        if (pieza == null)
+        {
+            AgregarMensajeInterno("⚠️ EfectoPusherRight: pieza no válida.");
+            return;
+        }
+
+        Vector2Int posActual = pieza.GetPosicionActual();
+        Vector2Int direccion = Vector2Int.right; // mover hacia la derecha
+        int pasosMax = 3;
+        Vector2Int destinoFinal = posActual;
+
+        for (int i = 1; i <= pasosMax; i++)
+        {
+            Vector2Int siguiente = posActual + direccion * i;
+
+            // Bordes del tablero
+            if (siguiente.x < 0 || siguiente.y < 0 || siguiente.x > 7 || siguiente.y > 7)
+            {
+                AgregarMensajeInterno($"🛑 PusherRight: borde del tablero alcanzado en {siguiente}.");
+                break;
+            }
+
+            var objetos = ObtenerObjetosEn(siguiente);
+
+            // Bloqueo por aliados o enemigos
+            if (objetos.Any(o => o is IFichaAliada || o is IFichaEnemiga))
+            {
+                AgregarMensajeInterno($"🛑 PusherRight: bloqueado por ficha en {siguiente}.");
+                break;
+            }
+
+            // Bloqueo por recolectable
+            if (objetos.Any(o => o is IObjetoRecoleccionable))
+            {
+                AgregarMensajeInterno($"🛑 PusherRight: objeto recolectable en {siguiente}. Se detiene.");
+                break;
+            }
+
+            destinoFinal = siguiente;
+        }
+
+        // Si hay un nuevo destino, mover la pieza
+        if (destinoFinal != posActual)
+        {
+            AgregarMensajeInterno($"✅ PusherRight: moviendo a {pieza} de {posActual} a {destinoFinal}.");
+
+            if (pieza is KingController rey)
+            {
+                rey.TeletransportarA(destinoFinal);
+            }
+            else if (pieza is PawnController peon)
+            {
+                peon.TeletransportarA(destinoFinal);
+            }
+
+            NotificarMovimientoAliado(destinoFinal);
+        }
+        else
+        {
+            AgregarMensajeInterno("ℹ️ PusherRight: no se movió la pieza.");
+        }
+    }
+
+    public void EfectoPusherDown(IPieceWithPosition pieza)
+    {
+        if (pieza == null)
+        {
+            AgregarMensajeInterno("⚠️ EfectoPusherDown: pieza no válida.");
+            return;
+        }
+
+        Vector2Int posActual = pieza.GetPosicionActual();
+        Vector2Int direccion = Vector2Int.down; // mover hacia abajo
+        int pasosMax = 3;
+        Vector2Int destinoFinal = posActual;
+
+        for (int i = 1; i <= pasosMax; i++)
+        {
+            Vector2Int siguiente = posActual + direccion * i;
+
+            // Bordes del tablero
+            if (siguiente.x < 0 || siguiente.y < 0 || siguiente.x > 7 || siguiente.y > 7)
+            {
+                AgregarMensajeInterno($"🛑 PusherDown: borde del tablero alcanzado en {siguiente}.");
+                break;
+            }
+
+            var objetos = ObtenerObjetosEn(siguiente);
+
+            // Bloqueo por aliados o enemigos
+            if (objetos.Any(o => o is IFichaAliada || o is IFichaEnemiga))
+            {
+                AgregarMensajeInterno($"🛑 PusherDown: bloqueado por ficha en {siguiente}.");
+                break;
+            }
+
+            // Bloqueo por recolectable
+            if (objetos.Any(o => o is IObjetoRecoleccionable))
+            {
+                AgregarMensajeInterno($"🛑 PusherDown: objeto recolectable en {siguiente}. Se detiene.");
+                break;
+            }
+
+            if (objetos.Any(o => o is Wall))
+            {
+                AgregarMensajeInterno($"🛑 PusherDown: muro encontrado en {siguiente}. Se detiene.");
+                break;
+            }
+
+            destinoFinal = siguiente;
+        }
+
+        // Si hay un nuevo destino, mover la pieza
+        if (destinoFinal != posActual)
+        {
+            AgregarMensajeInterno($"✅ PusherDown: moviendo a {pieza} de {posActual} a {destinoFinal}.");
+
+            if (pieza is KingController rey)
+            {
+                rey.TeletransportarA(destinoFinal);
+            }
+            else if (pieza is PawnController peon)
+            {
+                peon.TeletransportarA(destinoFinal);
+            }
+
+            NotificarMovimientoAliado(destinoFinal);
+        }
+        else
+        {
+            AgregarMensajeInterno("ℹ️ PusherDown: no se movió la pieza.");
+        }
+    }
+    
+
+
 
 
 }

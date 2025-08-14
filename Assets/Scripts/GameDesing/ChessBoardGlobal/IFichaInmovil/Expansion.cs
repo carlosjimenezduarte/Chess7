@@ -33,44 +33,68 @@ public class Expansion : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPie
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"♔ Rey llegó a casilla con Expansion en {tileCoords}.");
             ActivarExpansion(rey);
+            rey.MostrarMovimientoPosible();           
         }
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
-    public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga)
-    {
-        if (posicion == tileCoords)
-        {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♔ Rey llegó a casilla con Expansion en {tileCoords}.");
-            ActivarExpansion(reinaenemiga);
-        }
-        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
-
-    }
-
+   
     public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
     {
         if (posicionPeon == tileCoords)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"♙ Peón llegó a casilla con Expansion en {tileCoords}.");
             ActivarExpansion(peon);
+            peon.MostrarMovimientoPosible();
+        }
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    }
+
+    public void RevisarSiAlfilLlegó(Vector2Int posicionAlfil, BishopController alfil)
+    {
+       if (posicionAlfil == tileCoords)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♗ Alfil llegó a casilla con Expansion en {tileCoords}.");
+            ActivarExpansion(alfil);
+            alfil.MostrarMovimientoPosible();
+        }
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    }
+    public void RevisarSiCaballoLlegó(Vector2Int posicionCaballo, KnightController caballo)
+    {
+        if (posicionCaballo == tileCoords)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♘ Caballo llegó a casilla con Expansion en {tileCoords}.");
+            ActivarExpansion(caballo);
+            caballo.MostrarMovimientoPosible();
+        }
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    }
+    public void RevisarSiTorreLlegó(Vector2Int posicionTorre, RookController torre)
+    {
+        if (posicionTorre == tileCoords)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♖ Torre llegó a casilla con Expansion en {tileCoords}.");
+            ActivarExpansion(torre);
+            torre.MostrarMovimientoPosible();
+        }
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    } 
+    
+    public void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina)
+    {
+        if (posicionReina == tileCoords)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♕ Peón llegó a casilla con Expansion en {tileCoords}.");
+            ActivarExpansion(reina);
+            reina.MostrarMovimientoPosible();
         }
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
     public void RevisarSiFichaLlegó(Vector2Int posicionFicha, IFicha ficha)
     {
-        var nombreFicha = ((MonoBehaviour)ficha).name;
-        if (posicionFicha == tileCoords)
-        {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧩 Expansion activado por {nombreFicha} en {tileCoords}.");
-            ActivarExpansion((MonoBehaviour)ficha);
-        }
-        else
-        {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"❌ Ficha {nombreFicha} no activó Expansion: estaba en {posicionFicha}, no en {tileCoords}.");
-        }
-        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+        //
     }
 
     public void VerificarTurnoActual(int turnoActual) { }
@@ -118,13 +142,6 @@ public class Expansion : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPie
 
         return false;
     }
-
-    private bool EstaVisibleYRecolectable(MovableTileObject obj)
-    {
-        // Aquí puedes filtrar por clase si necesitas más adelante.
-        return true;
-    }
-
     private Vector2Int CalcularDireccion(Vector2Int delta)
     {
         if (delta.x == 0 && delta.y == 0) return Vector2Int.zero;
@@ -159,9 +176,15 @@ public class Expansion : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPie
         return tileCoords;
     }
 
-    public void RevisarSiReinaNegraEnemigaLlegó(Vector2Int posicion, BlackQueenEnemyController reinaenemiga)
+    public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga)
     {
-        //RevisarSiReinaEnemigaLlegó(posicion, rey);
+        //
+    }
+
+
+    public void RevisarSiReinaNegraEnemigaLlegó(Vector2Int posicion, BlackQueenEnemyController reinanegraenemiga)
+    {
+        //
     }
 
 
@@ -171,11 +194,11 @@ public class Expansion : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPie
     }
     public void RevisarSiAlfilNegroEnemigoLlegó(Vector2Int posicion, BlackBishopEnemyController alfilnegroenemigo)
     {
-        //
+       //
     }
     public void RevisarSiCaballoNegroEnemigoLlegó(Vector2Int posicion, BlackKnightEnemyController caballonegroenemigo)
     {
-        //
+       //
     }
 
     public void RevisarSiTorreEnemigaLlegó(Vector2Int posicion, RookEnemyController torreenemiga)
@@ -194,24 +217,8 @@ public class Expansion : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPie
     }
     public void RevisarSiPeonEnemigoLlegó(Vector2Int posicion, PawnEnemyController peonenemigo)
     {
-        //
+       //
     }
 
-    public void RevisarSiAlfilLlegó(Vector2Int posicionAlfil, BishopController alfil)
-    {
-        //
-    }
-    public void RevisarSiCaballoLlegó(Vector2Int posicionCaballo, KnightController caballo)
-    {
-        //
-    }
-    public void RevisarSiTorreLlegó(Vector2Int posicionTorre, RookController torre)
-    {
-        //
-    } 
     
-    public void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina)
-    {
-      //
-    }
 } 

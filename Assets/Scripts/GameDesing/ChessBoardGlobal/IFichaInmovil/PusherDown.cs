@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PusherUp : MonoBehaviour, ITileEffect, IFichaInmovil, IFicha, IPieceWithPosition
+public class PusherDown : MonoBehaviour, ITileEffect, IFichaInmovil, IFicha, IPieceWithPosition
 {
     public Vector2Int tileCoords;
     public bool esInamovible = true;
@@ -39,8 +39,19 @@ public class PusherUp : MonoBehaviour, ITileEffect, IFichaInmovil, IFicha, IPiec
         if (posicionRey == tileCoords)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"♔ Rey llegó a PusherUp en {tileCoords}.");
-            BoardManagerGlobal.Instance.EfectoPusherUp(rey);
+            BoardManagerGlobal.Instance.EfectoPusherDown(rey);
             rey.MostrarMovimientoPosible(); // refresco UI si lo usas
+        }
+    }
+   
+
+    public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
+    {
+        if (posicionPeon == tileCoords)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♙ Peón llegó a PusherUp en {tileCoords}.");
+            BoardManagerGlobal.Instance.EfectoPusherDown(peon);
+            peon.MostrarMovimientoPosible(); // refresco UI si lo usas
         }
     }
 
@@ -49,19 +60,9 @@ public class PusherUp : MonoBehaviour, ITileEffect, IFichaInmovil, IFicha, IPiec
        //
     }
 
-    public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
-    {
-        if (posicionPeon == tileCoords)
-        {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♙ Peón llegó a PusherUp en {tileCoords}.");
-            BoardManagerGlobal.Instance.EfectoPusherUp(peon);
-            peon.MostrarMovimientoPosible(); // refresco UI si lo usas
-        }
-    }
-
     public void RevisarSiReinaNegraEnemigaLlegó(Vector2Int posicion, BlackQueenEnemyController reinaenemiga)
     {
-        //RevisarSiReinaEnemigaLlegó(posicion, rey);
+        //
     }
     public void RevisarSiTorreNegraEnemigaLlegó(Vector2Int posicion, BlackRookEnemyController torrenegraenemiga)
     {
@@ -113,3 +114,4 @@ public class PusherUp : MonoBehaviour, ITileEffect, IFichaInmovil, IFicha, IPiec
       //
     }
 }
+

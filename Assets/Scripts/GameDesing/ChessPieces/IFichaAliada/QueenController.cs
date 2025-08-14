@@ -39,6 +39,14 @@ public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPo
 
     public void SetPosicionActual(Vector2Int nuevaPos)
     {
+        #if UNITY_EDITOR
+        if (!Application.isPlaying)
+        {
+            posicionActual = nuevaPos;
+            return;
+        }
+        #endif
+
         posicionActual = nuevaPos;
         GetComponent<MovableTileObject>().tileCoords = nuevaPos;
         GetComponent<PiecePositioner>().tileCoords = nuevaPos;
@@ -132,6 +140,7 @@ public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPo
         {
             mostrandoMovimientos = true;
             MostrarMovimientoPosible();
+            StartCoroutine(EvaluarCasillasDeAtaque());
             BoardManagerGlobal.Instance.AgregarMensajeInterno("🟢 Mostrando previsualización de la Reina.");
         }
         else
@@ -140,7 +149,7 @@ public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPo
             OcultarMovimientos();
             BoardManagerGlobal.Instance.AgregarMensajeInterno("🔴 Ocultando previsualización de la Reina.");
         }
-
+        
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
@@ -236,6 +245,10 @@ public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPo
     private IEnumerator EvaluarCasillasDeAtaque()
     {
         yield return new WaitForSeconds(0.2f);
+
+        var gameManager = FindFirstObjectByType<ChessGameManager>();
+        if (gameManager == null || gameManager.fichaSeleccionadaActual != this)
+        yield break;
 
         BoardManagerGlobal.Instance.AgregarMensajeInterno("🔁 Evaluando casillas de ataque reales de la Reina...");
 

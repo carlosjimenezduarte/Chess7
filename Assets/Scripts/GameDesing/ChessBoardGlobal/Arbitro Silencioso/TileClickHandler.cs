@@ -60,17 +60,22 @@ public class TileClickHandler : MonoBehaviour, IPointerClickHandler
             int distancia = Mathf.Max(dx, dy);
             ataqueValido = (EsLineaRecta || EsDiagonal) && distancia <= 3 && !hayObstaculo;
         }
+        else if (gameManager.fichaSeleccionadaActual is PawnController)
+        {
+            //  Peón: diagonal
+            ataqueValido = dx <= 1 && dy <= 1;
+        }
         else
         {
-            // Resto (Rey, Peón…): cuerpo a cuerpo
+            // Rey: cuerpo a cuerpo
             ataqueValido = dx <= 1 && dy <= 1;
         }
 
         if (!ataqueValido)
-        {
-            Debug.Log($"❌ Casilla {tileCoords} está marcada como ataque, pero está fuera del rango real desde {origen}.");
-            return;
-        }
+                {
+                    Debug.Log($"❌ Casilla {tileCoords} está marcada como ataque, pero está fuera del rango real desde {origen}.");
+                    return;
+                }
 
         Debug.Log($"⚔️ Casilla {tileCoords} reconocida como zona de ataque para {gameManager.fichaSeleccionadaActual.name}");
 

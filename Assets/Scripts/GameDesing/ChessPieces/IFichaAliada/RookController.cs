@@ -41,6 +41,14 @@ public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
     public void SetPosicionActual(Vector2Int nuevaPos)
     {
+        #if UNITY_EDITOR
+        if (!Application.isPlaying)
+        {
+            posicionActual = nuevaPos;
+            return;
+        }
+        #endif
+        
         posicionActual = nuevaPos;
         GetComponent<MovableTileObject>().tileCoords = nuevaPos;
         GetComponent<PiecePositioner>().tileCoords = nuevaPos;
@@ -88,12 +96,12 @@ public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         {
             for (int i = 1; i <= RangoMovimientoActual; i++)
             {
-                
+
                 Vector2Int destino = posicionActual + dir * i;
                 if (BoardManagerGlobal.Instance.HayObstaculoEntreAliado(posicionActual, destino, this))
                 {
                     break;
-                }               
+                }
                 if (!BoardManagerGlobal.Instance.EsCasillaAccesiblePorAliado(destino))
                 {
                     BoardManagerGlobal.Instance.AgregarMensajeInterno($"⛔ Casilla {destino} no accesible o fuera del tablero.");
@@ -112,6 +120,7 @@ public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
                     break;
             }
         }
+        
     }
 
     public void OcultarMovimientos()
@@ -134,6 +143,7 @@ public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         {
             mostrandoMovimientos = true;
             MostrarMovimientoPosible();
+            StartCoroutine(EvaluarCasillasDeAtaque());
             BoardManagerGlobal.Instance.AgregarMensajeInterno("🟢 Mostrando previsualización automática de la Torre.");
         }
         else
@@ -142,7 +152,7 @@ public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
             OcultarMovimientos();
             BoardManagerGlobal.Instance.AgregarMensajeInterno("🔴 Ocultando previsualización de la Torre.");
         }
-
+        
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
@@ -242,6 +252,10 @@ public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
     private IEnumerator EvaluarCasillasDeAtaque()
     {
         yield return new WaitForSeconds(0.2f);
+
+        var gameManager = FindFirstObjectByType<ChessGameManager>();
+        if (gameManager == null || gameManager.fichaSeleccionadaActual != this)
+        yield break;
 
         BoardManagerGlobal.Instance.AgregarMensajeInterno("🔁 Evaluando casillas de ataque reales de la Torre...");
 
