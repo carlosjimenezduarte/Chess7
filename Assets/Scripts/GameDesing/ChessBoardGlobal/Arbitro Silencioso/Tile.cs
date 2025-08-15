@@ -7,6 +7,7 @@ public class Tile : MonoBehaviour
     public Vector2Int tileCoords;
 
     private Image myImage;
+    private bool isShieldActive = false;
 
     private void Awake()
     {
@@ -18,61 +19,58 @@ public class Tile : MonoBehaviour
         if (myImage == null) return;
 
         myImage.color = isActive
-            ? new Color(0.5f, 1f, 0.5f, 1f) // verde claro
+            ? (isShieldActive 
+                ? new Color(1f, 0.827f, 0f, 1f) // dorado si hay escudo
+                : new Color(0.5f, 1f, 0.5f, 1f)) // verde normal
             : Color.white;
     }
 
     public void HighlightEnemyKillZone(bool isActive)
     {
         if (myImage == null) return;
-        myImage.color = isActive ? new Color(1f, 0.3f, 0.3f, 1f) : Color.white; // rojo claro
+        myImage.color = isActive ? new Color(1f, 0.3f, 0.3f, 1f) : Color.white;
     }
 
     public void HighlightEnemyRangeZone(bool isActive)
     {
         if (myImage == null) return;
-        myImage.color = isActive ? new Color(1f, 0.5f, 0.7f, 1f) : Color.white; // rosado
+        myImage.color = isActive ? new Color(1f, 0.5f, 0.7f, 1f) : Color.white;
     }
 
     public void HighlightEnemyAttack(bool state)
     {
         if (myImage == null) return;
-
-        Color colorAtaque = new Color(1f, 0.2f, 0.9f, 1f);
-        myImage.color = state ? colorAtaque : Color.clear;
+        myImage.color = state ? new Color(1f, 0.2f, 0.9f, 1f) : Color.clear;
     }
 
     public void HighlightBlackAttack(bool state)
     {
-    if (myImage == null) return;
-
-    Color colorAtaque = new Color(0.322f, 0.318f, 0.314f, 0.8f);
-    myImage.color = state ? colorAtaque : Color.clear;
+        if (myImage == null) return;
+        myImage.color = state ? new Color(0.322f, 0.318f, 0.314f, 0.8f) : Color.clear;
     }
+
+    public void Shield(bool isActive)
+    {
+        isShieldActive = isActive; // ✅ ahora solo cambia el flag
+    }
+
     public void HighlightSpecific(bool isActive)
     {
         if (myImage != null)
-        {
-            myImage.color = isActive
-                ? new Color(1f, 0.2f, 0.9f, 1f) // fucsia sólido
-                : Color.white;
-        }
+            myImage.color = isActive ? new Color(1f, 0.2f, 0.9f, 1f) : Color.white;
     }
 
     public bool EsCasillaDeAtaque()
     {
-    if (myImage == null) return false;
-
-    // Este es el color que se usa en HighlightEnemyAttack
-    Color colorAtaque = new Color(1f, 0.2f, 0.9f, 1f);
-
-    return myImage.color.Equals(colorAtaque);
+        if (myImage == null) return false;
+        return myImage.color.Equals(new Color(1f, 0.2f, 0.9f, 1f));
     }
 
-    
     public void ResetColor()
     {
         if (myImage != null)
             myImage.color = Color.white;
+
+        isShieldActive = false; // ✅ evita que quede activo después
     }
 }

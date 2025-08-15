@@ -6,6 +6,10 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 {
     [Header("Rango de Movimiento")]
     public int rangoMovimientoBase { get; set; } = 1;
+
+    public bool tieneEscudo = false;
+
+    public bool isShieldActive = false;
     private int rangoMovimientoExtra = 0;
     public int rangoAtaque { get; set; } = 1; // 🔺 NUEVO: Rango fijo de ataque en diagonal
 
@@ -41,13 +45,13 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
     public void SetPosicionActual(Vector2Int nuevaPos)
     {
-#if UNITY_EDITOR
-        if (!Application.isPlaying)
-        {
-            posicionActual = nuevaPos;
-            return;
-        }
-#endif
+    #if UNITY_EDITOR
+            if (!Application.isPlaying)
+            {
+                posicionActual = nuevaPos;
+                return;
+            }
+    #endif
 
         posicionActual = nuevaPos;
 
@@ -70,6 +74,8 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         mostrandoMovimientos = true;
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
+
+    
 
     public void MostrarMovimientoPosible()
     {
@@ -96,13 +102,17 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
             bool puedeMover =
                 distancia <= RangoMovimientoActual &&
-                // permite pintar la casilla actual del peón
                 (tile.tileCoords == posicionActual ||
-                // y bloquea casillas con aliadas o inmóviles (pero permite recoleccionables)
                 BoardManagerGlobal.Instance.EsCasillaAccesiblePorAliado(tile.tileCoords));
 
-            tile.HighlightMove(puedeMover);
-        }
+            if (puedeMover && tieneEscudo)
+            {
+                tile.Shield(true); // ✅ activa dorado
+            }
+
+            tile.HighlightMove(puedeMover); // pinta usando el flag interno del tile
+        }        
+
 
 
         // 💥 Mostrar ataques en las diagonales dentro del rango de ataque
@@ -460,6 +470,12 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         rangoMovimientoBase = 1;
         rangoAtaque = 1;
         rangoMovimientoExtra = 0;
+        tieneEscudo = false;
+
+        foreach (Tile tile in BoardManagerGlobal.Instance.tiles)
+        {
+            tile.Shield(false); // apagar dorado
+        }
     }
 
 

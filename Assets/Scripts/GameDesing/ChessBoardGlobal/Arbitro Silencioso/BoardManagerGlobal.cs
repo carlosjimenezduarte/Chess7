@@ -16,6 +16,8 @@ public class BoardManagerGlobal : MonoBehaviour
     public bool caballoRojoAtaco = false;
     public bool peonRojoAtaco = false;
 
+    private List<IFichaAliada> fichasConEscudo = new List<IFichaAliada>();
+
     private List<IFichaEnemiga> fichasEnemigasRegistradas = new List<IFichaEnemiga>();
 
     // 🔁 Control de activaciones por movimiento
@@ -767,6 +769,12 @@ public class BoardManagerGlobal : MonoBehaviour
                 break;
             }
 
+            if (objetos.Any(o => o is Wall))
+            {
+                AgregarMensajeInterno($"🛑 PusherDown: muro encontrado en {siguiente}. Se detiene.");
+                break;
+            }
+
             destinoFinal = siguiente;
         }
 
@@ -832,6 +840,12 @@ public class BoardManagerGlobal : MonoBehaviour
                 break;
             }
 
+            if (objetos.Any(o => o is Wall))
+            {
+                AgregarMensajeInterno($"🛑 PusherDown: muro encontrado en {siguiente}. Se detiene.");
+                break;
+            }
+
             destinoFinal = siguiente;
         }
 
@@ -894,6 +908,12 @@ public class BoardManagerGlobal : MonoBehaviour
             if (objetos.Any(o => o is IObjetoRecoleccionable))
             {
                 AgregarMensajeInterno($"🛑 PusherRight: objeto recolectable en {siguiente}. Se detiene.");
+                break;
+            }
+
+            if (objetos.Any(o => o is Wall))
+            {
+                AgregarMensajeInterno($"🛑 PusherDown: muro encontrado en {siguiente}. Se detiene.");
                 break;
             }
 
@@ -993,6 +1013,43 @@ public class BoardManagerGlobal : MonoBehaviour
         }
     }
     
+    public void RegistrarFichaConEscudo(IFichaAliada ficha)
+    {
+    if (!fichasConEscudo.Contains(ficha))
+        fichasConEscudo.Add(ficha);
+    }
+
+// Llamar este método al INICIO del turno del jugador
+    public void QuitarEscudos()
+    {
+    if (fichasConEscudo.Count == 0) return;
+
+    AgregarMensajeInterno("🛡 Fin del efecto de ESCUDO. Restaurando estado normal.");
+
+    // Restaurar a cada ficha su color normal
+    foreach (var ficha in fichasConEscudo)
+    {
+        if ((ficha as Object) == null) continue;
+
+        var metodoShield = ficha.GetType().GetMethod("Shield", new[] { typeof(bool) });
+        metodoShield?.Invoke(ficha, new object[] { false });
+    }
+
+    // Aquí podrías restaurar los rangos originales de los enemigos
+    var enemigos = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+        .OfType<IFichaEnemiga>();
+
+    foreach (var enemigo in enemigos)
+    {
+        try
+        {
+            enemigo.ReiniciarTurno(); // Método que deberías tener en tus enemigos
+        }
+        catch { }
+    }
+
+    fichasConEscudo.Clear();
+    }
 
 
 

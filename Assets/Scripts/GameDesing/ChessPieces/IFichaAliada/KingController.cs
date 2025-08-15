@@ -372,6 +372,12 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         mostrandoMovimientos = true;
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
         BoardManagerGlobal.Instance.ResetearAtaquesEnemigos();
+        BoardManagerGlobal.Instance.QuitarEscudos();
+        var peones = FindObjectsByType<PawnController>(FindObjectsSortMode.None);
+        foreach (var p in peones)
+        {
+            p.tieneEscudo = false;
+        }
     }
 
     public void GanarPuntoMovimiento(int cantidad)
