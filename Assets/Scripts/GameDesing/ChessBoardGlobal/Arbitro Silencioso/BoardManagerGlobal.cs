@@ -1012,46 +1012,43 @@ public class BoardManagerGlobal : MonoBehaviour
             AgregarMensajeInterno("ℹ️ PusherDown: no se movió la pieza.");
         }
     }
-    
+
     public void RegistrarFichaConEscudo(IFichaAliada ficha)
     {
-    if (!fichasConEscudo.Contains(ficha))
-        fichasConEscudo.Add(ficha);
+        if (!fichasConEscudo.Contains(ficha))
+            fichasConEscudo.Add(ficha);
     }
 
-// Llamar este método al INICIO del turno del jugador
+    // Llamar este método al INICIO del turno del jugador
     public void QuitarEscudos()
     {
-    if (fichasConEscudo.Count == 0) return;
+        if (fichasConEscudo.Count == 0) return;
 
-    AgregarMensajeInterno("🛡 Fin del efecto de ESCUDO. Restaurando estado normal.");
+        AgregarMensajeInterno("🛡 Fin del efecto de ESCUDO. Restaurando estado normal.");
 
-    // Restaurar a cada ficha su color normal
-    foreach (var ficha in fichasConEscudo)
-    {
-        if ((ficha as Object) == null) continue;
-
-        var metodoShield = ficha.GetType().GetMethod("Shield", new[] { typeof(bool) });
-        metodoShield?.Invoke(ficha, new object[] { false });
-    }
-
-    // Aquí podrías restaurar los rangos originales de los enemigos
-    var enemigos = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-        .OfType<IFichaEnemiga>();
-
-    foreach (var enemigo in enemigos)
-    {
-        try
+        // Restaurar a cada ficha su color normal
+        foreach (var ficha in fichasConEscudo)
         {
-            enemigo.ReiniciarTurno(); // Método que deberías tener en tus enemigos
+            if ((ficha as Object) == null) continue;
+
+            var metodoShield = ficha.GetType().GetMethod("Shield", new[] { typeof(bool) });
+            metodoShield?.Invoke(ficha, new object[] { false });
         }
-        catch { }
+
+        // Aquí podrías restaurar los rangos originales de los enemigos
+        var enemigos = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+            .OfType<IFichaEnemiga>();
+
+        foreach (var enemigo in enemigos)
+        {
+            try
+            {
+                enemigo.ReiniciarTurno(); // Método que deberías tener en tus enemigos
+            }
+            catch { }
+        }
+
+        fichasConEscudo.Clear();
     }
-
-    fichasConEscudo.Clear();
-    }
-
-
-
 
 }

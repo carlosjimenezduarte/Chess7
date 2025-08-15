@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Linq;
+using System.Collections;
 using UnityEngine.SceneManagement; // para usar SceneManager
 
 public class ChessGameManager : MonoBehaviour
@@ -176,6 +177,7 @@ public class ChessGameManager : MonoBehaviour
     {
         turnoActivo = false;
         Debug.Log("⏸ Juego detenido, reloj pausado.");
+
     }
 
     public void AgregarTiempoAlTurno(float segundos)
@@ -205,7 +207,7 @@ public class ChessGameManager : MonoBehaviour
     {
         Debug.Log("🔄 Reiniciando nivel...");
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        LevelProgress.Instance.ResetProgress();
+        //LevelProgress.Instance.ResetProgress();
     }
 
     public void Exit()
@@ -221,6 +223,9 @@ public class ChessGameManager : MonoBehaviour
             reina.RevisarAmenazasEnZona();
         }
     }
+    
+    
+   
     
  
 }

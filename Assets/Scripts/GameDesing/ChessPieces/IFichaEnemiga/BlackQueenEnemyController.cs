@@ -194,6 +194,11 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
         if (pieza is IPieceWithPosition piezaVictima)
             piezaVictima.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
 
+        if (pieza is KingController)
+        {
+            yield return new WaitForSeconds(3f);
+        }
+
         if (pieza is PawnController peon)
         {
             peon.OcultarMovimientos();

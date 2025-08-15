@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class LevelResultUI : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class LevelResultUI : MonoBehaviour
 
     [Header("Llaves")]
     public TMP_Text keysText;
+    
     public GameObject key1;
     public GameObject key2;
     public GameObject key3;
@@ -53,6 +55,27 @@ public class LevelResultUI : MonoBehaviour
 
     public void ShowResults(int keysCollected, bool hasDiamond, int livesRemaining, int totalScore)
     {
+
+        gameObject.SetActive(true);
+        // Si murió el Rey (o se acabaron vidas), esperar 3 segundos antes de mostrar resultados
+        if (livesRemaining <= 0)
+        {
+            StartCoroutine(MostrarResultadosConRetraso(keysCollected, hasDiamond, livesRemaining, totalScore, 0.0001f));
+        }
+        else
+        {
+            MostrarResultadosInmediatos(keysCollected, hasDiamond, livesRemaining, totalScore);
+        }
+    }
+
+    private IEnumerator MostrarResultadosConRetraso(int keysCollected, bool hasDiamond, int livesRemaining, int totalScore, float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay);
+        MostrarResultadosInmediatos(keysCollected, hasDiamond, livesRemaining, totalScore);
+    }
+
+    private void MostrarResultadosInmediatos(int keysCollected, bool hasDiamond, int livesRemaining, int totalScore)
+    {
         // Textos principales
         keysText.text = $"{keysCollected} / 3 keys";
         diamondText.text = hasDiamond ? "Diamond: Yes" : "Diamond: No";
@@ -67,7 +90,7 @@ public class LevelResultUI : MonoBehaviour
         timeLabelText.text = "Time";
         timeValueText.text = $"{minutos:D2}:{segundos:D2}";
 
-        // Llaves visuales + Enabled
+        // Llaves visual + Enabled
         key1Enabled.SetActive(true);
         key2Enabled.SetActive(true);
         key3Enabled.SetActive(true);
@@ -115,6 +138,7 @@ public class LevelResultUI : MonoBehaviour
         Debug.Log($"🎉 Resultados mostrados -> Llaves: {keysCollected}, Diamante: {hasDiamond}, Vidas: {livesRemaining}, Score: {totalScore}, Tiempo: {minutos:D2}:{segundos:D2}");
     }
 
+    
     private void MostrarBoton(GameObject boton, bool visible)
     {
         if (boton.TryGetComponent(out CanvasGroup cg))

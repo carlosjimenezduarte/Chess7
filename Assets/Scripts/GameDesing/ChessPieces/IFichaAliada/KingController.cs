@@ -1,12 +1,13 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Linq;
+using System.Collections;
 
 public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPosition, IFicha, IFichaAliada
 {
     public bool tieneEscudo = false;
     public int puntosMovimientoMax = 3;
-    
+
     public int rangoAtaqueKing = 1; // 🔺 Rango de ataque fijo del Rey (igual que el Peón)
     public int puntosAccionMax = 5;
 
@@ -57,13 +58,13 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
     public void SetPosicionActual(Vector2Int nuevaPos)
     {
-        #if UNITY_EDITOR
-                if (!Application.isPlaying)
-                {
-                    posicionActual = nuevaPos;
-                    return;
-                }
-        #endif
+#if UNITY_EDITOR
+        if (!Application.isPlaying)
+        {
+            posicionActual = nuevaPos;
+            return;
+        }
+#endif
 
         posicionActual = nuevaPos;
 
@@ -75,6 +76,14 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
         BoardManagerGlobal.Instance?.RegistrarMovimiento(this, nuevaPos);
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"♔ Rey actualizado a {nuevaPos}.");
+        // 🛑 Si el Rey fue enviado a la Dimensión Divina, detener el juego
+    if (nuevaPos == BoardManagerGlobal.DimensionDivina)
+    {
+        puntosMovimientoActual = 0;
+        puntosAccionActual = 0;
+        turnosRestantes = 0;
+       
+    }
     }
 
     public Vector2Int GetPosicionActual()
@@ -193,72 +202,72 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
     public void MoverA(Vector2Int nuevaPos)
     {
-    if (!juegoActivo) return;
+        if (!juegoActivo) return;
 
-    // 1) Chequeo de alcance Manhattan (diamante)
-    int manhattan = Mathf.Abs(posicionActual.x - nuevaPos.x) + Mathf.Abs(posicionActual.y - nuevaPos.y);
-    if (manhattan > puntosMovimientoActual)
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("🚫 Movimiento no permitido, no hay suficientes PM.");
-        return;
-    }
-
-    // 2) Avance paso a paso ORTOGONAL (nunca diagonal) hacia el destino
-    Vector2Int paso = posicionActual;
-    int pasosDados = 0;
-
-    while (paso != nuevaPos)
-    {
-        Vector2Int siguiente = paso;
-
-        int dx = nuevaPos.x - paso.x;
-        int dy = nuevaPos.y - paso.y;
-
-        if (Mathf.Abs(dx) >= Mathf.Abs(dy))
+        // 1) Chequeo de alcance Manhattan (diamante)
+        int manhattan = Mathf.Abs(posicionActual.x - nuevaPos.x) + Mathf.Abs(posicionActual.y - nuevaPos.y);
+        if (manhattan > puntosMovimientoActual)
         {
-            if (dx != 0) siguiente.x += dx > 0 ? 1 : -1;
-            else if (dy != 0) siguiente.y += dy > 0 ? 1 : -1;
-        }
-        else
-        {
-            if (dy != 0) siguiente.y += dy > 0 ? 1 : -1;
-            else if (dx != 0) siguiente.x += dx > 0 ? 1 : -1;
-        }
-
-        // Bordes
-        if (siguiente.x < 0 || siguiente.y < 0 || siguiente.x > 7 || siguiente.y > 7)
-        {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛑 Movimiento cancelado: {siguiente} fuera del tablero.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("🚫 Movimiento no permitido, no hay suficientes PM.");
             return;
         }
 
-        // Obstáculos
-        var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(siguiente);
-        if (objetos.Any(o => o is IFichaAliada))
-        {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛑 Movimiento bloqueado por aliado/obstáculo en {siguiente}.");
-            return;
-        }
-        if (objetos.Any(o => o is IFichaEnemiga))
-        {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛑 Movimiento bloqueado por enemigo en {siguiente}.");
-            return;
-        }
+        // 2) Avance paso a paso ORTOGONAL (nunca diagonal) hacia el destino
+        Vector2Int paso = posicionActual;
+        int pasosDados = 0;
 
-        bool hayReco = objetos.Any(o => o is IObjetoRecoleccionable);
-        bool esUltimoPaso = siguiente == nuevaPos;
-        if (hayReco && !esUltimoPaso)
+        while (paso != nuevaPos)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛑 Hay un objeto en {siguiente}. Debes caer aquí primero.");
-            return;
-        }
+            Vector2Int siguiente = paso;
 
-        // Avanzar un paso
-        paso = siguiente;
-        pasosDados++;
+            int dx = nuevaPos.x - paso.x;
+            int dy = nuevaPos.y - paso.y;
 
-        SetPosicionActual(paso);
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🚶 El Rey pasa por {paso}");
+            if (Mathf.Abs(dx) >= Mathf.Abs(dy))
+            {
+                if (dx != 0) siguiente.x += dx > 0 ? 1 : -1;
+                else if (dy != 0) siguiente.y += dy > 0 ? 1 : -1;
+            }
+            else
+            {
+                if (dy != 0) siguiente.y += dy > 0 ? 1 : -1;
+                else if (dx != 0) siguiente.x += dx > 0 ? 1 : -1;
+            }
+
+            // Bordes
+            if (siguiente.x < 0 || siguiente.y < 0 || siguiente.x > 7 || siguiente.y > 7)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛑 Movimiento cancelado: {siguiente} fuera del tablero.");
+                return;
+            }
+
+            // Obstáculos
+            var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(siguiente);
+            if (objetos.Any(o => o is IFichaAliada))
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛑 Movimiento bloqueado por aliado/obstáculo en {siguiente}.");
+                return;
+            }
+            if (objetos.Any(o => o is IFichaEnemiga))
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛑 Movimiento bloqueado por enemigo en {siguiente}.");
+                return;
+            }
+
+            bool hayReco = objetos.Any(o => o is IObjetoRecoleccionable);
+            bool esUltimoPaso = siguiente == nuevaPos;
+            if (hayReco && !esUltimoPaso)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛑 Hay un objeto en {siguiente}. Debes caer aquí primero.");
+                return;
+            }
+
+            // Avanzar un paso
+            paso = siguiente;
+            pasosDados++;
+
+            SetPosicionActual(paso);
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🚶 El Rey pasa por {paso}");
 
             // 🔹 Revisar efectos en la casilla actual
             foreach (ITileEffect efecto in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ITileEffect>())
@@ -311,60 +320,66 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
                 else
                 {
                     efecto.RevisarSiReyLlegó(paso, this);
-                }                
+                }
+            }
+
         }
 
-    }
+        // 3) Sincroniza visual + descuenta PM reales
+        transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(nuevaPos);
+        puntosMovimientoActual -= pasosDados;
 
-    // 3) Sincroniza visual + descuenta PM reales
-    transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(nuevaPos);
-    puntosMovimientoActual -= pasosDados;
+        // 4) Refrescos y lógica existente
+        MostrarMovimientoPosible();
+        mostrandoMovimientos = true;
+        BoardManagerGlobal.Instance.NotificarMovimientoAliado(posicionActual);
 
-    // 4) Refrescos y lógica existente
-    MostrarMovimientoPosible();
-    mostrandoMovimientos = true;
-    BoardManagerGlobal.Instance.NotificarMovimientoAliado(posicionActual);
+        var reina = FindFirstObjectByType<QueenEnemyController>(); if (reina != null) reina.VerificarAmenazaSobre(posicionActual);
+        var torre = FindFirstObjectByType<RookEnemyController>(); if (torre != null) torre.VerificarAmenazaSobre(posicionActual);
+        var alfil = FindFirstObjectByType<BishopEnemyController>(); if (alfil != null) alfil.VerificarAmenazaSobre(posicionActual);
 
-    var reina = FindFirstObjectByType<QueenEnemyController>(); if (reina != null) reina.VerificarAmenazaSobre(posicionActual);
-    var torre = FindFirstObjectByType<RookEnemyController>(); if (torre != null) torre.VerificarAmenazaSobre(posicionActual);
-    var alfil = FindFirstObjectByType<BishopEnemyController>(); if (alfil != null) alfil.VerificarAmenazaSobre(posicionActual);
+        FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
 
-    FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
+        // 🚀 Llegó a la meta
+        if (posicionActual == new Vector2Int(7, 7))
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("🚀 El Rey llegó a la meta (H8). Calculando bonus.");
+            int bonus = turnosRestantes * 25;
+            PlayerScore.Instance.AgregarPuntaje(bonus);
+            LevelResultUI.Instance.ShowResults(
+                LevelProgress.Instance.keysCollected,
+                LevelProgress.Instance.hasDiamond,
+                turnosRestantes,
+                PlayerScore.Instance.GetTotalScore()
+            );
 
-    if (posicionActual == new Vector2Int(7, 7))
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("🚀 El Rey llegó a la meta (H8). Calculando bonus.");
-        int bonus = turnosRestantes * 50;
-        PlayerScore.Instance.AgregarPuntaje(bonus);
-        LevelResultUI.Instance.ShowResults(
-            LevelProgress.Instance.keysCollected,
-            LevelProgress.Instance.hasDiamond,
-            turnosRestantes,
-            PlayerScore.Instance.GetTotalScore()
-        );
-        juegoActivo = false;
+            FindFirstObjectByType<ChessGameManager>()?.DetenerJuego();
+
+        }
+
+        // 💀 Se quedó sin turnos
+        if (turnosRestantes <= 0)
+        {
         FindFirstObjectByType<ChessGameManager>()?.DetenerJuego();
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("💀 El Rey ha sido eliminado.");
+        StartCoroutine(MostrarResultadosTrasRetraso(3f));
+        }
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
+    
+    private IEnumerator MostrarResultadosTrasRetraso(float segundos)
+{
+    yield return new WaitForSeconds(segundos);
+  
 
-    if (turnosRestantes <= 0)
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("💀 El Rey sin vidas.");
         LevelResultUI.Instance.ShowResults(
-            LevelProgress.Instance.keysCollected,
-            LevelProgress.Instance.hasDiamond,
-            0,
-            PlayerScore.Instance.GetTotalScore()
-        );
-        juegoActivo = false;
-        FindFirstObjectByType<ChessGameManager>()?.DetenerJuego();
-    }
-
-    BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
-    }
-
-
-
-
+        LevelProgress.Instance.keysCollected,
+        LevelProgress.Instance.hasDiamond, 
+        0,
+        PlayerScore.Instance.GetTotalScore()
+    );
+}
+    
 
     public void ReiniciarTurno()
     {
@@ -384,7 +399,7 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         {
             tile.Shield(false); // apagar dorado
         }
-        
+
     }
 
     public void GanarPuntoMovimiento(int cantidad)
@@ -527,23 +542,25 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         get => 0; // El Rey no usa esta propiedad
         set { }   // Ignora cualquier intento de modificarla
     }
-    
+
     public void TeletransportarA(Vector2Int nuevaPos)
     {
-    posicionActual = nuevaPos;
+        posicionActual = nuevaPos;
 
-    var movible = GetComponent<MovableTileObject>();
-    if (movible != null) movible.tileCoords = nuevaPos;
+        var movible = GetComponent<MovableTileObject>();
+        if (movible != null) movible.tileCoords = nuevaPos;
 
-    var posicionador = GetComponent<PiecePositioner>();
-    if (posicionador != null) posicionador.tileCoords = nuevaPos;
+        var posicionador = GetComponent<PiecePositioner>();
+        if (posicionador != null) posicionador.tileCoords = nuevaPos;
 
-    transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(nuevaPos);
-    BoardManagerGlobal.Instance.RegistrarMovimiento(this, nuevaPos);
+        transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(nuevaPos);
+        BoardManagerGlobal.Instance.RegistrarMovimiento(this, nuevaPos);
 
-    BoardManagerGlobal.Instance.AgregarMensajeInterno($"♔ Rey teletransportado a {nuevaPos}.");
-    BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"♔ Rey teletransportado a {nuevaPos}.");
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
+    
+ 
 
 
 }
