@@ -4,6 +4,7 @@ using System.Linq;
 
 public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPosition, IFicha, IFichaAliada
 {
+    public bool tieneEscudo = false;
     public int puntosMovimientoMax = 3;
     
     public int rangoAtaqueKing = 1; // 🔺 Rango de ataque fijo del Rey (igual que el Peón)
@@ -90,69 +91,73 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
     }
 
     public void MostrarMovimientoPosible()
-{
-    if (!juegoActivo) return;
-
-    BoardManagerGlobal.Instance.AgregarMensajeInterno($"👣 Alcance personal del Rey: {puntosMovimientoActual} PM.");
-
-    // (Opcional) limpiar antes
-    foreach (Tile t in BoardManagerGlobal.Instance.tiles)
-        t.HighlightMove(false);
-
-    foreach (Tile tile in BoardManagerGlobal.Instance.tiles)
     {
-        int distancia = Mathf.Abs(tile.tileCoords.x - posicionActual.x) + Mathf.Abs(tile.tileCoords.y - posicionActual.y);
+        if (!juegoActivo) return;
 
-        // ✅ Solo pinta si está dentro de PM y la casilla NO está ocupada por aliada/inmóvil
-        bool puedeMover = distancia <= puntosMovimientoActual
-                  && (tile.tileCoords == posicionActual 
-                      || BoardManagerGlobal.Instance.EsCasillaAccesiblePorAliado(tile.tileCoords));
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"👣 Alcance personal del Rey: {puntosMovimientoActual} PM.");
 
-        tile.HighlightMove(puedeMover);
-    }
+        // (Opcional) limpiar antes
+        foreach (Tile t in BoardManagerGlobal.Instance.tiles)
+            t.HighlightMove(false);
 
-    // --- tu bloque de ataque adyacente queda igual ---
-    Vector2Int[] direcciones = new Vector2Int[]
-    {
+        foreach (Tile tile in BoardManagerGlobal.Instance.tiles)
+        {
+            int distancia = Mathf.Abs(tile.tileCoords.x - posicionActual.x) + Mathf.Abs(tile.tileCoords.y - posicionActual.y);
+
+            // ✅ Solo pinta si está dentro de PM y la casilla NO está ocupada por aliada/inmóvil
+            bool puedeMover = distancia <= puntosMovimientoActual
+                      && (tile.tileCoords == posicionActual
+                          || BoardManagerGlobal.Instance.EsCasillaAccesiblePorAliado(tile.tileCoords));
+
+            if (puedeMover && tieneEscudo)
+                tile.Shield(true); // 🔹 marcar dorado si el Rey tiene escudo
+
+            tile.HighlightMove(puedeMover);
+        }
+
+        // --- Ataque adyacente (igual que antes) ---
+        Vector2Int[] direcciones = new Vector2Int[]
+        {
         new Vector2Int(1,0), new Vector2Int(-1,0),
         new Vector2Int(0,1), new Vector2Int(0,-1),
         new Vector2Int(1,1), new Vector2Int(-1,1),
         new Vector2Int(1,-1), new Vector2Int(-1,-1)
-    };
+        };
 
-    BoardManagerGlobal.Instance.AgregarMensajeInterno("🧠 Revisando casillas adyacentes para posibles ataques del Rey...");
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("🧠 Revisando casillas adyacentes para posibles ataques del Rey...");
 
-    foreach (var delta in direcciones)
-    {
-        Vector2Int destino = posicionActual + delta;
-
-        if (destino.x < 0 || destino.y < 0 || destino.x > 7 || destino.y > 7)
-            continue;
-
-        var objetosEnDestino = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino).ToList();
-        if (objetosEnDestino.Count == 0)
-            continue;
-
-        var enemigo = objetosEnDestino.FirstOrDefault(obj =>
-            obj is IFichaEnemiga && obj is IPieceWithPosition pwp && pwp.GetPosicionActual() == destino);
-
-        if (enemigo != null)
+        foreach (var delta in direcciones)
         {
-            int distanciaX = Mathf.Abs(destino.x - posicionActual.x);
-            int distanciaY = Mathf.Abs(destino.y - posicionActual.y);
+            Vector2Int destino = posicionActual + delta;
 
-            if (distanciaX <= rangoAtaqueKing && distanciaY <= rangoAtaqueKing)
+            if (destino.x < 0 || destino.y < 0 || destino.x > 7 || destino.y > 7)
+                continue;
+
+            var objetosEnDestino = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino).ToList();
+            if (objetosEnDestino.Count == 0)
+                continue;
+
+            var enemigo = objetosEnDestino.FirstOrDefault(obj =>
+                obj is IFichaEnemiga && obj is IPieceWithPosition pwp && pwp.GetPosicionActual() == destino);
+
+            if (enemigo != null)
             {
-                Tile tile = BoardManagerGlobal.Instance.GetTileAt(destino);
-                if (tile != null)
+                int distanciaX = Mathf.Abs(destino.x - posicionActual.x);
+                int distanciaY = Mathf.Abs(destino.y - posicionActual.y);
+
+                if (distanciaX <= rangoAtaqueKing && distanciaY <= rangoAtaqueKing)
                 {
-                    tile.HighlightEnemyAttack(true);
-                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"🎯 Casilla {destino} marcada como ataque posible del Rey.");
+                    Tile tile = BoardManagerGlobal.Instance.GetTileAt(destino);
+                    if (tile != null)
+                    {
+                        tile.HighlightEnemyAttack(true);
+                        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🎯 Casilla {destino} marcada como ataque posible del Rey.");
+                    }
                 }
             }
         }
     }
-}
+
 
     public void OcultarMovimientos()
     {
@@ -373,11 +378,13 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
         BoardManagerGlobal.Instance.ResetearAtaquesEnemigos();
         BoardManagerGlobal.Instance.QuitarEscudos();
-        var peones = FindObjectsByType<PawnController>(FindObjectsSortMode.None);
-        foreach (var p in peones)
+        tieneEscudo = false;
+
+        foreach (Tile tile in BoardManagerGlobal.Instance.tiles)
         {
-            p.tieneEscudo = false;
+            tile.Shield(false); // apagar dorado
         }
+        
     }
 
     public void GanarPuntoMovimiento(int cantidad)

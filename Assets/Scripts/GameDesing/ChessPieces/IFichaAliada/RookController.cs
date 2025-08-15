@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPosition, IFicha, IFichaAliada
 {
     [Header("Rangos")]
+    public bool tieneEscudo = false;
     public int rangoMovimientoBase { get; set; } = 5;
     private int rangoMovimientoExtra = 0;
     public int rangoAtaque { get; set; } = 3;
@@ -83,25 +84,27 @@ public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
         Vector2Int[] direcciones = new Vector2Int[]
         {
-            Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right
+        Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right
         };
-        // 🔵 Iluminar la casilla actual de la Torre
+
+        // 🔵 Casilla actual
         var casillaActual = BoardManagerGlobal.Instance.GetTileAt(posicionActual);
         if (casillaActual != null)
         {
+            if (tieneEscudo) casillaActual.Shield(true); // ✅ marcar dorado si hay escudo
             casillaActual.HighlightMove(true);
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔵 Casilla central del Caballo ({posicionActual}) marcada como centro.");
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔵 Casilla central de la Torre ({posicionActual}) marcada como centro.");
         }
+
         foreach (var dir in direcciones)
         {
             for (int i = 1; i <= RangoMovimientoActual; i++)
             {
-
                 Vector2Int destino = posicionActual + dir * i;
+
                 if (BoardManagerGlobal.Instance.HayObstaculoEntreAliado(posicionActual, destino, this))
-                {
                     break;
-                }
+
                 if (!BoardManagerGlobal.Instance.EsCasillaAccesiblePorAliado(destino))
                 {
                     BoardManagerGlobal.Instance.AgregarMensajeInterno($"⛔ Casilla {destino} no accesible o fuera del tablero.");
@@ -111,18 +114,18 @@ public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
                 var tile = BoardManagerGlobal.Instance.GetTileAt(destino);
                 if (tile == null) break;
 
+                if (tieneEscudo) tile.Shield(true); // ✅ marcar dorado si hay escudo
                 tile.HighlightMove(true);
+
                 BoardManagerGlobal.Instance.AgregarMensajeInterno($"🟦 Casilla {destino} marcada como movimiento válido.");
 
-                // Detener si hay objeto recoleccionable o enemigo (no se puede pasar a través)
                 var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino);
                 if (objetos.Any(obj => obj is IFicha))
                     break;
             }
         }
-        
     }
-
+    
     public void OcultarMovimientos()
     {
         foreach (Tile tile in BoardManagerGlobal.Instance.tiles)
@@ -350,6 +353,12 @@ public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         rangoAtaque = 3;
         rangoMovimientoExtra = 0;
         StartCoroutine(EvaluarCasillasDeAtaque());
+        tieneEscudo = false;
+
+        foreach (Tile tile in BoardManagerGlobal.Instance.tiles)
+        {
+            tile.Shield(false); // apagar dorado
+        }
     }
 
     public void AumentarRangoMovimientoSilencioso(int cantidad)

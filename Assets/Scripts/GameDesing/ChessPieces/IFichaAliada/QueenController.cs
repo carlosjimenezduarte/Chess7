@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPosition, IFicha, IFichaAliada
 {
     [Header("Rangos")]
+    public bool tieneEscudo = false;
     public int rangoMovimientoBase { get; set; } = 5;
     private int rangoMovimientoExtra = 0;
     public int rangoAtaque { get; set; } = 3;
@@ -66,59 +67,63 @@ public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPo
 
     public void MostrarMovimientoPosible()
     {
-        if (!juegoActivo) return;
+    if (!juegoActivo) return;
 
-        var rey = FindFirstObjectByType<KingController>();
-        if (rey == null || rey.puntosAccionActual <= 0)
+    var rey = FindFirstObjectByType<KingController>();
+    if (rey == null || rey.puntosAccionActual <= 0)
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("⚠️ Rey sin PA, Reina no puede moverse.");
+        OcultarMovimientos();
+        mostrandoMovimientos = false;
+        return;
+    }
+
+    BoardManagerGlobal.Instance.AgregarMensajeInterno("🔍 Mostrando posibles movimientos de la Reina (diagonales y ortogonales):");
+
+    Vector2Int[] direcciones = new Vector2Int[]
+    {
+        Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right,
+        new Vector2Int(1,1), new Vector2Int(-1,1), new Vector2Int(1,-1), new Vector2Int(-1,-1)
+    };
+
+    var casillaActual = BoardManagerGlobal.Instance.GetTileAt(posicionActual);
+    if (casillaActual != null)
+    {
+        if (tieneEscudo) casillaActual.Shield(true); // 🔹 aplicar dorado si hay escudo
+        casillaActual.HighlightMove(true);
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔵 Casilla central de la Reina ({posicionActual}) marcada como centro.");
+    }
+
+    foreach (var dir in direcciones)
+    {
+        for (int i = 1; i <= RangoMovimientoActual; i++)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("⚠️ Rey sin PA, Reina no puede moverse.");
-            OcultarMovimientos();
-            mostrandoMovimientos = false;
-            return;
-        }
+            Vector2Int destino = posicionActual + dir * i;
 
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("🔍 Mostrando posibles movimientos de la Reina (diagonales y ortogonales):");
+            if (BoardManagerGlobal.Instance.HayObstaculoEntreAliado(posicionActual, destino, this))
+                break;
 
-        Vector2Int[] direcciones = new Vector2Int[]
-        {
-            Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right,
-            new Vector2Int(1,1), new Vector2Int(-1,1), new Vector2Int(1,-1), new Vector2Int(-1,-1)
-        };
-
-        var casillaActual = BoardManagerGlobal.Instance.GetTileAt(posicionActual);
-        if (casillaActual != null)
-        {
-            casillaActual.HighlightMove(true);
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔵 Casilla central de la Reina ({posicionActual}) marcada como centro.");
-        }
-
-        foreach (var dir in direcciones)
-        {
-            for (int i = 1; i <= RangoMovimientoActual; i++)
+            if (!BoardManagerGlobal.Instance.EsCasillaAccesiblePorAliado(destino))
             {
-                Vector2Int destino = posicionActual + dir * i;
-                if (BoardManagerGlobal.Instance.HayObstaculoEntreAliado(posicionActual, destino, this))
-                {
-                    break;
-                }
-                if (!BoardManagerGlobal.Instance.EsCasillaAccesiblePorAliado(destino))
-                {
-                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"⛔ Casilla {destino} no accesible.");
-                    break;
-                }
-
-                var tile = BoardManagerGlobal.Instance.GetTileAt(destino);
-                if (tile == null) break;
-
-                tile.HighlightMove(true);
-                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🟦 Casilla {destino} marcada como movimiento válido.");
-
-                var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino);
-                if (objetos.Any(obj => obj is IFicha))
-                    break;
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"⛔ Casilla {destino} no accesible.");
+                break;
             }
+
+            var tile = BoardManagerGlobal.Instance.GetTileAt(destino);
+            if (tile == null) break;
+
+            if (tieneEscudo) tile.Shield(true); // 🔹 aplicar dorado si hay escudo
+            tile.HighlightMove(true);
+
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🟦 Casilla {destino} marcada como movimiento válido.");
+
+            var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino);
+            if (objetos.Any(obj => obj is IFicha))
+                break;
         }
     }
+    }
+
 
     public void OcultarMovimientos()
     {
@@ -344,6 +349,12 @@ public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPo
         rangoAtaque = 3;
         rangoMovimientoExtra = 0;
         StartCoroutine(EvaluarCasillasDeAtaque());
+        tieneEscudo = false;
+
+        foreach (Tile tile in BoardManagerGlobal.Instance.tiles)
+        {
+            tile.Shield(false); // apagar dorado
+        }
     }
 
     

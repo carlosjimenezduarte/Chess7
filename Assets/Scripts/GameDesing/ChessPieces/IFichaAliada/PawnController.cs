@@ -5,10 +5,8 @@ using System.Linq;
 public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPosition, IFicha, IFichaAliada
 {
     [Header("Rango de Movimiento")]
-    public int rangoMovimientoBase { get; set; } = 1;
-
     public bool tieneEscudo = false;
-
+    public int rangoMovimientoBase { get; set; } = 1;    
     public bool isShieldActive = false;
     private int rangoMovimientoExtra = 0;
     public int rangoAtaque { get; set; } = 1; // 🔺 NUEVO: Rango fijo de ataque en diagonal

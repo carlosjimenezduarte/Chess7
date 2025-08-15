@@ -161,11 +161,186 @@ public class Shield : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPiece
                     }
                 }
             }
+            else if (ficha is KnightController caballo)
+            {
+                caballo.tieneEscudo = true;
+
+                // Casilla actual
+                var casillaActual = BoardManagerGlobal.Instance.GetTileAt(caballo.GetPosicionActual());
+                if (casillaActual != null)
+                {
+                    casillaActual.Shield(true);
+                }
+
+                // Marcar movimientos en L
+                foreach (var delta in caballo.movimientosEnL)
+                {
+                    Vector2Int destino = caballo.GetPosicionActual() + delta;
+
+                    if (!BoardManagerGlobal.Instance.EsCasillaAccesiblePorAliado(destino))
+                        continue;
+
+                    var tile = BoardManagerGlobal.Instance.GetTileAt(destino);
+                    if (tile != null)
+                    {
+                        tile.Shield(true);
+                    }
+                }
+            }
+            else if (ficha is QueenController reina)
+            {
+                reina.tieneEscudo = true;
+
+                // Casilla actual
+                var casillaActual = BoardManagerGlobal.Instance.GetTileAt(reina.GetPosicionActual());
+                if (casillaActual != null)
+                {
+                    casillaActual.Shield(true);
+                }
+
+                // Movimientos posibles (diagonales y ortogonales)
+                Vector2Int[] direcciones = new Vector2Int[]
+                {
+                    Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right,
+                    new Vector2Int(1,1), new Vector2Int(-1,1), new Vector2Int(1,-1), new Vector2Int(-1,-1)
+                };
+
+                for (int d = 0; d < direcciones.Length; d++)
+                {
+                    for (int i = 1; i <= reina.RangoMovimientoActual; i++)
+                    {
+                        Vector2Int destino = reina.GetPosicionActual() + direcciones[d] * i;
+
+                        if (BoardManagerGlobal.Instance.HayObstaculoEntreAliado(reina.GetPosicionActual(), destino, reina))
+                            break;
+
+                        if (!BoardManagerGlobal.Instance.EsCasillaAccesiblePorAliado(destino))
+                            break;
+
+                        var tile = BoardManagerGlobal.Instance.GetTileAt(destino);
+                        if (tile != null)
+                        {
+                            tile.Shield(true);
+                        }
+
+                        var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino);
+                        if (objetos.Any(obj => obj is IFicha))
+                            break;
+                    }
+                }
+            }
+            else if (ficha is RookController torre)
+            {
+                torre.tieneEscudo = true;
+
+                // Casilla actual
+                var casillaActual = BoardManagerGlobal.Instance.GetTileAt(torre.GetPosicionActual());
+                if (casillaActual != null)
+                {
+                    casillaActual.Shield(true);
+                }
+
+                // Movimientos posibles (solo ortogonales)
+                Vector2Int[] direcciones = new Vector2Int[]
+                {
+                    Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right
+                };
+
+                for (int d = 0; d < direcciones.Length; d++)
+                {
+                    for (int i = 1; i <= torre.RangoMovimientoActual; i++)
+                    {
+                        Vector2Int destino = torre.GetPosicionActual() + direcciones[d] * i;
+
+                        if (BoardManagerGlobal.Instance.HayObstaculoEntreAliado(torre.GetPosicionActual(), destino, torre))
+                            break;
+
+                        if (!BoardManagerGlobal.Instance.EsCasillaAccesiblePorAliado(destino))
+                            break;
+
+                        var tile = BoardManagerGlobal.Instance.GetTileAt(destino);
+                        if (tile != null)
+                        {
+                            tile.Shield(true);
+                        }
+
+                        var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino);
+                        if (objetos.Any(obj => obj is IFicha))
+                            break;
+                    }
+                }
+
+            }
+            else if (ficha is BishopController alfil)
+            {
+                alfil.tieneEscudo = true;
+
+                // Casilla actual
+                var casillaActual = BoardManagerGlobal.Instance.GetTileAt(alfil.GetPosicionActual());
+                if (casillaActual != null)
+                {
+                    casillaActual.Shield(true);
+                }
+
+                // Movimientos posibles (solo diagonales)
+                Vector2Int[] direcciones = new Vector2Int[]
+                {
+        new Vector2Int(1,1), new Vector2Int(-1,1),
+        new Vector2Int(1,-1), new Vector2Int(-1,-1)
+                };
+
+                for (int d = 0; d < direcciones.Length; d++)
+                {
+                    for (int i = 1; i <= alfil.RangoMovimientoActual; i++)
+                    {
+                        Vector2Int destino = alfil.GetPosicionActual() + direcciones[d] * i;
+
+                        if (BoardManagerGlobal.Instance.HayObstaculoEntreAliado(alfil.GetPosicionActual(), destino, alfil))
+                            break;
+
+                        if (!BoardManagerGlobal.Instance.EsCasillaAccesiblePorAliado(destino))
+                            break;
+
+                        var tile = BoardManagerGlobal.Instance.GetTileAt(destino);
+                        if (tile != null)
+                        {
+                            tile.Shield(true);
+                        }
+
+                        var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino);
+                        if (objetos.Any(obj => obj is IFicha || obj is IFichaInmovil))
+                            break;
+                    }
+                }
+            }
             else if (ficha is KingController rey)
             {
-                // rey.tieneEscudo = true; // si decides usarlo también en el Rey
-                // Aquí podrías marcar sus tiles igual que en el Peón
+                rey.tieneEscudo = true;
+
+                // Casilla actual
+                var casillaActual = BoardManagerGlobal.Instance.GetTileAt(rey.GetPosicionActual());
+                if (casillaActual != null)
+                {
+                    casillaActual.Shield(true);
+                }
+
+                // Movimientos posibles (todas las direcciones a distancia de puntosMovimientoActual)
+                foreach (Tile tile in BoardManagerGlobal.Instance.tiles)
+                {
+                    int distancia = Mathf.Abs(tile.tileCoords.x - rey.GetPosicionActual().x) +
+                                    Mathf.Abs(tile.tileCoords.y - rey.GetPosicionActual().y);
+
+                    bool puedeMover = distancia <= rey.puntosMovimientoActual &&
+                                       (tile.tileCoords == rey.GetPosicionActual() ||
+                                        BoardManagerGlobal.Instance.EsCasillaAccesiblePorAliado(tile.tileCoords));
+
+                    if (puedeMover)
+                    {
+                        tile.Shield(true);
+                    }
+                }
             }
+
 
             // 2️⃣ Desactivar rangos de todos los enemigos
             var enemigos = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
@@ -195,6 +370,7 @@ public class Shield : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPiece
 
         Destroy(gameObject); // El escudo desaparece tras recogerse
     }
+    
 
 
 

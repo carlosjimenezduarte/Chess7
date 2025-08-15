@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithPosition, IFicha, IFichaAliada
 {
     [Header("Rangos")]
+    public bool tieneEscudo = false;
     public int rangoMovimientoBase { get; set; } = 5;
     private int rangoMovimientoExtra = 0;
     public int rangoAtaque { get; set; } = 3;
@@ -83,14 +84,15 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
 
         Vector2Int[] direcciones = new Vector2Int[]
         {
-            new Vector2Int(1,1), new Vector2Int(-1,1),
-            new Vector2Int(1,-1), new Vector2Int(-1,-1)
+        new Vector2Int(1,1), new Vector2Int(-1,1),
+        new Vector2Int(1,-1), new Vector2Int(-1,-1)
         };
 
-        // 🔵 Centro
+        // 🔵 Casilla actual
         var casillaActual = BoardManagerGlobal.Instance.GetTileAt(posicionActual);
         if (casillaActual != null)
         {
+            if (tieneEscudo) casillaActual.Shield(true); // ✅ marcar dorado si hay escudo
             casillaActual.HighlightMove(true);
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔵 Casilla central del Alfil ({posicionActual}) marcada como centro.");
         }
@@ -114,7 +116,9 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
                 var tile = BoardManagerGlobal.Instance.GetTileAt(destino);
                 if (tile == null) break;
 
+                if (tieneEscudo) tile.Shield(true); // ✅ marcar dorado si hay escudo
                 tile.HighlightMove(true);
+
                 BoardManagerGlobal.Instance.AgregarMensajeInterno($"🟦 Casilla {destino} marcada como movimiento válido.");
 
                 var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino);
@@ -123,6 +127,7 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
             }
         }
     }
+
 
     public void OcultarMovimientos()
     {
@@ -375,6 +380,12 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
         rangoAtaque = 3;
         rangoMovimientoExtra = 0;
         StartCoroutine(EvaluarCasillasDeAtaque());
+        tieneEscudo = false;
+
+        foreach (Tile tile in BoardManagerGlobal.Instance.tiles)
+        {
+            tile.Shield(false); // apagar dorado
+        }
     }
 
     

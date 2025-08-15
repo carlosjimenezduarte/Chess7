@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithPosition, IFicha, IFichaAliada
 {
     [Header("Rango de Movimiento")]
+    public bool tieneEscudo = false;
     public int rangoMovimientoBase { get; set; } = 1;
     private int rangoMovimientoExtra = 0;
     public int rangoAtaque { get; set; } = 1;
@@ -18,13 +19,15 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
     private bool juegoActivo = false;
     public bool mostrandoMovimientos = false;
 
-    private static readonly Vector2Int[] movimientosEnL = new Vector2Int[]
+    public readonly Vector2Int[] movimientosEnL = new Vector2Int[]
     {
         new Vector2Int(2, 1), new Vector2Int(1, 2),
         new Vector2Int(-1, 2), new Vector2Int(-2, 1),
         new Vector2Int(-2, -1), new Vector2Int(-1, -2),
         new Vector2Int(1, -2), new Vector2Int(2, -1)
     };
+
+   
 
     private void Start()
     {
@@ -76,7 +79,7 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
     }
 
     public void MostrarMovimientoPosible()
-    {
+{
     if (!juegoActivo) return;
 
     var rey = FindFirstObjectByType<KingController>();
@@ -88,14 +91,17 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
         return;
     }
 
-    BoardManagerGlobal.Instance.AgregarMensajeInterno("🔍 Mostrando posibles movimientos en L del Caballo (sin enemigos).");
-    // 🔵 Iluminar la casilla actual del Caballo
+    BoardManagerGlobal.Instance.AgregarMensajeInterno("🔍 Mostrando posibles movimientos en L del Caballo.");
+
+    // 🔵 Casilla actual
     var casillaActual = BoardManagerGlobal.Instance.GetTileAt(posicionActual);
     if (casillaActual != null)
     {
+        if (tieneEscudo) casillaActual.Shield(true); // ✅ marcar dorado si hay escudo
         casillaActual.HighlightMove(true);
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔵 Casilla central del Caballo ({posicionActual}) marcada como centro.");
     }
+
     foreach (var delta in movimientosEnL)
     {
         Vector2Int destino = posicionActual + delta;
@@ -108,11 +114,12 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
         var tile = BoardManagerGlobal.Instance.GetTileAt(destino);
         if (tile == null) continue;
 
-        // 💚 Solo marcamos como movimiento posible
+        if (tieneEscudo) tile.Shield(true); // ✅ marcar dorado si hay escudo
         tile.HighlightMove(true);
+
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"🟦 Casilla {destino} marcada como movimiento válido.");
     }
-    }
+}
 
     public void OcultarMovimientos()
     {
@@ -296,6 +303,12 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
         rangoMovimientoBase = 1;
         rangoAtaque = 1;
         StartCoroutine(EvaluarCasillasDeAtaque());
+        tieneEscudo = false;
+
+        foreach (Tile tile in BoardManagerGlobal.Instance.tiles)
+        {
+            tile.Shield(false); // apagar dorado
+        }
     }
 
     
