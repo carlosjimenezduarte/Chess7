@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &626632825085157816
+--- !u!1 &6606022710749811883
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,26 +8,25 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2994443515095739344}
-  - component: {fileID: 1734527028587898047}
-  - component: {fileID: 6533439155558620837}
-  - component: {fileID: 2243250832241142952}
-  - component: {fileID: 1162244616712132574}
-  - component: {fileID: 2062129631136883389}
+  - component: {fileID: 9180719381230370054}
+  - component: {fileID: 949701309029571533}
+  - component: {fileID: 3713192491024469022}
+  - component: {fileID: 5753395150971052141}
+  - component: {fileID: 4528833465506354291}
   m_Layer: 5
-  m_Name: KingPiece
+  m_Name: KingFree
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &2994443515095739344
+--- !u!224 &9180719381230370054
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 626632825085157816}
+  m_GameObject: {fileID: 6606022710749811883}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -40,21 +39,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 135, y: 135}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &1734527028587898047
+--- !u!222 &949701309029571533
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 626632825085157816}
+  m_GameObject: {fileID: 6606022710749811883}
   m_CullTransparentMesh: 1
---- !u!114 &6533439155558620837
+--- !u!114 &3713192491024469022
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 626632825085157816}
+  m_GameObject: {fileID: 6606022710749811883}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
@@ -78,52 +77,30 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2243250832241142952
+--- !u!114 &5753395150971052141
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 626632825085157816}
+  m_GameObject: {fileID: 6606022710749811883}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74e5e04f83e472a4281766b56f53ad24, type: 3}
+  m_Script: {fileID: 11500000, guid: a5895a2afe36aae4b8602ad346cde43d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   tileCoords: {x: 0, y: 0}
---- !u!114 &1162244616712132574
+--- !u!114 &4528833465506354291
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 626632825085157816}
+  m_GameObject: {fileID: 6606022710749811883}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27d3c6c698f212a4a87ed0e94bfde542, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tieneEscudo: 0
-  puntosMovimientoMax: 3
-  rangoAtaqueKing: 1
-  puntosAccionMax: 5
-  esInamovible: 0
-  puntosMovimientoActual: 0
-  puntosAccionActual: 5
-  turnosRestantes: 7
-  mostrandoMovimientos: 0
---- !u!114 &2062129631136883389
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 626632825085157816}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33d1fb08166c8ac48b559443f7486744, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f69a17de30209f41b863b2429a2216d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   tileCoords: {x: 0, y: 0}
-  activoEnTablero: 1
-  esInamovible: 0
+  moveCooldown: 0.15
