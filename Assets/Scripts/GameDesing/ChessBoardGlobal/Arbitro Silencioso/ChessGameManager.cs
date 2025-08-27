@@ -212,8 +212,7 @@ public class ChessGameManager : MonoBehaviour
 
     public void Exit()
     {
-        Debug.Log("🏠 Saliendo al GameHome...");
-        SceneManager.LoadScene("GameHome");
+        //
     }
     public void NotifyBoardChanged()
     {

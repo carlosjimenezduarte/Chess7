@@ -18,14 +18,14 @@ public class CodexManagerSimple : MonoBehaviour
 
     [Header("Paneles de categorías")]
     public GameObject panelAliadas;
-    public GameObject panelEnemigasNegras;        
-    public GameObject panelEnemigasRojas; 
-    public GameObject panelScore; 
-    public GameObject panelAntiScore; 
-    public GameObject panelHelpItems; 
+    public GameObject panelEnemigasNegras;
+    public GameObject panelEnemigasRojas;
+    public GameObject panelScore;
+    public GameObject panelAntiScore;
+    public GameObject panelHelpItems;
     public GameObject panelHelpItemsLess;
-    public GameObject panelInmovil; 
-    public GameObject panelAwards; 
+    public GameObject panelInmovil;
+    public GameObject panelAwards;
 
 
     [Header("Páginas completas de Aliadas")]
@@ -41,7 +41,7 @@ public class CodexManagerSimple : MonoBehaviour
     public GameObject TorreNegraPanel;
     public GameObject AlfilNegroPanel;
     public GameObject CaballoNegroPanel;
-    
+
     [Header("Páginas completas de Enemigas Rojas")]
     public GameObject peonRojoPanel;
     public GameObject alfilRojoPanel;
@@ -82,9 +82,9 @@ public class CodexManagerSimple : MonoBehaviour
     public GameObject Less3PMPanel;
     public GameObject Less5PMPanel;
     public GameObject Less15PMPanel;
-    public GameObject HeartLessPanel; 
+    public GameObject HeartLessPanel;
 
-    
+
     [Header("Páginas completas de IFichaInmovil")]
     public GameObject PusherUpPanel;
     public GameObject PusherDownPanel;
@@ -121,89 +121,57 @@ public class CodexManagerSimple : MonoBehaviour
     // ===== Acciones de los GlobalItems =====
     public void OnClickFichasAliadas()
     {
-       // if (book) book.SetActive(false);
+        /* if (book) book.SetActive(false);
         if (panelAliadas) panelAliadas.SetActive(true);
 
         OcultarPaginas();
         currentPage = null;
+        Debug.Log("📘 Codex: Abierto panel IFichaAliada");*/
+        ActivarCategoria(panelAliadas);
         Debug.Log("📘 Codex: Abierto panel IFichaAliada");
     }
 
     public void OnClickFichasEnemigasNegras()
     {
-    // Apagamos otras categorías
-    if (panelAliadas) panelAliadas.SetActive(false);
-    OcultarPaginas();
+        /* Apagamos otras categorías
+        if (panelAliadas) panelAliadas.SetActive(false);
+        OcultarPaginas();
 
-    // Encendemos esta categoría
-    if (panelEnemigasNegras) panelEnemigasNegras.SetActive(true);
+        // Encendemos esta categoría
+        if (panelEnemigasNegras) panelEnemigasNegras.SetActive(true);
 
-    currentPage = null;
-    Debug.Log("📘 Codex: Abierto panel IFichasEnemigasNegras");
+        currentPage = null;
+        Debug.Log("📘 Codex: Abierto panel IFichasEnemigasNegras");*/
+        ActivarCategoria(panelEnemigasNegras);
+        Debug.Log("📘 Codex: Abierto panel IFichasEnemigasNegras");
     }
 
     public void OnClickFichasEnemigasRojas()
     {
-        // Apagamos otras categorías
-        if (panelAliadas) panelAliadas.SetActive(false);
-        if (panelEnemigasNegras) panelEnemigasNegras.SetActive(false);
-        OcultarPaginas();
-
-        // Encendemos esta categoría
-        if (panelEnemigasRojas) panelEnemigasRojas.SetActive(true);
-
-        currentPage = null;
+        ActivarCategoria(panelEnemigasRojas);
         Debug.Log("📘 Codex: Abierto panel IFichasEnemigasRojas");
-
+    
     }
 
     public void OnClickScore()
     {
-        // Apagamos otras categorías
-        if (panelAliadas) panelAliadas.SetActive(false);
-        if (panelEnemigasNegras) panelEnemigasNegras.SetActive(false);
-        if (panelEnemigasRojas) panelEnemigasRojas.SetActive(false);
-        OcultarPaginas();
-
-        // Encendemos esta categoría
-        if (panelScore) panelScore.SetActive(true);
-
-        currentPage = null;
+        ActivarCategoria(panelScore);
         Debug.Log("📘 Codex: Abierto panel Score");
+    
     }
 
 
     public void OnClickAntiScore()
     {
-        // Apagamos otras categorías
-        if (panelAliadas) panelAliadas.SetActive(false);
-        if (panelEnemigasNegras) panelEnemigasNegras.SetActive(false);
-        if (panelEnemigasRojas) panelEnemigasRojas.SetActive(false);
-        if (panelScore) panelScore.SetActive(false);
-        OcultarPaginas();
-
-        // Encendemos esta categoría
-        if (panelAntiScore) panelAntiScore.SetActive(true);
-
-        currentPage = null;
+        ActivarCategoria(panelAntiScore);
         Debug.Log("📘 Codex: Abierto panel AntiScore");
+    
     }
 
 
     public void OnClickHelpItems()
     {
-        // Apagamos otras categorías
-        if (panelAliadas) panelAliadas.SetActive(false);
-        if (panelEnemigasNegras) panelEnemigasNegras.SetActive(false);
-        if (panelEnemigasRojas) panelEnemigasRojas.SetActive(false);
-        if (panelScore) panelScore.SetActive(false);
-        if (panelAntiScore) panelAntiScore.SetActive(false);
-        OcultarPaginas();
-
-        // Encendemos esta categoría
-        if (panelHelpItems) panelHelpItems.SetActive(true);
-
-        currentPage = null;
+        ActivarCategoria(panelHelpItems);
         Debug.Log("📘 Codex: Abierto panel HelpItems");
     }
 
@@ -211,61 +179,25 @@ public class CodexManagerSimple : MonoBehaviour
 
     public void OnClickHelpItemsLess()
     {
-        // Apagamos otras categorías
-        if (panelAliadas) panelAliadas.SetActive(false);
-        if (panelEnemigasNegras) panelEnemigasNegras.SetActive(false);
-        if (panelEnemigasRojas) panelEnemigasRojas.SetActive(false);
-        if (panelScore) panelScore.SetActive(false);
-        if (panelAntiScore) panelAntiScore.SetActive(false);
-        if (panelHelpItems) panelHelpItems.SetActive(false);
-        OcultarPaginas();
-
-        // Encendemos esta categoría
-        if (panelHelpItemsLess) panelHelpItemsLess.SetActive(true);
-
-        currentPage = null;
+        ActivarCategoria(panelHelpItemsLess);
         Debug.Log("📘 Codex: Abierto panel HelpItemsLess");
+    
     }
 
     public void OnClickIFichaInmovil()
     {
-        // Apagamos otras categorías
-        if (panelAliadas) panelAliadas.SetActive(false);
-        if (panelEnemigasNegras) panelEnemigasNegras.SetActive(false);
-        if (panelEnemigasRojas) panelEnemigasRojas.SetActive(false);
-        if (panelScore) panelScore.SetActive(false);
-        if (panelAntiScore) panelAntiScore.SetActive(false);
-        if (panelHelpItems) panelHelpItems.SetActive(false);
-        if (panelHelpItemsLess) panelHelpItemsLess.SetActive(false);
-        OcultarPaginas();
-
-        // Encendemos esta categoría
-        if (panelInmovil) panelInmovil.SetActive(true);
-
-        currentPage = null;
+        ActivarCategoria(panelInmovil);
         Debug.Log("📘 Codex: Abierto panel IFichaInmovil");
+    
     }
 
 
 
     public void OnClickAwards()
     {
-        // Apagamos otras categorías
-        if (panelAliadas) panelAliadas.SetActive(false);
-        if (panelEnemigasNegras) panelEnemigasNegras.SetActive(false);
-        if (panelEnemigasRojas) panelEnemigasRojas.SetActive(false);
-        if (panelScore) panelScore.SetActive(false);
-        if (panelAntiScore) panelAntiScore.SetActive(false);
-        if (panelHelpItems) panelHelpItems.SetActive(false);
-        if (panelHelpItemsLess) panelHelpItemsLess.SetActive(false);
-        if (panelInmovil) panelInmovil.SetActive(false);
-        OcultarPaginas();
-
-        // Encendemos esta categoría
-        if (panelAwards) panelAwards.SetActive(true);
-
-        currentPage = null;
+        ActivarCategoria(panelAwards);
         Debug.Log("📘 Codex: Abierto panel Awards");
+    
     }
 
 
@@ -292,28 +224,28 @@ public class CodexManagerSimple : MonoBehaviour
         currentPage = pagina;
         Debug.Log($"📘 Codex: Mostrando {pagina.name}");
     }
-    
+
     public void TogglePaginaEnemiga(GameObject pagina)
     {
-    // Si ya estaba activa, la apagamos (pero el panelEnemigasNegras sigue visible)
-    if (currentPage == pagina && pagina.activeSelf)
-    {
-        pagina.SetActive(false);
-        currentPage = null;
-        return;
-    }
+        // Si ya estaba activa, la apagamos (pero el panelEnemigasNegras sigue visible)
+        if (currentPage == pagina && pagina.activeSelf)
+        {
+            pagina.SetActive(false);
+            currentPage = null;
+            return;
+        }
 
-    // Apaga todas las páginas activas primero
-    OcultarPaginas();
+        // Apaga todas las páginas activas primero
+        OcultarPaginas();
 
-    // Enciende la página seleccionada
-    pagina.SetActive(true);
+        // Enciende la página seleccionada
+        pagina.SetActive(true);
 
-    // Mantiene visible el panel de EnemigasNegras
-    if (panelEnemigasNegras) panelEnemigasNegras.SetActive(true);
+        // Mantiene visible el panel de EnemigasNegras
+        if (panelEnemigasNegras) panelEnemigasNegras.SetActive(true);
 
-    currentPage = pagina;
-    Debug.Log($"📘 Codex: Mostrando {pagina.name}");
+        currentPage = pagina;
+        Debug.Log($"📘 Codex: Mostrando {pagina.name}");
     }
 
     public void TogglePaginaEnemigaRoja(GameObject pagina)
@@ -525,7 +457,36 @@ public class CodexManagerSimple : MonoBehaviour
         if (ParchmentPanel) ParchmentPanel.SetActive(false);
         if (TrophyPanel) TrophyPanel.SetActive(false);
         if (MedalPanel) MedalPanel.SetActive(false);
-    
+
 
     }
+
+    // Método central para cambiar de categoría
+    private void ActivarCategoria(GameObject panelCategoria)
+    {
+        // 1. Apagamos todos los paneles de categorías
+        if (panelAliadas) panelAliadas.SetActive(false);
+        if (panelEnemigasNegras) panelEnemigasNegras.SetActive(false);
+        if (panelEnemigasRojas) panelEnemigasRojas.SetActive(false);
+        if (panelScore) panelScore.SetActive(false);
+        if (panelAntiScore) panelAntiScore.SetActive(false);
+        if (panelHelpItems) panelHelpItems.SetActive(false);
+        if (panelHelpItemsLess) panelHelpItemsLess.SetActive(false);
+        if (panelInmovil) panelInmovil.SetActive(false);
+        if (panelAwards) panelAwards.SetActive(false);
+
+        // 2. Apagamos todas las páginas
+        OcultarPaginas();
+
+        // 3. Activamos el panel de la categoría pedida
+        if (panelCategoria) panelCategoria.SetActive(true);
+
+        // 4. Dejamos visible siempre el Book
+        if (book) book.SetActive(true);
+
+        // 5. Reiniciamos referencia de página activa
+        currentPage = null;
+    }
+
+
 }
