@@ -10,6 +10,29 @@ public class LevelResultUI : MonoBehaviour
     [Header("Referencias UI")]
     public GameObject resultPanel;
 
+    [Header("Condecoracion")]
+    public TMP_Text CondecorationText;
+    public GameObject Condecoracion;
+    public GameObject CondecoracionEnabled;
+
+    [Header("Ganar o perder")]
+    public GameObject youWinText;
+    public GameObject youLoseText; 
+
+    [Header("Pergamino")]   
+    public GameObject ParchmentText;
+    public GameObject Parchment2Text; 
+
+    public GameObject Pergamino;
+    public GameObject PergaminoEnabled;
+
+    [Header("Trofeo")]
+
+    public TMP_Text TrophyText;
+
+    public GameObject Trophy;
+    public GameObject TrophyEnabled;
+
     [Header("Llaves")]
     public TMP_Text keysText;
     
@@ -21,7 +44,7 @@ public class LevelResultUI : MonoBehaviour
     public GameObject key3Enabled;
 
     [Header("Diamante")]
-    public TMP_Text diamondText;
+    //public TMP_Text diamondText;
     public GameObject diamond;
     public GameObject diamondEnabled;
 
@@ -34,7 +57,9 @@ public class LevelResultUI : MonoBehaviour
     public TMP_Text scoreText;
 
     [Header("Ganó o perdió")]
-    public TMP_Text winLoseText;
+    //public TMP_Text winLoseText;
+    //public TMP_Text winLoseText2;
+    
 
     [Header("Tiempo")]
     public TMP_Text timeLabelText; // 🔥 Nuevo: texto para el título ("Time")
@@ -76,21 +101,15 @@ public class LevelResultUI : MonoBehaviour
 
     private void MostrarResultadosInmediatos(int keysCollected, bool hasDiamond, int livesRemaining, int totalScore)
     {
-        // Textos principales
-        keysText.text = $"{keysCollected} / 3 keys";
-        diamondText.text = hasDiamond ? "Diamond: Yes" : "Diamond: No";
-        livesText.text = $"{livesRemaining} lives left";
-        scoreText.text = $"Total Score: {totalScore}";
-
-        // 🔥 Mostrar tiempo del nivel jugado
+        // 🔹 Tiempo
         float tiempoJugado = FindFirstObjectByType<ChessGameManager>().GetTiempoNivelAcumulado();
         int minutos = Mathf.FloorToInt(tiempoJugado / 60f);
         int segundos = Mathf.FloorToInt(tiempoJugado % 60f);
 
-        timeLabelText.text = "Time";
         timeValueText.text = $"{minutos:D2}:{segundos:D2}";
+        // (El label "Time" está fijo en Unity para traducirse)
 
-        // Llaves visual + Enabled
+        // 🔹 Llaves (solo en niveles normales)
         key1Enabled.SetActive(true);
         key2Enabled.SetActive(true);
         key3Enabled.SetActive(true);
@@ -99,19 +118,28 @@ public class LevelResultUI : MonoBehaviour
         key2.SetActive(keysCollected >= 2);
         key3.SetActive(keysCollected >= 3);
 
-        // Diamante visual + Enabled
+        // 🔹 Diamante
         diamondEnabled.SetActive(true);
         diamond.SetActive(hasDiamond);
+        // (El texto "Diamond" está fijo en Unity, no lo tocamos aquí)
 
-        // UP visual + Enabled
+        // 🔹 Vidas
         upEnabled.SetActive(true);
         up.SetActive(livesRemaining > 0);
+        livesText.text = $"{livesRemaining}";
+        // (El label "Lives" está fijo en Unity, aquí solo la cifra)
 
-        // Ganó o perdió
+        // 🔹 Score
+        scoreText.text = $"{totalScore}";
+        // (El label "Total Score" está fijo en Unity, aquí solo la cifra)
+
+        // 🔹 Ganó o perdió
         bool gano = livesRemaining > 0;
-        winLoseText.text = gano ? "¡You win!" : "Game Over";
 
-        // Botones con reordenamiento
+        youWinText.SetActive(gano);   // ← GameObject TMP en Unity
+        youLoseText.SetActive(!gano); // ← GameObject TMP en Unity
+
+        // 🔹 Botones
         if (gano)
         {
             MostrarBoton(nextLevelButton, true);
@@ -135,7 +163,81 @@ public class LevelResultUI : MonoBehaviour
 
         resultPanel.SetActive(true);
 
-        Debug.Log($"🎉 Resultados mostrados -> Llaves: {keysCollected}, Diamante: {hasDiamond}, Vidas: {livesRemaining}, Score: {totalScore}, Tiempo: {minutos:D2}:{segundos:D2}");
+        Debug.Log($"🎉 Resultados -> Llaves: {keysCollected}, Diamante: {hasDiamond}, Vidas: {livesRemaining}, Score: {totalScore}, Tiempo: {minutos:D2}:{segundos:D2}");
+    }
+
+    public void ShowParchmentResult(int totalScore, int livesRemaining, bool hasDiamond, bool pergaminoObtenido)
+    {
+        // 🔹 Ocultar lo que no aplica
+        key1.SetActive(false);
+        key2.SetActive(false);
+        key3.SetActive(false);
+        key1Enabled.SetActive(false);
+        key2Enabled.SetActive(false);
+        key3Enabled.SetActive(false);
+
+        Trophy.SetActive(false);
+        TrophyEnabled.SetActive(false);
+        TrophyText.gameObject.SetActive(false);
+
+        Condecoracion.SetActive(false);
+        CondecoracionEnabled.SetActive(false);
+        CondecorationText.gameObject.SetActive(false);
+
+        // 🔹 Mostrar pergamino según el estado
+        PergaminoEnabled.SetActive(true);
+        Pergamino.SetActive(pergaminoObtenido);     // Solo visible si lo obtuvo
+        ParchmentText.SetActive(pergaminoObtenido); // Texto “obtenido”
+        Parchment2Text.SetActive(!pergaminoObtenido); // Texto “no obtenido”
+
+        // 🔹 Tiempo
+        float tiempoJugado = FindFirstObjectByType<ChessGameManager>().GetTiempoNivelAcumulado();
+        int minutos = Mathf.FloorToInt(tiempoJugado / 60f);
+        int segundos = Mathf.FloorToInt(tiempoJugado % 60f);
+        timeValueText.text = $"{minutos:D2}:{segundos:D2}";
+
+        // 🔹 Diamante
+        diamondEnabled.SetActive(true);
+        diamond.SetActive(hasDiamond);
+
+        // 🔹 Vidas
+        upEnabled.SetActive(true);
+        up.SetActive(livesRemaining > 0);
+        livesText.text = $"{livesRemaining}";
+
+        // 🔹 Score
+        scoreText.text = $"{totalScore}";
+
+        // 🔹 Ganó o perdió
+        bool gano = livesRemaining > 0;
+        youWinText.SetActive(gano);
+        youLoseText.SetActive(!gano);
+
+        // 🔹 Botones (igual que antes)
+        if (gano)
+        {
+            MostrarBoton(nextLevelButton, true);
+            MostrarBoton(tryAgainButton, true);
+            MostrarBoton(backToHomeButton, true);
+
+            nextLevelButton.transform.SetSiblingIndex(0);
+            tryAgainButton.transform.SetSiblingIndex(1);
+            backToHomeButton.transform.SetSiblingIndex(2);
+        }
+        else
+        {
+            MostrarBoton(nextLevelButton, false);
+            MostrarBoton(tryAgainButton, true);
+            MostrarBoton(backToHomeButton, true);
+
+            tryAgainButton.transform.SetAsFirstSibling();
+            backToHomeButton.transform.SetSiblingIndex(1);
+            nextLevelButton.transform.SetSiblingIndex(2);
+        }
+
+        resultPanel.SetActive(true);
+
+        Debug.Log($"📜 Resultado Pergamino -> {(pergaminoObtenido ? "Obtenido" : "No obtenido")}, Diamante: {hasDiamond}, Vidas: {livesRemaining}, Score: {totalScore}, Tiempo: {minutos:D2}:{segundos:D2}");
     }
 
     
