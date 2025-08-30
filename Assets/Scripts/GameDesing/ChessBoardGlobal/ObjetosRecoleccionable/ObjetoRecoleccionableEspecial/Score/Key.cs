@@ -162,6 +162,9 @@ public class Key : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRe
     {
         //   
     }
-
+    public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre)
+    {
+        //
+    }
    
 }

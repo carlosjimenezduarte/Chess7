@@ -26,7 +26,7 @@ public class PusherRight : MonoBehaviour, ITileEffect, IFichaInmovil, IFicha, IP
         //
     }
 
-    
+
 
     public bool EsInamovible() => esInamovible;
     public void SetPosicionActual(Vector2Int nuevaPos) => tileCoords = nuevaPos;
@@ -43,7 +43,7 @@ public class PusherRight : MonoBehaviour, ITileEffect, IFichaInmovil, IFicha, IP
             rey.MostrarMovimientoPosible(); // refresco UI si lo usas
         }
     }
-   
+
 
     public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
     {
@@ -57,7 +57,7 @@ public class PusherRight : MonoBehaviour, ITileEffect, IFichaInmovil, IFicha, IP
 
     public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reina)
     {
-       //
+        //
     }
 
     public void RevisarSiReinaNegraEnemigaLlegó(Vector2Int posicion, BlackQueenEnemyController reinaenemiga)
@@ -108,9 +108,13 @@ public class PusherRight : MonoBehaviour, ITileEffect, IFichaInmovil, IFicha, IP
     public void RevisarSiTorreLlegó(Vector2Int posicionTorre, RookController torre)
     {
         //
-    } 
+    }
     public void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina)
     {
-      //
+        //
+    }
+    public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre)
+    {
+        //
     }
 }

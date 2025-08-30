@@ -149,4 +149,8 @@ public class Padlock : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObje
     {
         //   
     }
+    public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre)
+    {
+        //
+    }
 }

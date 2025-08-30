@@ -217,4 +217,8 @@ public class ClockSubtractTime : MonoBehaviour, ITileEffect, IObjetoRecolecciona
     public void RevisarSiCaballoLlegó(Vector2Int pos, KnightController caballo) => RevisarSiFichaAliadaLlegó(pos, caballo);
     public void RevisarSiTorreLlegó(Vector2Int pos, RookController torre) => RevisarSiFichaAliadaLlegó(pos, torre);
     public void RevisarSiReinaLlegó(Vector2Int pos, QueenController reina) => RevisarSiFichaAliadaLlegó(pos, reina);
+    public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre)
+    {
+        //
+    }
 }

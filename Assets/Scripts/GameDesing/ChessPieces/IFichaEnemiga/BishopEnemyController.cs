@@ -151,7 +151,7 @@ public class BishopEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
             StartCoroutine(ProcesarAmenazasDesdeArbitro());
         });
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
-    } 
+    }
 
     public void RevisarSiTorreLlegó(Vector2Int posicionTorre, RookController torre)
     {
@@ -168,8 +168,8 @@ public class BishopEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
             StartCoroutine(ProcesarAmenazasDesdeArbitro());
         });
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
-    } 
- 
+    }
+
 
 
     private IEnumerator MatarPiezaDespuesDelay(MonoBehaviour pieza, Vector2Int posicion)
@@ -275,7 +275,7 @@ public class BishopEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
         foreach (Tile tile in BoardManagerGlobal.Instance.tiles)
             tile.ResetColor();
     }
-    
+
 
     public void VerificarTurnoActual(int turnoActual)
     {
@@ -580,7 +580,7 @@ public class BishopEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
     public void ProcesarMovimientoAliado(Vector2Int posAliada, int idMovimiento)
     {
         // 1️⃣ Si ya atacó este turno, ignora
-        if (BoardManagerGlobal.Instance.alfilRojoAtaco) 
+        if (BoardManagerGlobal.Instance.alfilRojoAtaco)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno("♝ Alfil Rojo ignora: ya atacó este turno.");
             return;
@@ -631,6 +631,10 @@ public class BishopEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
     }
     public void RevisarSiPeonEnemigoLlegó(Vector2Int posicion, PawnEnemyController peonenemigo)
     {
-        
+
+    }
+    public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre)
+    {
+        //
     }
 }

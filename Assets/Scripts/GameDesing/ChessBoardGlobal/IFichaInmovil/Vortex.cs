@@ -60,9 +60,9 @@ public class Vortex : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPieceW
         {
             alfil.OcultarMovimientos();
             alfil.mostrandoMovimientos = false;
-            alfil.rangoMovimientoBase=-9000;
+            alfil.rangoMovimientoBase = -9000;
             ExiliarAliadoYDestruir(alfil);
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♗ Alfil fue absorbido por Vortex en {tileCoords}. Enviando a Dimensión Divina y destruyendo.");                                              
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"♗ Alfil fue absorbido por Vortex en {tileCoords}. Enviando a Dimensión Divina y destruyendo.");
         }
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
@@ -150,4 +150,9 @@ public class Vortex : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPieceW
     public void SetPosicionActual(Vector2Int nuevaPos) => tileCoords = nuevaPos;
 
     public Vector2Int GetPosicionActual() => tileCoords;
+    
+    public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre)
+    {
+        //
+    }
 }

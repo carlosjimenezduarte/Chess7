@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1555377850365731658}
   - component: {fileID: 8700367565149193042}
   - component: {fileID: 242403998499702580}
-  - component: {fileID: 7588071264904996404}
+  - component: {fileID: 1596305357992398363}
   m_Layer: 5
   m_Name: MagicChest
   m_TagString: Untagged
@@ -60,7 +60,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -76,7 +76,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &7588071264904996404
+--- !u!114 &1596305357992398363
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -85,7 +85,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7377764712077621174}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74e5e04f83e472a4281766b56f53ad24, type: 3}
+  m_Script: {fileID: 11500000, guid: a5895a2afe36aae4b8602ad346cde43d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileCoords: {x: 5, y: 5}
+  tileCoords: {x: 4, y: 4}

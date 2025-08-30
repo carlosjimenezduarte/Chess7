@@ -220,5 +220,8 @@ public class Expansion : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPie
        //
     }
 
-    
+    public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre)
+    {
+        //
+    }
 } 

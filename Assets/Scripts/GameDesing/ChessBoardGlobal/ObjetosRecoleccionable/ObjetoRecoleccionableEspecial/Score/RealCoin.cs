@@ -160,5 +160,9 @@ public class RealCoin : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObj
         //   
     }
 
+    public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre)
+    {
+        //
+    }
    
 }

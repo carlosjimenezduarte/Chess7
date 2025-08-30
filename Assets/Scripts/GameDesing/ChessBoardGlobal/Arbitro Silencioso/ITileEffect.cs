@@ -5,6 +5,7 @@ public interface ITileEffect
     void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey);
     void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon);
 
+    void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre);
     void RevisarSiCaballoLlegó(Vector2Int posicionCaballo, KnightController caballo);
 
     void RevisarSiAlfilLlegó(Vector2Int posicionAlfil, BishopController alfil);

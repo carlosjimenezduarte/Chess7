@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 949701309029571533}
   - component: {fileID: 3713192491024469022}
   - component: {fileID: 5753395150971052141}
-  - component: {fileID: 4528833465506354291}
+  - component: {fileID: 5506271561248265966}
+  - component: {fileID: 8682970678038057939}
   m_Layer: 5
   m_Name: KingFree
   m_TagString: Untagged
@@ -89,8 +90,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5895a2afe36aae4b8602ad346cde43d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileCoords: {x: 0, y: 0}
---- !u!114 &4528833465506354291
+  tileCoords: {x: 1, y: 0}
+--- !u!114 &5506271561248265966
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -102,5 +103,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f69a17de30209f41b863b2429a2216d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tieneEscudo: 0
+  puntosMovimientoMax: 3
+  rangoAtaqueKing: 1
+  puntosAccionMax: 5
+  esInamovible: 0
+  puntosMovimientoActual: 0
+  puntosAccionActual: 5
+  turnosRestantes: 7
+  posicionActual: {x: 0, y: 0}
+  mostrandoMovimientos: 0
+--- !u!114 &8682970678038057939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6606022710749811883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33d1fb08166c8ac48b559443f7486744, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   tileCoords: {x: 0, y: 0}
-  moveCooldown: 0.15
+  activoEnTablero: 0
+  esInamovible: 0

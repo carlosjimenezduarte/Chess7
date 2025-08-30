@@ -14,7 +14,7 @@ public class PawnEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
     private Vector2Int posicionActual;
     private bool mostrandoRango = false;
 
-    
+
     private void Start()
     {
         // 1️⃣ Determinar posición inicial
@@ -142,7 +142,7 @@ public class PawnEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
             StartCoroutine(ProcesarAmenazasDesdeArbitro());
         });
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
-    } 
+    }
 
     public void RevisarSiTorreLlegó(Vector2Int posicionTorre, RookController torre)
     {
@@ -151,7 +151,7 @@ public class PawnEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
             StartCoroutine(ProcesarAmenazasDesdeArbitro());
         });
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
-    } 
+    }
 
     public void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina)
     {
@@ -160,7 +160,7 @@ public class PawnEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
             StartCoroutine(ProcesarAmenazasDesdeArbitro());
         });
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
-    } 
+    }
 
     private IEnumerator MatarPiezaDespuesDelay(MonoBehaviour pieza, Vector2Int posicion)
     {
@@ -474,15 +474,15 @@ public class PawnEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
 
     public void ProcesarMovimientoAliado(Vector2Int posAliada, int idMovimiento)
     {
-        if (BoardManagerGlobal.Instance.peonRojoAtaco) 
+        if (BoardManagerGlobal.Instance.peonRojoAtaco)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno(
                 $"♙ Peón Roja ignora movimiento {idMovimiento} porque ya atacó este turno."
             );
             return;
         }
-        
-       
+
+
 
         RevisarAmenazasEnZona();
     }
@@ -527,6 +527,10 @@ public class PawnEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
 
     public void RevisarSiPeonEnemigoLlegó(Vector2Int posicion, PawnEnemyController peonenemigo)
     {
-        
+
+    }
+    public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre)
+    {
+        //
     }
 }

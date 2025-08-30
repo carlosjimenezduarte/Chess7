@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 8496961105589097218}
   - component: {fileID: 8764851622579999247}
   - component: {fileID: 9191660565542727845}
-  - component: {fileID: 6409104401575359492}
+  - component: {fileID: 8597254023825886181}
+  - component: {fileID: 1393741886345127380}
   m_Layer: 5
   m_Name: The Crown-Key of the Soul
   m_TagString: Untagged
@@ -28,7 +29,7 @@ RectTransform:
   m_GameObject: {fileID: 334880057440829137}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.9, y: 0.9, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -60,7 +61,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -76,7 +77,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6409104401575359492
+--- !u!114 &8597254023825886181
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -85,7 +86,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 334880057440829137}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74e5e04f83e472a4281766b56f53ad24, type: 3}
+  m_Script: {fileID: 11500000, guid: 4df6ca832d353e7418c8798b0864cf98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   tileCoords: {x: 0, y: 0}
+  esInamovible: 0
+--- !u!114 &1393741886345127380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 334880057440829137}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5895a2afe36aae4b8602ad346cde43d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileCoords: {x: 4, y: 3}

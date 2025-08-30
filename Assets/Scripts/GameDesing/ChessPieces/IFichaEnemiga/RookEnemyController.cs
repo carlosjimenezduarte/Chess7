@@ -150,7 +150,7 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
             StartCoroutine(ProcesarAmenazasDesdeArbitro());
         });
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
-    } 
+    }
 
     private IEnumerator MatarPiezaDespuesDelay(MonoBehaviour pieza, Vector2Int posicion)
     {
@@ -163,7 +163,7 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
 
         if (pieza is IPieceWithPosition piezaVictima)
             piezaVictima.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
-        
+
 
         if (pieza is PawnController peon)
         {
@@ -194,7 +194,7 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
 
 
 
-        
+
 
         Destroy(pieza.gameObject);
 
@@ -637,7 +637,11 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
     }
     public void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina)
     {
-      //
+        //
+    }
+    public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre)
+    {
+        //
     }
     
 }

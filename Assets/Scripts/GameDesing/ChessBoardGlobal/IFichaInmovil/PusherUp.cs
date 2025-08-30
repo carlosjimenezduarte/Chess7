@@ -26,7 +26,7 @@ public class PusherUp : MonoBehaviour, ITileEffect, IFichaInmovil, IFicha, IPiec
         //
     }
 
-    
+
 
     public bool EsInamovible() => esInamovible;
     public void SetPosicionActual(Vector2Int nuevaPos) => tileCoords = nuevaPos;
@@ -46,7 +46,7 @@ public class PusherUp : MonoBehaviour, ITileEffect, IFichaInmovil, IFicha, IPiec
 
     public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reina)
     {
-       //
+        //
     }
 
     public void RevisarSiPeonLlegó(Vector2Int posicionPeon, PawnController peon)
@@ -107,9 +107,13 @@ public class PusherUp : MonoBehaviour, ITileEffect, IFichaInmovil, IFicha, IPiec
     public void RevisarSiTorreLlegó(Vector2Int posicionTorre, RookController torre)
     {
         //
-    } 
+    }
     public void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina)
     {
-      //
+        //
+    }
+    public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre)
+    {
+        //
     }
 }

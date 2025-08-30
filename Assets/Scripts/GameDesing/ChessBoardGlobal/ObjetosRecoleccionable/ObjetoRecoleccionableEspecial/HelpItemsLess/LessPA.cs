@@ -128,44 +128,44 @@ public class LessPA : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPiece
 
     public void RevisarSiFichaAliadaLlegó(Vector2Int posicionFicha, IFichaAliada ficha)
     {
-    if (tileCoords != posicionFicha || desactivado) return;
-    if ((ficha as Object) == null) return; // Unity-null (o destruido)
-    if (ficha is KingController) return;
+        if (tileCoords != posicionFicha || desactivado) return;
+        if ((ficha as Object) == null) return; // Unity-null (o destruido)
+        if (ficha is KingController) return;
 
-    desactivado = true; // evitamos doble aplicación en el mismo frame
+        desactivado = true; // evitamos doble aplicación en el mismo frame
 
-    // Nombre seguro sin arriesgar NRE
-    string nombreFicha = "FichaAliada";
-    try { nombreFicha = ficha.GetType().Name; } catch { }
+        // Nombre seguro sin arriesgar NRE
+        string nombreFicha = "FichaAliada";
+        try { nombreFicha = ficha.GetType().Name; } catch { }
 
-    BoardManagerGlobal.Instance?.AgregarMensajeInterno(
-        $"🧪 {name} detecta ficha aliada ({nombreFicha}) encima. Bonus de rango aplicado."
-    );
+        BoardManagerGlobal.Instance?.AgregarMensajeInterno(
+            $"🧪 {name} detecta ficha aliada ({nombreFicha}) encima. Bonus de rango aplicado."
+        );
 
-    try
-    {
-        var tipo = ficha.GetType();
-        var metodo = tipo.GetMethod("AumentarPA", new[] { typeof(int) });
-
-        if (metodo != null)
+        try
         {
-            metodo.Invoke(ficha, new object[] { -5 });
-        }
-        else
-        {
-            Debug.LogWarning($"⚠️ {nombreFicha} no implementa AumentarRangoMovimiento ni su versión silenciosa.");
-        }
-    }
-    catch (TargetInvocationException ex)
-    {
-        Debug.LogError($"💥 Error interno al aplicar bonus a {nombreFicha}: {ex.InnerException?.Message}");
-    }
-    catch (System.Exception ex)
-    {
-        Debug.LogError($"💥 Error al invocar método de bonus en {nombreFicha}: {ex.Message}");
-    }
+            var tipo = ficha.GetType();
+            var metodo = tipo.GetMethod("AumentarPA", new[] { typeof(int) });
 
-    Destroy(gameObject);
+            if (metodo != null)
+            {
+                metodo.Invoke(ficha, new object[] { -5 });
+            }
+            else
+            {
+                Debug.LogWarning($"⚠️ {nombreFicha} no implementa AumentarRangoMovimiento ni su versión silenciosa.");
+            }
+        }
+        catch (TargetInvocationException ex)
+        {
+            Debug.LogError($"💥 Error interno al aplicar bonus a {nombreFicha}: {ex.InnerException?.Message}");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"💥 Error al invocar método de bonus en {nombreFicha}: {ex.Message}");
+        }
+
+        Destroy(gameObject);
     }
 
     public void ExiliarADimensionDivina()
@@ -305,9 +305,13 @@ public class LessPA : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPiece
     public void RevisarSiTorreLlegó(Vector2Int posicionTorre, RookController torre)
     {
         RevisarSiFichaAliadaLlegó(posicionTorre, torre);
-    } 
+    }
     public void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina)
     {
         RevisarSiFichaAliadaLlegó(posicionReina, reina);
+    }
+    public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre)
+    {
+        //
     }
 }

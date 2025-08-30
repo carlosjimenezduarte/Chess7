@@ -160,5 +160,8 @@ public class Chest : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjeto
         //   
     }
 
-   
+   public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre)
+    {
+        //
+    }
 }

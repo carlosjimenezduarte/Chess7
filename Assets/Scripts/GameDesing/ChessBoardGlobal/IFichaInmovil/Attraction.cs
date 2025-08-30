@@ -124,50 +124,50 @@ public class Attraction : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPi
     // Núcleo: permitir acercarse, pero jamás aterrizar en el centro
     private void ActivarAtraction(MonoBehaviour activador)
     {
-    BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧲 Atraction en {tileCoords} se activa por {activador.name}.");
+        BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧲 Atraction en {tileCoords} se activa por {activador.name}.");
 
-    List<MovableTileObject> todos = BoardManagerGlobal.Instance.GetObjetosMoviblesOrdenadosDesde(tileCoords);
+        List<MovableTileObject> todos = BoardManagerGlobal.Instance.GetObjetosMoviblesOrdenadosDesde(tileCoords);
 
-    foreach (var obj in todos)
-    {
-        if (EsIgnorable(obj, activador))
+        foreach (var obj in todos)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛑 {obj.name} ignorado por Atraction.");
-            continue;
+            if (EsIgnorable(obj, activador))
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛑 {obj.name} ignorado por Atraction.");
+                continue;
+            }
+
+            if (!EsDentroTablero(obj.tileCoords))
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🌌 {obj.name} fuera del tablero en {obj.tileCoords}.");
+                continue;
+            }
+
+            Vector2Int dirDesdeCentro = CalcularDireccion(obj.tileCoords - tileCoords);
+            if (dirDesdeCentro == Vector2Int.zero)
+            {
+                // Ya está en el centro (por seguridad extra)
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"😌 {obj.name} ya está en el centro {tileCoords}.");
+                continue;
+            }
+
+            Vector2Int destino = obj.tileCoords - dirDesdeCentro;
+
+            if (!EsDentroTablero(destino))
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🚫 {obj.name} no puede atraerse fuera del tablero hacia {destino}.");
+                continue;
+            }
+
+            // 💡 Clave: bloquear solo si el destino es el centro
+            if (EsCentro(destino))
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧱 {obj.name} no se mueve: destino {destino} es el centro. Se permite quedar alrededor.");
+                continue;
+            }
+
+            BoardManagerGlobal.Instance.AgregarMensajeInterno($"➡️ {obj.name} atraído de {obj.tileCoords} a {destino}.");
+            obj.MoverA(destino);
         }
-
-        if (!EsDentroTablero(obj.tileCoords))
-        {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🌌 {obj.name} fuera del tablero en {obj.tileCoords}.");
-            continue;
-        }
-
-        Vector2Int dirDesdeCentro = CalcularDireccion(obj.tileCoords - tileCoords);
-        if (dirDesdeCentro == Vector2Int.zero)
-        {
-            // Ya está en el centro (por seguridad extra)
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"😌 {obj.name} ya está en el centro {tileCoords}.");
-            continue;
-        }
-
-        Vector2Int destino = obj.tileCoords - dirDesdeCentro;
-
-        if (!EsDentroTablero(destino))
-        {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🚫 {obj.name} no puede atraerse fuera del tablero hacia {destino}.");
-            continue;
-        }
-
-        // 💡 Clave: bloquear solo si el destino es el centro
-        if (EsCentro(destino))
-        {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧱 {obj.name} no se mueve: destino {destino} es el centro. Se permite quedar alrededor.");
-            continue;
-        }
-
-        BoardManagerGlobal.Instance.AgregarMensajeInterno($"➡️ {obj.name} atraído de {obj.tileCoords} a {destino}.");
-        obj.MoverA(destino);
-    }
     }
 
 
@@ -175,16 +175,16 @@ public class Attraction : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPi
     // Utilidades
     // ─────────────────────────────────────────────────────────────────────────────
     private bool EsIgnorable(MovableTileObject obj, MonoBehaviour activador)
-{
-    // Ignora el centro (ya está en tileCoords)
-    if (EsCentro(obj.tileCoords)) return true;
+    {
+        // Ignora el centro (ya está en tileCoords)
+        if (EsCentro(obj.tileCoords)) return true;
 
-    // Ignora a la ficha activadora
-    if (activador != null && ReferenceEquals(obj.gameObject, activador.gameObject))
-        return true;
+        // Ignora a la ficha activadora
+        if (activador != null && ReferenceEquals(obj.gameObject, activador.gameObject))
+            return true;
 
-    return false;
-}
+        return false;
+    }
 
     private Vector2Int CalcularDireccion(Vector2Int delta)
     {
@@ -211,4 +211,9 @@ public class Attraction : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPi
     public void SetPosicionActual(Vector2Int nuevaPos) => tileCoords = nuevaPos;
 
     public Vector2Int GetPosicionActual() => tileCoords;
+    
+    public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre)
+    {
+        //
+    }
 }

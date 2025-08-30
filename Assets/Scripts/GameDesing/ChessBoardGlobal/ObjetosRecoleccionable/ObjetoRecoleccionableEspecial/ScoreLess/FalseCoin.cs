@@ -160,5 +160,8 @@ public class FalseCoin : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IOb
         //   
     }
 
-   
+    public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre)
+    {
+        //
+    }
 }

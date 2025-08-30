@@ -57,7 +57,7 @@ public class Medal : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjeto
 
     public void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina)
     {
-      RevisarSiFichaAliadaLlegó(posicionReina, reina);
+        RevisarSiFichaAliadaLlegó(posicionReina, reina);
     }
     public void RevisarSiAlfilLlegó(Vector2Int posicion, BishopController alfil)
     {
@@ -72,7 +72,7 @@ public class Medal : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjeto
     public void RevisarSiTorreLlegó(Vector2Int posicion, RookController torre)
     {
         RevisarSiFichaAliadaLlegó(posicion, torre);
-    } 
+    }
 
     public void RevisarSiFichaLlegó(Vector2Int posicion, IFicha ficha)
     {
@@ -159,4 +159,8 @@ public class Medal : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjeto
     {
         //   
     }   
+    public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre)
+    {
+        //
+    }
 }

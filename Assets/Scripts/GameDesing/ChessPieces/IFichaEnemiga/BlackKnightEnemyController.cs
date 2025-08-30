@@ -158,7 +158,7 @@ public class BlackKnightEnemyController : MonoBehaviour, IPointerClickHandler, I
             StartCoroutine(ProcesarAmenazasDesdeArbitro());
         });
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
-    } 
+    }
 
     private IEnumerator MatarPiezaDespuesDelay(MonoBehaviour pieza, Vector2Int posicion)
     {
@@ -401,9 +401,13 @@ public class BlackKnightEnemyController : MonoBehaviour, IPointerClickHandler, I
     {
         //
     }
-    
+
     public void RevisarSiPeonEnemigoLlegó(Vector2Int posicion, PawnEnemyController peonenemigo)
     {
-        
+
+    }
+    public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre)
+    {
+        //
     }
 }

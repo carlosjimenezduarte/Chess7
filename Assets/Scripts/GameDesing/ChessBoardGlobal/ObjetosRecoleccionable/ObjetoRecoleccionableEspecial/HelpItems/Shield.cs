@@ -523,5 +523,8 @@ public class Shield : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPiece
     {
         RevisarSiFichaAliadaLlegó(posicionReina, reina);
     }
-    
+    public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre)
+    {
+        //
+    }
 }

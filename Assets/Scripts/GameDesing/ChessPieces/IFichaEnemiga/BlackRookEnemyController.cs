@@ -154,7 +154,7 @@ public class BlackRookEnemyController : MonoBehaviour, IPointerClickHandler, ITi
             StartCoroutine(ProcesarAmenazasDesdeArbitro());
         });
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
-    } 
+    }
 
     private IEnumerator MatarPiezaDespuesDelay(MonoBehaviour pieza, Vector2Int posicion)
     {
@@ -441,6 +441,10 @@ public class BlackRookEnemyController : MonoBehaviour, IPointerClickHandler, ITi
     }
     public void RevisarSiPeonEnemigoLlegó(Vector2Int posicion, PawnEnemyController peonenemigo)
     {
-        
+        //
+    }
+    public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre)
+    {
+        //
     }
 }

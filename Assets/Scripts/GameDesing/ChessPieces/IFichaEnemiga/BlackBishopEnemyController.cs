@@ -145,7 +145,7 @@ public class BlackBishopEnemyController : MonoBehaviour, IPointerClickHandler, I
             StartCoroutine(ProcesarAmenazasDesdeArbitro());
         });
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
-    } 
+    }
     public void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina)
     {
         RevisarAmenazaAPieza(posicionReina, () =>
@@ -153,7 +153,7 @@ public class BlackBishopEnemyController : MonoBehaviour, IPointerClickHandler, I
             StartCoroutine(ProcesarAmenazasDesdeArbitro());
         });
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
-    } 
+    }
 
 
     private IEnumerator MatarPiezaDespuesDelay(MonoBehaviour pieza, Vector2Int posicion)
@@ -452,6 +452,10 @@ public class BlackBishopEnemyController : MonoBehaviour, IPointerClickHandler, I
     }
     public void RevisarSiPeonEnemigoLlegó(Vector2Int posicion, PawnEnemyController peonenemigo)
     {
-        
+
+    }
+    public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre)
+    {
+        //
     }
 }

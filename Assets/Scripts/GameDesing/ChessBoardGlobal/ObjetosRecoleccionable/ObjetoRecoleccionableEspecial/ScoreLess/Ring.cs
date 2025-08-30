@@ -54,7 +54,7 @@ public class Ring : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoR
     public void RevisarSiReyLlegó(Vector2Int posicion, KingController rey) =>
         RevisarSiFichaAliadaLlegó(posicion, rey);
 
-    
+
     public void RevisarSiFichaLlegó(Vector2Int posicion, IFicha ficha)
     {
         if (ficha is IFichaAliada aliada)
@@ -96,7 +96,7 @@ public class Ring : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoR
     public bool EstaRealmenteEnTablero() =>
         tileCoords.x >= 0 && tileCoords.y >= 0 && tileCoords.x <= 7 && tileCoords.y <= 7;
 
-     public void RevisarSiAlfilLlegó(Vector2Int posicionAlfil, BishopController alfil)
+    public void RevisarSiAlfilLlegó(Vector2Int posicionAlfil, BishopController alfil)
     {
         //
     }
@@ -109,11 +109,11 @@ public class Ring : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoR
     public void RevisarSiTorreLlegó(Vector2Int posicionTorre, RookController torre)
     {
         //
-    } 
-    
+    }
+
     public void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina)
     {
-      //
+        //
     }
     public void RevisarSiReinaNegraEnemigaLlegó(Vector2Int posicion, BlackQueenEnemyController reinaenemiga)
     {
@@ -159,6 +159,10 @@ public class Ring : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoR
     {
         //   
     }
-
+    public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre)
+    {
+        //
+    }
+    
    
 }

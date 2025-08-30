@@ -9,7 +9,7 @@ public class TheCrownKeyofTheSoul : MonoBehaviour, ITileEffect, IObjetoRecolecci
     public bool esInamovible = false;
 
     private Image image;
-    private PiecePositioner positioner;
+    private PiecePositionerGarden positioner;
     private MovableTileObject movable;
     private bool yaRecolectado = false;
 
@@ -22,32 +22,41 @@ public class TheCrownKeyofTheSoul : MonoBehaviour, ITileEffect, IObjetoRecolecci
     private void Awake()
     {
         image = GetComponent<Image>();
-        positioner = GetComponent<PiecePositioner>();
+        positioner = GetComponent<PiecePositionerGarden>();
         movable = GetComponent<MovableTileObject>();
 
         tileCoords = positioner != null ? positioner.tileCoords : new Vector2Int(-1, -1);
         if (movable != null) movable.activoEnTablero = true;
 
-        BoardManagerGlobal.Instance?.RegistrarMovimiento(this, tileCoords);
-        BoardManagerGlobal.Instance?.AgregarMensajeInterno($"🏆 Trofeo posicionado en {tileCoords}.");
+        // 🔄 Usar Garden7 en lugar de BoardManagerGlobal
+        Garden7.Instance?.RegistrarMovimiento(this, tileCoords);
+        Garden7.Instance?.AgregarMensajeInterno($"🏆 Trofeo posicionado en {tileCoords}.");
     }
+
+
 
     public void RevisarSiFichaAliadaLlegó(Vector2Int posicion, IFichaAliada ficha)
     {
+        // 🔄 Aseguramos sincronización de la posición actual de la llave
+        if (positioner != null)
+            tileCoords = positioner.tileCoords;
+
         if (yaRecolectado || tileCoords != posicion) return;
 
         yaRecolectado = true;
-        BoardManagerGlobal.Instance?.AgregarMensajeInterno($"🏆 Trofeo recolectado por {ficha.GetType().Name} en {posicion}.");
+        Garden7.Instance?.AgregarMensajeInterno($"🏆 Trofeo recolectado por {ficha.GetType().Name} en {posicion}.");
 
         // Puntaje
         var score = FindFirstObjectByType<PlayerScore>();
         if (score != null)
             score.AgregarPuntaje(ObtenerValorPuntaje());
 
-        // Recolectar y destruir
-        
+        FindFirstObjectByType<CofreController>()?.SetTieneLlave(true);
+
         Destroy(gameObject);
     }
+
+
 
     public void RevisarSiPeonLlegó(Vector2Int posicion, PawnController peon) =>
         RevisarSiFichaAliadaLlegó(posicion, peon);
@@ -73,6 +82,11 @@ public class TheCrownKeyofTheSoul : MonoBehaviour, ITileEffect, IObjetoRecolecci
     {
         RevisarSiFichaAliadaLlegó(posicion, torre);
     } 
+    
+    public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre)
+    {
+        RevisarSiFichaAliadaLlegó(posicion, reyLibre);
+    }
 
     public void RevisarSiFichaLlegó(Vector2Int posicion, IFicha ficha)
     {
@@ -103,12 +117,10 @@ public class TheCrownKeyofTheSoul : MonoBehaviour, ITileEffect, IObjetoRecolecci
 
         foreach (var ficha in fichasAliadas)
         {
-            if (ficha is KingController rey)
-                RevisarSiReyLlegó(rey.GetPosicionActual(), rey);
-            else
-                RevisarSiFichaAliadaLlegó(ficha.GetPosicionActual(), ficha);
+            RevisarSiFichaAliadaLlegó(ficha.GetPosicionActual(), ficha);
         }
     }
+
 
     public Vector2Int GetPosicionActual() => tileCoords;
 

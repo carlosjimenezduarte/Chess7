@@ -166,7 +166,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
             StartCoroutine(ProcesarAmenazasDesdeArbitro());
         });
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
-    } 
+    }
 
     public void RevisarSiTorreLlegó(Vector2Int posicionTorre, RookController torre)
     {
@@ -175,7 +175,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
             StartCoroutine(ProcesarAmenazasDesdeArbitro());
         });
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
-    } 
+    }
 
     public void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina)
     {
@@ -184,7 +184,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
             StartCoroutine(ProcesarAmenazasDesdeArbitro());
         });
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
-    } 
+    }
 
     private IEnumerator MatarPiezaDespuesDelay(MonoBehaviour pieza, Vector2Int posicion)
     {
@@ -675,7 +675,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
     public void ProcesarMovimientoAliado(Vector2Int posAliada, int idMovimiento)
     {
-        if (BoardManagerGlobal.Instance.reinaRojaAtaco) 
+        if (BoardManagerGlobal.Instance.reinaRojaAtaco)
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno(
                 $"♛ Reina Roja ignora movimiento {idMovimiento} porque ya atacó este turno."
@@ -686,10 +686,10 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         // ✅ Llamamos a la verificación visual con delay y chequeo de supervivencia
         StartCoroutine(VerificarAmenazaSobre(posAliada));
 
-        
+
 
         // ✅ Solo intenta atacar si nadie más ha atacado en este movimiento
-        
+
 
         // ✅ Si llega aquí, es la atacante autorizada
         RevisarAmenazasEnZona();
@@ -730,7 +730,11 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
     }
     public void RevisarSiPeonEnemigoLlegó(Vector2Int posicion, PawnEnemyController peonenemigo)
     {
-        
+
+    }
+    public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre)
+    {
+        //
     }
 
 }

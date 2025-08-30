@@ -25,6 +25,18 @@ public class Tile : MonoBehaviour
             : Color.white;
     }
 
+    public void HighlightMoveForKing(bool isActive)
+    {
+        if (myImage == null) return;
+
+        myImage.color = isActive
+            ? (isShieldActive
+                ? new Color(1f, 0.827f, 0f, 1f) // dorado si hay escudo
+                : new Color(0.75f, 0.6f, 0.6f, 0.6f)) 
+            : Color.white;
+    }
+
+
     public void HighlightEnemyKillZone(bool isActive)
     {
         if (myImage == null) return;
