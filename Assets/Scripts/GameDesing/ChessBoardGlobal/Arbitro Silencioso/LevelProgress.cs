@@ -5,6 +5,8 @@ public class LevelProgress : MonoBehaviour
     public static LevelProgress Instance { get; private set; }
 
     [Header("Tipo de nivel")]
+
+    public bool esNivelMasterKey = false;
     public bool esNivelPergamino = false;
 
     public bool esNivelTrofeo = false;
@@ -15,14 +17,14 @@ public class LevelProgress : MonoBehaviour
     [Header("Estado del nivel")]
     public int keysCollected = 0;
     public bool hasDiamond = false;
-
+    
     public bool hasParchment = false;
 
     public bool hasTrophy = false;
 
     public bool hasMedal = false;
 
-    public bool MasterKey3 = false;
+    public bool hasMasterKey3 = false;
 
     private void Awake()
     {
@@ -76,21 +78,29 @@ public class LevelProgress : MonoBehaviour
 
     public void Trophy()
     {
-        hasTrophy = true;
-        Debug.Log($"💎 ¡Pergamino obtenido!");
+        if (!hasTrophy)
+        {
+            hasTrophy = true;
+            Debug.Log($"🏆 ¡Trofeo obtenido!");
+        }
     }
 
     public void Medal()
     {
-        hasMedal = true;
-        Debug.Log($"💎 ¡Pergamino obtenido!");
+        if (!hasMedal)
+        {
+            hasMedal = true;
+            Debug.Log($"🎖️ ¡Medalla obtenida!");
+        }
     }
 
     public void MasterKey()
     {
-        MasterKey3 = true;
-        Debug.Log($"🗝️ Fragmento de llave recogido: {MasterKey3}");
-
+        if (!hasMasterKey3)
+        {
+            hasMasterKey3 = true;
+            Debug.Log($"🗝️ Fragmento de llave recogido: {hasMasterKey3}");
+        }
     }
 
     public void ResetProgress()
@@ -103,24 +113,29 @@ public class LevelProgress : MonoBehaviour
     }
 
     public void FinalizarNivel(int vidas, int score)
-{
-    if (esNivelPergamino)
     {
-        LevelResultUI.Instance.ShowParchmentResult(score, vidas, hasDiamond, hasParchment);
-    }
-    else if (esNivelTrofeo)
-    {
-        //LevelResultUI.Instance.ShowTrophyResult(score, vidas, hasDiamond, hasTrophy);
-    }
-    else if (esNivelMedalla)
-    {
-    //    LevelResultUI.Instance.ShowMedalResult(score, vidas, hasDiamond, hasMedal);
-    }
-    else
-    {
-        // Nivel normal
-        LevelResultUI.Instance.ShowResults(keysCollected, hasDiamond, vidas, score);
-    }
+        if (esNivelPergamino)
+        {
+            LevelResultUI.Instance.ShowParchmentResult(score, vidas, hasDiamond, hasParchment);
+        }
+        else if (esNivelTrofeo)
+        {
+            LevelResultUI.Instance.ShowTrophyResult(score, vidas, hasDiamond, hasTrophy);
+        }
+        else if (esNivelMedalla)
+        {
+            LevelResultUI.Instance.ShowMedalResult(score, vidas, hasDiamond, hasMedal);
+        }
+        else if (esNivelMasterKey)
+        {
+            LevelResultUI.Instance.ShowMasterKeyResult(score, vidas, hasMasterKey3);
+        }
+        else
+        {
+            // Nivel normal
+            LevelResultUI.Instance.ShowResults(keysCollected, hasDiamond, vidas, score);
+        }
+    
 }
 
 

@@ -321,9 +321,9 @@ public class KingFree : MonoBehaviour, IPointerClickHandler, IPieceWithPosition,
     private static readonly HashSet<Vector2Int> casillasBloqueadas = new HashSet<Vector2Int>
 {
     new Vector2Int(2,0), new Vector2Int(4,0), new Vector2Int(6,0),
-    new Vector2Int(0,2), new Vector2Int(8,2),
-    new Vector2Int(0,4), new Vector2Int(8,4),
-    new Vector2Int(0,6), new Vector2Int(8,6),
+    new Vector2Int(0,2), new Vector2Int(8,2),new Vector2Int(3,5),new Vector2Int(5,5),
+    new Vector2Int(0,4), new Vector2Int(8,4),new Vector2Int(5,3),
+    new Vector2Int(0,6), new Vector2Int(8,6), new Vector2Int(3,3),
     new Vector2Int(2,8), new Vector2Int(4,8), new Vector2Int(6,8)
 };
 

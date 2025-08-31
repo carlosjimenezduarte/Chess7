@@ -24,10 +24,10 @@ public class SlideshowController : MonoBehaviour
         foreach (var p in panels) p.SetActive(false);
 
         if (closeButton != null)
-        closeButton.gameObject.SetActive(false); // 🔒 botón oculto al inicio
+            closeButton.gameObject.SetActive(false); // 🔒 botón oculto al inicio
 
-
-        closeButton.onClick.AddListener(CerrarPresentacion);
+        if (closeButton != null)
+            closeButton.onClick.AddListener(CerrarPresentacion);
     }
 
     public void IniciarPresentacion()
@@ -47,7 +47,6 @@ public class SlideshowController : MonoBehaviour
         if (closeButton != null)
             closeButton.gameObject.SetActive(true);
 
-
         // Iniciar slideshow
         StartCoroutine(ReproducirSlideshow());
     }
@@ -60,7 +59,10 @@ public class SlideshowController : MonoBehaviour
 
             yield return new WaitForSeconds(panelDuration);
 
-            panels[currentIndex].SetActive(false);
+            // ❌ No apagar el último panel (logo final)
+            if (currentIndex < panels.Length - 1)
+                panels[currentIndex].SetActive(false);
+
             currentIndex++;
         }
 
@@ -76,15 +78,24 @@ public class SlideshowController : MonoBehaviour
         if (musicSource != null && musicSource.isPlaying)
             musicSource.Stop();
 
-        // Ocultar todos los paneles
-        foreach (var p in panels) p.SetActive(false);
-        // 🔒 Ocultar botón de cerrar al salir
+        // Ocultar todos los paneles excepto el último
+        for (int i = 0; i < panels.Length - 1; i++)
+        {
+            if (panels[i] != null)
+                panels[i].SetActive(false);
+        }
 
+        // 🔹 Mantener el último panel visible (logo + link)
+        if (panels.Length > 0 && panels[panels.Length - 1] != null)
+            panels[panels.Length - 1].SetActive(true);
+
+        // 🔒 Ocultar botón de cerrar al salir
         if (closeButton != null)
             closeButton.gameObject.SetActive(false);
 
-        // Aquí puedes regresar a GameHome u otra acción
+        // Cambiar a GameHome sin "parpadeo del Jardín"
         SceneManager.LoadScene(4);
-        Debug.Log("✅ Presentación cerrada.");
+
+        Debug.Log("✅ Presentación cerrada en último panel (logo visible).");
     }
 }
