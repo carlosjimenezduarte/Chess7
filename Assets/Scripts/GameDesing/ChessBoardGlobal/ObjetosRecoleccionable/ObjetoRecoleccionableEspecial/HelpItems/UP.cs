@@ -121,6 +121,7 @@ public class UP : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPieceWith
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧪 {name} detecta al Rey encima. Se activa.");
             rey.GanarVida(1);
+            SoundManager.Instance.PlaySound(21);
             Destroy(gameObject);
         }
     }
@@ -163,7 +164,7 @@ public class UP : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPieceWith
         {
             Debug.LogError($"💥 Error al invocar método de bonus en {nombreFicha}: {ex.Message}");
         }
-
+        SoundManager.Instance.PlaySound(21);
         Destroy(gameObject);
     }
 

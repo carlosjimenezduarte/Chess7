@@ -46,6 +46,7 @@ public class Parchment : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IOb
 
         // Recolectar y destruir
         LevelProgress.Instance?.Parchment();
+        SoundManager.Instance.PlaySound(25);
         Destroy(gameObject);
     }
 

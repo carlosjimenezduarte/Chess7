@@ -37,6 +37,7 @@ public class Lamp : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoR
         if (yaRecolectado || tileCoords != posicion) return;
 
         yaRecolectado = true;
+        SoundManager.Instance.PlaySound(18);
         BoardManagerGlobal.Instance?.AgregarMensajeInterno($"🧞‍♂️ Lámpara mágica recolectada por {ficha.GetType().Name} en {posicion}.");
 
         // Puntaje

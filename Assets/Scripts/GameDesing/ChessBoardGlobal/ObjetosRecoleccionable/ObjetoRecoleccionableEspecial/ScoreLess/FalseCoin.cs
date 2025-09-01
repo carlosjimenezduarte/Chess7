@@ -37,6 +37,7 @@ public class FalseCoin : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IOb
         if (yaRecolectado || tileCoords != posicion) return;
 
         yaRecolectado = true;
+        SoundManager.Instance.PlaySound(18);
         BoardManagerGlobal.Instance?.AgregarMensajeInterno($"💰 Moneda Falsa recolectada por {ficha.GetType().Name} en {posicion}.");
 
         // Puntaje

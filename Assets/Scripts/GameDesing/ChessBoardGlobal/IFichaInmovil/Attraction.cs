@@ -168,6 +168,7 @@ public class Attraction : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPi
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"➡️ {obj.name} atraído de {obj.tileCoords} a {destino}.");
             obj.MoverA(destino);
         }
+        SoundManager.Instance.PlaySound(33);
     }
 
 

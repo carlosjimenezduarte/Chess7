@@ -37,6 +37,7 @@ public class Diamond : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObje
         if (yaRecolectado || tileCoords != posicion) return;
 
         yaRecolectado = true;
+        SoundManager.Instance.PlaySound(13);
         BoardManagerGlobal.Instance?.AgregarMensajeInterno($"💎 Diamante recolectada por {ficha.GetType().Name} en {posicion}.");
 
         // Puntaje

@@ -131,6 +131,7 @@ public class Expansion : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPie
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"💥 {obj.name} empujado de {obj.tileCoords} a {destino}.");
             obj.MoverA(destino);
         }
+        SoundManager.Instance.PlaySound(34);
     }
 
     private bool EsIgnorable(MovableTileObject obj, MonoBehaviour activador)

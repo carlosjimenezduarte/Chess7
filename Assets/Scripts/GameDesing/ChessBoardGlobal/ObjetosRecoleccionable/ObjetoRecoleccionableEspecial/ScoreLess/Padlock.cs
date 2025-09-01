@@ -36,6 +36,7 @@ public class Padlock : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObje
         if (yaRecolectado || tileCoords != posicion) return;
 
         yaRecolectado = true;
+        SoundManager.Instance.PlaySound(18);
         BoardManagerGlobal.Instance?.AgregarMensajeInterno($"🔒 Candado recogido por {ficha.GetType().Name} en {posicion}.");
 
         // Puntaje (opcional, puedes restar o no puntaje aquí)

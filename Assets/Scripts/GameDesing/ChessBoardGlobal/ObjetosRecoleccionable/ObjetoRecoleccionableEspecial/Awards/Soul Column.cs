@@ -45,7 +45,8 @@ public class SoulColumn : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IO
             score.AgregarPuntaje(ObtenerValorPuntaje());
 
         // Recolectar y destruir
-        LevelProgress.Instance?.MasterKey();
+        SoundManager.Instance.PlaySound(30);
+        LevelProgress.Instance?.MasterKey();        
         Destroy(gameObject);
     }
 

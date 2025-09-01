@@ -45,7 +45,8 @@ public class Medal : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjeto
             score.AgregarPuntaje(ObtenerValorPuntaje());
 
         // Recolectar y destruir
-        LevelProgress.Instance?.Medal();
+        SoundManager.Instance.PlaySound(27);
+        LevelProgress.Instance?.Medal();         
         Destroy(gameObject);
     }
 

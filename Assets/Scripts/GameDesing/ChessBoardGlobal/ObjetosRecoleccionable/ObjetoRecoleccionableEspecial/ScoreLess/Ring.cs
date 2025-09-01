@@ -37,6 +37,7 @@ public class Ring : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoR
         if (yaRecolectado || tileCoords != posicion) return;
 
         yaRecolectado = true;
+        SoundManager.Instance.PlaySound(18);
         BoardManagerGlobal.Instance?.AgregarMensajeInterno($"💍 Anillo Efrit por {ficha.GetType().Name} en {posicion}.");
 
         // Puntaje

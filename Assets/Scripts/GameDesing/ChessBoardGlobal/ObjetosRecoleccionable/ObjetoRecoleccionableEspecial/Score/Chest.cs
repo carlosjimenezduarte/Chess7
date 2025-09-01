@@ -37,6 +37,7 @@ public class Chest : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjeto
         if (yaRecolectado || tileCoords != posicion) return;
 
         yaRecolectado = true;
+        SoundManager.Instance.PlaySound(16);
         BoardManagerGlobal.Instance?.AgregarMensajeInterno($"💎💰💎 Cofre recolectado por {ficha.GetType().Name} en {posicion}.");
 
         // Puntaje

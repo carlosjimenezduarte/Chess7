@@ -491,10 +491,12 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
                             BoardManagerGlobal.Instance.GetTileAnchoredPosition(coord);
                         overlaysInstanciados.Add(overlay);
                         BoardManagerGlobal.Instance.AgregarMensajeInterno($"♛ [PREFAB] Overlay rojo en {coord}");
+                        
                     }
 
                     ultimaPosicionAmenaza = posicionPieza;
                     amenazaCreada = true;
+                    SoundManager.Instance.PlaySound(11);
                     break; // ✅ No seguimos más en esta dirección
                 }
 
@@ -512,7 +514,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
             );
             ultimaPosicionAmenaza = new Vector2Int(-99, -99);
         }
-
+        
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 

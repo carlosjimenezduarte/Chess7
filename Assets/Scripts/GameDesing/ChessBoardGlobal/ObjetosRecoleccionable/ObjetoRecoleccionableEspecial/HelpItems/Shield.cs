@@ -120,6 +120,7 @@ public class Shield : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPiece
         if (tileCoords == posicionRey)
         {
             RevisarSiFichaAliadaLlegó(posicionRey, rey);
+            SoundManager.Instance.PlaySound(24);
         }
     }
 

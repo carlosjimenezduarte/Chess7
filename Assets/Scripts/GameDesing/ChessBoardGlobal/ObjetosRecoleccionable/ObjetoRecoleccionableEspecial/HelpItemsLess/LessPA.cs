@@ -122,6 +122,7 @@ public class LessPA : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPiece
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔷 {name} detecta al Rey encima. -5 PA aplicado.");
             rey.puntosAccionActual += -5;
             FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
+            SoundManager.Instance.PlaySound(22);
             Destroy(gameObject);
         }
     }
@@ -164,7 +165,7 @@ public class LessPA : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPiece
         {
             Debug.LogError($"💥 Error al invocar método de bonus en {nombreFicha}: {ex.Message}");
         }
-
+        SoundManager.Instance.PlaySound(22);
         Destroy(gameObject);
     }
 

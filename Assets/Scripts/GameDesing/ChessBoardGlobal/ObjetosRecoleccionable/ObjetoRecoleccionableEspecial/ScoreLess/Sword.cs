@@ -37,6 +37,7 @@ public class Sword : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjeto
         if (yaRecolectado || tileCoords != posicion) return;
 
         yaRecolectado = true;
+        SoundManager.Instance.PlaySound(18);
         BoardManagerGlobal.Instance?.AgregarMensajeInterno($"🗡️ Espada recolectada por {ficha.GetType().Name} en {posicion}.");
 
         // Puntaje

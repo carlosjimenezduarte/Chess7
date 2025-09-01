@@ -113,6 +113,7 @@ public class TimePickup : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IP
             desactivado = true;
             BoardManagerGlobal.Instance?.AgregarMensajeInterno($"⏳ Tiempo recogido por Rey en {posicionRey}. +15s al turno.");
             FindFirstObjectByType<ChessGameManager>()?.AgregarTiempoAlTurno(15f);
+            SoundManager.Instance.PlaySound(28);
             Destroy(gameObject);
         }
     }
@@ -130,6 +131,7 @@ public class TimePickup : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IP
 
         BoardManagerGlobal.Instance?.AgregarMensajeInterno($"⏳ Tiempo recogido por {nombreFicha} en {posicionFicha}. +15s al turno.");
         FindFirstObjectByType<ChessGameManager>()?.AgregarTiempoAlTurno(15f);
+        SoundManager.Instance.PlaySound(28);
         Destroy(gameObject);
     }
 

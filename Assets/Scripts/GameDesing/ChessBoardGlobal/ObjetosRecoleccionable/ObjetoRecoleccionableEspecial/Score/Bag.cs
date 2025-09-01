@@ -37,6 +37,7 @@ public class Bag : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRe
         if (yaRecolectado || tileCoords != posicion) return;
 
         yaRecolectado = true;
+        SoundManager.Instance.PlaySound(15);
         BoardManagerGlobal.Instance?.AgregarMensajeInterno($"💰 Bolsa recolectada por {ficha.GetType().Name} en {posicion}.");
 
         // Puntaje

@@ -434,6 +434,7 @@ public class BishopEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
 
                     ultimaPosicionAmenaza = posicionPieza;
                     amenazaCreada = true;
+                    SoundManager.Instance.PlaySound(11);
                     break;
                 }
 

@@ -33,6 +33,7 @@ public class Vortex : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPieceW
     {
         if (posicionRey == tileCoords)
         {
+            SoundManager.Instance.PlaySound(32);
             BoardManagerGlobal.Instance.AgregarMensajeInterno(
                 $"♔ Rey fue absorbido por Vortex en {tileCoords}. Enviando a (0,0).");
 
@@ -47,6 +48,7 @@ public class Vortex : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPieceW
     {
         if (pos == tileCoords)
         {
+            SoundManager.Instance.PlaySound(32);
             BoardManagerGlobal.Instance.AgregarMensajeInterno(
                 $"♙ Peón fue absorbido por Vortex en {tileCoords}. Enviando a Dimensión Divina y destruyendo.");
             ExiliarAliadoYDestruir(peon);
@@ -58,6 +60,7 @@ public class Vortex : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPieceW
     {
         if (pos == tileCoords)
         {
+            SoundManager.Instance.PlaySound(32);
             alfil.OcultarMovimientos();
             alfil.mostrandoMovimientos = false;
             alfil.rangoMovimientoBase = -9000;
@@ -71,6 +74,7 @@ public class Vortex : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPieceW
     {
         if (pos == tileCoords)
         {
+            SoundManager.Instance.PlaySound(32);
             BoardManagerGlobal.Instance.AgregarMensajeInterno(
                 $"♘ Caballo fue absorbido por Vortex en {tileCoords}. Enviando a Dimensión Divina y destruyendo.");
             ExiliarAliadoYDestruir(caballo);
@@ -82,6 +86,7 @@ public class Vortex : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPieceW
     {
         if (pos == tileCoords)
         {
+            SoundManager.Instance.PlaySound(32);
             BoardManagerGlobal.Instance.AgregarMensajeInterno(
                 $"♖ Torre fue absorbida por Vortex en {tileCoords}. Enviando a Dimensión Divina y destruyendo.");
             ExiliarAliadoYDestruir(torre);
@@ -93,6 +98,7 @@ public class Vortex : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, IPieceW
     {
         if (pos == tileCoords)
         {
+            SoundManager.Instance.PlaySound(32);
             BoardManagerGlobal.Instance.AgregarMensajeInterno(
                 $"♕ Reina fue absorbida por Vortex en {tileCoords}. Enviando a Dimensión Divina y destruyendo.");
             ExiliarAliadoYDestruir(reina);

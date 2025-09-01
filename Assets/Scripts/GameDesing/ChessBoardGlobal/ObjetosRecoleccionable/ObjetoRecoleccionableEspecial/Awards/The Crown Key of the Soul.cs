@@ -52,7 +52,7 @@ public class TheCrownKeyofTheSoul : MonoBehaviour, ITileEffect, IObjetoRecolecci
             score.AgregarPuntaje(ObtenerValorPuntaje());
 
         FindFirstObjectByType<CofreController>()?.SetTieneLlave(true);
-
+        
         Destroy(gameObject);
     }
 

@@ -121,6 +121,7 @@ public class LessUP : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPiece
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧪 {name} detecta al Rey encima. Se activa.");
             rey.GanarVida(-1);
+            SoundManager.Instance.PlaySound(23);
             Destroy(gameObject);
         }
     }
@@ -163,7 +164,7 @@ public class LessUP : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPiece
         {
             Debug.LogError($"💥 Error al invocar método de bonus en {nombreFicha}: {ex.Message}");
         }
-
+        SoundManager.Instance.PlaySound(23);
         Destroy(gameObject);
     }
 

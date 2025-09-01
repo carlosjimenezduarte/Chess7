@@ -113,6 +113,7 @@ public class ClockSubtractTime : MonoBehaviour, ITileEffect, IObjetoRecolecciona
             desactivado = true;
             BoardManagerGlobal.Instance?.AgregarMensajeInterno($"⏳ Tiempo Negativo recogido por Rey en {posicionRey}. -15s al turno.");
             FindFirstObjectByType<ChessGameManager>()?.AgregarTiempoAlTurno(-15f);
+            SoundManager.Instance.PlaySound(29);
             Destroy(gameObject);
         }
     }
@@ -130,6 +131,7 @@ public class ClockSubtractTime : MonoBehaviour, ITileEffect, IObjetoRecolecciona
 
         BoardManagerGlobal.Instance?.AgregarMensajeInterno($"⏳ Tiempo Negativo recogido por {nombreFicha} en {posicionFicha}. -15s al turno.");
         FindFirstObjectByType<ChessGameManager>()?.AgregarTiempoAlTurno(-15f);
+        SoundManager.Instance.PlaySound(29);
         Destroy(gameObject);
     }
 

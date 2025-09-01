@@ -40,6 +40,7 @@ public class PusherUp : MonoBehaviour, ITileEffect, IFichaInmovil, IFicha, IPiec
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"♔ Rey llegó a PusherUp en {tileCoords}.");
             BoardManagerGlobal.Instance.EfectoPusherUp(rey);
+            SoundManager.Instance.PlaySound(31);
             rey.MostrarMovimientoPosible(); // refresco UI si lo usas
         }
     }
@@ -55,6 +56,7 @@ public class PusherUp : MonoBehaviour, ITileEffect, IFichaInmovil, IFicha, IPiec
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"♙ Peón llegó a PusherUp en {tileCoords}.");
             BoardManagerGlobal.Instance.EfectoPusherUp(peon);
+            SoundManager.Instance.PlaySound(31);
             peon.MostrarMovimientoPosible(); // refresco UI si lo usas
         }
     }

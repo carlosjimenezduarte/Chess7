@@ -121,6 +121,7 @@ public class Potion3PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPi
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧪 {name} detecta al Rey encima. Se activa.");
             rey.GanarPuntoMovimiento(3);
+            SoundManager.Instance.PlaySound(19);
             Destroy(gameObject);
         }
     }
@@ -164,7 +165,7 @@ public class Potion3PM : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPi
         {
             Debug.LogError($"💥 Error al invocar método de bonus en {nombreFicha}: {ex.Message}");
         }
-
+        SoundManager.Instance.PlaySound(19);
         Destroy(gameObject);
     }
 

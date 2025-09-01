@@ -15,6 +15,7 @@ public class QuitPanelManager : MonoBehaviour
     public void OnExitButton()
     {
         if (quitPanel != null) quitPanel.SetActive(true);
+        SoundManager.Instance.PlaySound(7);
     }
 
     // 🔹 Botón NO

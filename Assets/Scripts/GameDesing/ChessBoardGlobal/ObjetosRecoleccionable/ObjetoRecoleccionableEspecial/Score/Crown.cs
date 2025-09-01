@@ -37,6 +37,7 @@ public class Crown : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjeto
         if (yaRecolectado || tileCoords != posicion) return;
 
         yaRecolectado = true;
+        SoundManager.Instance.PlaySound(17);
         BoardManagerGlobal.Instance?.AgregarMensajeInterno($"👑 Corona recolectada por {ficha.GetType().Name} en {posicion}.");
 
         // Puntaje

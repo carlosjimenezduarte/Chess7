@@ -410,6 +410,7 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
 
                     ultimaPosicionAmenaza = posicionPieza;
                     amenazaCreada = true;
+                    SoundManager.Instance.PlaySound(11);
                     break;
                 }
 

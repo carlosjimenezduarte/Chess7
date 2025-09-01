@@ -159,6 +159,7 @@ public class ChessGameManager : MonoBehaviour
         {
             SoundManager.Instance.PlaySound(4);
         }
+        SoundManager.Instance.PlaySound(9);
     }
 
     private void NotificarEfectosTurno()
@@ -213,9 +214,17 @@ public class ChessGameManager : MonoBehaviour
     public void Restart()
     {
         Debug.Log("🔄 Reiniciando nivel...");
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SoundManager.Instance.PlaySound(10);
+        
         //LevelProgress.Instance.ResetProgress();
+        StartCoroutine(RestartWithDelay(0.5f)); 
     }
+
+    private IEnumerator RestartWithDelay(float delay)
+{
+    yield return new WaitForSecondsRealtime(delay); // ignora el timeScale
+    SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+}
 
     public void Exit()
     {

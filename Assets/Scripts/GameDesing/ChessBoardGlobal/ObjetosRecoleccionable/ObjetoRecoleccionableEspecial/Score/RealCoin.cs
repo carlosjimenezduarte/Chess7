@@ -37,6 +37,7 @@ public class RealCoin : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObj
         if (yaRecolectado || tileCoords != posicion) return;
 
         yaRecolectado = true;
+        SoundManager.Instance.PlaySound(14);
         BoardManagerGlobal.Instance?.AgregarMensajeInterno($"💰 Moneda recolectada por {ficha.GetType().Name} en {posicion}.");
 
         // Puntaje

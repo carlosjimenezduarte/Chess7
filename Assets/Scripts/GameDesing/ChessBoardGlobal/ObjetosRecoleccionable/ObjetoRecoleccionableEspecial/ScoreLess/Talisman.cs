@@ -36,6 +36,7 @@ public class Talisman : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObj
         if (yaRecolectado || tileCoords != posicion) return;
 
         yaRecolectado = true;
+        SoundManager.Instance.PlaySound(18);
         BoardManagerGlobal.Instance?.AgregarMensajeInterno($"🧿 Talisman recogido por {ficha.GetType().Name} en {posicion}.");
 
         // Puntaje (opcional, puedes restar o no puntaje aquí)

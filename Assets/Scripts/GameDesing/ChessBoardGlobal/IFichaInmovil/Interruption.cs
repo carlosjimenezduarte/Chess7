@@ -75,6 +75,7 @@ public class Interruption : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, I
             ficha.OcultarMovimientos();
             ficha.rangoAtaque = 0;
             ficha.rangoMovimientoBase = 0;
+            SoundManager.Instance.PlaySound(35);
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧊 Movimiento bloqueado para aliada {((MonoBehaviour)ficha).name}");
         }
 
@@ -85,11 +86,12 @@ public class Interruption : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, I
             rey.OcultarMovimientos();
             rey.puntosMovimientoActual = 0;
             rey.rangoAtaqueKing = 0;
+            SoundManager.Instance.PlaySound(35);
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"♔ Rey penalizado por Interruption (no fue el activador)");
         }
 
         // Cancelar ataques de enemigos
-        var fichasEnemigas = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<IFichaEnemiga>();
+        /*var fichasEnemigas = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<IFichaEnemiga>();
 
         foreach (var enemigo in fichasEnemigas)
         {
@@ -97,7 +99,7 @@ public class Interruption : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, I
             enemigo.rangoKillZone = 0;
             enemigo.rangoRangeZone = 0;
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧊 Ataque bloqueado para enemiga {((MonoBehaviour)enemigo).name}");
-        }
+        }*/
 
 
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();

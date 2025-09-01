@@ -121,6 +121,7 @@ public class PotionPA : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPie
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"🔷 {name} detecta al Rey encima. +1 PA aplicado.");
             rey.puntosAccionActual += 1;
+            SoundManager.Instance.PlaySound(20);
             FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
             Destroy(gameObject);
         }
@@ -164,7 +165,7 @@ public class PotionPA : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPie
         {
             Debug.LogError($"💥 Error al invocar método de bonus en {nombreFicha}: {ex.Message}");
         }
-
+        SoundManager.Instance.PlaySound(20);
         Destroy(gameObject);
     }
 

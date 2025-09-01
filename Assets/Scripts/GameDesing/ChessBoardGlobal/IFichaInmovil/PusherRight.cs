@@ -40,6 +40,7 @@ public class PusherRight : MonoBehaviour, ITileEffect, IFichaInmovil, IFicha, IP
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"♔ Rey llegó a PusherUp en {tileCoords}.");
             BoardManagerGlobal.Instance.EfectoPusherRight(rey);
+            SoundManager.Instance.PlaySound(31);
             rey.MostrarMovimientoPosible(); // refresco UI si lo usas
         }
     }
@@ -51,6 +52,7 @@ public class PusherRight : MonoBehaviour, ITileEffect, IFichaInmovil, IFicha, IP
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"♙ Peón llegó a PusherUp en {tileCoords}.");
             BoardManagerGlobal.Instance.EfectoPusherRight(peon);
+            SoundManager.Instance.PlaySound(31);
             peon.MostrarMovimientoPosible(); // refresco UI si lo usas
         }
     }
