@@ -105,6 +105,24 @@ public class BlackBishopEnemyController : MonoBehaviour, IPointerClickHandler, I
 
     public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey)
     {
+        if (BoardManagerGlobal.Instance.reinaNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Alfil Negro no ataca: Reina Negra ya ejecutó al Rey.");
+            return;
+        }
+
+        if (BoardManagerGlobal.Instance.torreNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Alfil Negro no ataca: Torre Negra ya ejecutó al Rey.");
+            return;
+        }        
+
+        if (BoardManagerGlobal.Instance.alfilNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Alfil Negro no ataca: Torre Negra ya ejecutó al Rey.");
+            return;
+        }  
+
         RevisarAmenazaAPieza(posicionRey, () =>
         {
             StartCoroutine(MatarPiezaDespuesDelay(rey, posicionRey));
@@ -169,9 +187,30 @@ public class BlackBishopEnemyController : MonoBehaviour, IPointerClickHandler, I
             piezaVictima.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
 
         if (pieza is KingController rey)
+    {
+        if (BoardManagerGlobal.Instance.reinaNegraAtaco)
         {
-        yield return new WaitForSeconds(3f);        
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Alfil Negro aborta: el Rey ya fue ejecutado.");
+            yield break;
         }
+        if (BoardManagerGlobal.Instance.torreNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Alfil Negro aborta: el Rey ya fue ejecutado.");
+            yield break;
+        
+        }
+        if (BoardManagerGlobal.Instance.alfilNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Alfil Negro aborta: el Rey ya fue ejecutado.");
+            yield break;
+        
+        }
+            BoardManagerGlobal.Instance.alfilNegraAtaco = true;
+            rey.GetComponent<UnityEngine.UI.Image>().enabled = false;
+            yield return new WaitForSeconds(3f);  
+                  
+    }
+
 
 
 
@@ -209,7 +248,7 @@ public class BlackBishopEnemyController : MonoBehaviour, IPointerClickHandler, I
 
         // 🔹 Marcar ataque para la jerarquía
         BoardManagerGlobal.Instance.alfilNegraAtaco = true;
-
+        SoundManager.Instance.PlaySound(5);
         yield return new WaitForSeconds(1f);
     }
 

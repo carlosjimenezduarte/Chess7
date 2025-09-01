@@ -106,11 +106,10 @@ public class BlackRookEnemyController : MonoBehaviour, IPointerClickHandler, ITi
     public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey)
     {
         if (BoardManagerGlobal.Instance.reinaNegraAtaco)
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Torre Negra no ataca: Reina Negra ya ejecutó al Rey.");
-        return;
-    }
-
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Torre Negra no ataca: Reina Negra ya ejecutó al Rey.");
+            return;
+        }
     
         RevisarAmenazaAPieza(posicionRey, () =>
         {
@@ -175,7 +174,7 @@ public class BlackRookEnemyController : MonoBehaviour, IPointerClickHandler, ITi
     if (pieza is IPieceWithPosition piezaVictima)
         piezaVictima.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
 
-    // ⚡ Caso especial: si la víctima es el Rey
+    
     if (pieza is KingController rey)
     {
         if (BoardManagerGlobal.Instance.reinaNegraAtaco || BoardManagerGlobal.Instance.torreNegraAtaco)
@@ -184,6 +183,7 @@ public class BlackRookEnemyController : MonoBehaviour, IPointerClickHandler, ITi
         yield break;
     }
         BoardManagerGlobal.Instance.torreNegraAtaco = true;
+        rey.GetComponent<UnityEngine.UI.Image>().enabled = false;
         yield return new WaitForSeconds(3f);        
     }
 
@@ -221,7 +221,7 @@ public class BlackRookEnemyController : MonoBehaviour, IPointerClickHandler, ITi
 
     // 🔹 Marcar ataque en jerarquía
     BoardManagerGlobal.Instance.torreNegraAtaco = true;
-
+    SoundManager.Instance.PlaySound(5);
     yield return new WaitForSeconds(1f);
 }
 

@@ -125,10 +125,12 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
 
     public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey)
     {
+        
         RevisarAmenazaAPieza(posicionRey, () =>
         {
             if (Vector2Int.Distance(posicionActual, posicionRey) <= rangoKillZone)
                 StartCoroutine(MatarPiezaDespuesDelay(rey, posicionRey));
+                
 
         });
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
@@ -194,9 +196,10 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
         if (pieza is IPieceWithPosition piezaVictima)
             piezaVictima.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
 
-        if (pieza is KingController)
+        if (pieza is KingController rey)
         {
             BoardManagerGlobal.Instance.reinaNegraAtaco = true;
+            rey.GetComponent<UnityEngine.UI.Image>().enabled = false;
             yield return new WaitForSeconds(3f);
         }
 
@@ -234,7 +237,7 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
 
         // 🔹 Marcar que la ReinaNegra atacó
         BoardManagerGlobal.Instance.reinaNegraAtaco = true;
-
+        SoundManager.Instance.PlaySound(5);
         yield return new WaitForSeconds(1f);
     }
 

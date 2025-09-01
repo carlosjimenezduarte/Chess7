@@ -173,6 +173,67 @@ public class PawnEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
 
         if (pieza is IPieceWithPosition piezaVictima)
             piezaVictima.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
+        
+        if (pieza is KingController rey)
+        {
+            if (BoardManagerGlobal.Instance.reinaNegraAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Peón Rojo aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.torreNegraAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Peón Rojo aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.alfilNegraAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Peón Rojo aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.caballoNegraAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Peón Rojo aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.reinaRojaAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Peón Rojo aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.torreRojaAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Peón Rojo aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.alfilRojoAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Peón Rojo aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.caballoRojoAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Peón Rojo aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.peonRojoAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Peón Rojo aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            rey.OcultarMovimientos();
+            rey.GetComponent<UnityEngine.UI.Image>().enabled = false;
+            BoardManagerGlobal.Instance.peonRojoAtaco = true;
+            FindFirstObjectByType<ChessGameManager>()?.DetenerJuego();
+            yield return new WaitForSeconds(3f);
+            
+              LevelResultUI.Instance.ShowResults(
+                LevelProgress.Instance.keysCollected,
+                LevelProgress.Instance.hasDiamond,
+                0, // vidas = 0
+                PlayerScore.Instance.GetTotalScore()
+            );
+        }
 
         if (pieza is PawnController peon)
         {
@@ -205,6 +266,7 @@ public class PawnEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"💀 {pieza.name} ejecutado por el Peón en {posicion}");
 
         BoardManagerGlobal.Instance.peonRojoAtaco = true;
+        SoundManager.Instance.PlaySound(5);
         yield return new WaitForSeconds(1f);
     }
 

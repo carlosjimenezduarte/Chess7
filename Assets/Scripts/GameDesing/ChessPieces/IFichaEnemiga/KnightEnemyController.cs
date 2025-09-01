@@ -160,6 +160,62 @@ public class KnightEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
 
         if (pieza is IPieceWithPosition piezaVictima)
             piezaVictima.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
+            
+        if (pieza is KingController rey)
+        {
+            if (BoardManagerGlobal.Instance.reinaNegraAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Caballo Rojo aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.torreNegraAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Caballo Rojo aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.alfilNegraAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Caballo Rojo aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.caballoNegraAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Caballo Rojo aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.reinaRojaAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Caballo Rojo aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.torreRojaAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Caballo Rojo aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.alfilRojoAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Caballo Rojo aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.caballoRojoAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Caballo Rojo aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            rey.OcultarMovimientos();
+            rey.GetComponent<UnityEngine.UI.Image>().enabled = false;
+            BoardManagerGlobal.Instance.caballoRojoAtaco = true;
+            FindFirstObjectByType<ChessGameManager>()?.DetenerJuego();
+            yield return new WaitForSeconds(3f);
+
+            LevelResultUI.Instance.ShowResults(
+              LevelProgress.Instance.keysCollected,
+              LevelProgress.Instance.hasDiamond,
+              0, // vidas = 0
+              PlayerScore.Instance.GetTotalScore()
+          );
+        }
 
         if (pieza is PawnController peon)
         {
@@ -191,6 +247,7 @@ public class KnightEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"💀 {pieza.name} ejecutado por el Caballo en {posicion}");
 
         BoardManagerGlobal.Instance.caballoRojoAtaco = true;
+        SoundManager.Instance.PlaySound(5);
         yield return new WaitForSeconds(0.5f);
     }
 

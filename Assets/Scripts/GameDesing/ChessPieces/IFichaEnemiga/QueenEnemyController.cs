@@ -135,6 +135,35 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
     public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey)
     {
+        if (BoardManagerGlobal.Instance.reinaNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Caballo Negro no ataca: Reina Negra ya ejecutó al Rey.");
+            return;
+        }
+
+        if (BoardManagerGlobal.Instance.torreNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Caballo Negro no ataca: Torre Negra ya ejecutó al Rey.");
+            return;
+        } 
+
+        if (BoardManagerGlobal.Instance.alfilNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Caballo Negro no ataca: Torre Negra ya ejecutó al Rey.");
+            return;
+        } 
+        if (BoardManagerGlobal.Instance.caballoNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Caballo Negro no ataca: Torre Negra ya ejecutó al Rey.");
+            return;
+        }
+
+        if (BoardManagerGlobal.Instance.reinaRojaAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Caballo Negro no ataca: Torre Negra ya ejecutó al Rey.");
+            return;
+        }
+
         RevisarAmenazaAPieza(posicionRey, () =>
         {
             StartCoroutine(ProcesarAmenazasDesdeArbitro());
@@ -201,6 +230,49 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         if (pieza is IPieceWithPosition piezaVictima)
             piezaVictima.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
 
+        if (pieza is KingController rey)
+        {
+            if (BoardManagerGlobal.Instance.reinaNegraAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Reina Roja aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.torreNegraAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Reina Roja aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.alfilNegraAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Reina Roja aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.caballoNegraAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Reina Roja aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.reinaRojaAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Reina Roja aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            rey.OcultarMovimientos();
+            rey.GetComponent<UnityEngine.UI.Image>().enabled = false;
+            BoardManagerGlobal.Instance.reinaRojaAtaco = true;
+            FindFirstObjectByType<ChessGameManager>()?.DetenerJuego();
+            yield return new WaitForSeconds(3f);
+            
+              LevelResultUI.Instance.ShowResults(
+                LevelProgress.Instance.keysCollected,
+                LevelProgress.Instance.hasDiamond,
+                0, // vidas = 0
+                PlayerScore.Instance.GetTotalScore()
+            );
+        }
+
+
+
         if (pieza is PawnController peon)
         {
             peon.OcultarMovimientos();
@@ -235,7 +307,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
         // 🔹 Marcar ataque para jerarquía
         BoardManagerGlobal.Instance.reinaRojaAtaco = true;
-
+        SoundManager.Instance.PlaySound(5);
         yield return new WaitForSeconds(1f);
         BoardManagerGlobal.Instance.AgregarMensajeInterno("♛ Reina Roja bloqueada para el resto del turno tras su primer ataque.");
     }

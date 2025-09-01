@@ -164,9 +164,50 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
         if (pieza is IPieceWithPosition piezaVictima)
             piezaVictima.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
 
-        if (pieza is KingController)
+        if (pieza is KingController rey)
         {
+            if (BoardManagerGlobal.Instance.reinaNegraAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Torre Roja aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.torreNegraAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Torre Roja aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.alfilNegraAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Torre Roja aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.caballoNegraAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Torre Roja aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.reinaRojaAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Torre Roja aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.torreRojaAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Torre Roja aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            rey.OcultarMovimientos();
+            rey.GetComponent<UnityEngine.UI.Image>().enabled = false;
+            BoardManagerGlobal.Instance.torreRojaAtaco = true;
+            FindFirstObjectByType<ChessGameManager>()?.DetenerJuego();
             yield return new WaitForSeconds(3f);
+            
+              LevelResultUI.Instance.ShowResults(
+                LevelProgress.Instance.keysCollected,
+                LevelProgress.Instance.hasDiamond,
+                0, // vidas = 0
+                PlayerScore.Instance.GetTotalScore()
+            );
         }
 
 
@@ -208,6 +249,7 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
         );
 
         BoardManagerGlobal.Instance.torreRojaAtaco = true;
+        SoundManager.Instance.PlaySound(5);
         yield return new WaitForSeconds(1f);
     }
 

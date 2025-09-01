@@ -50,6 +50,7 @@ public class ChessGameManager : MonoBehaviour
         paText.text = "";
 
         ActualizarHUD();
+        
     }
 
     private void Update()
@@ -109,6 +110,7 @@ public class ChessGameManager : MonoBehaviour
 
         ActualizarHUD();
         NotificarEfectosTurno();
+        SoundManager.Instance.PlaySound(6);
     }
 
     private void MostrarRangoInicialRey()

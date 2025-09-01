@@ -108,6 +108,28 @@ public class BlackKnightEnemyController : MonoBehaviour, IPointerClickHandler, I
 
     public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey)
     {
+        if (BoardManagerGlobal.Instance.reinaNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Caballo Negro no ataca: Reina Negra ya ejecutó al Rey.");
+            return;
+        }
+
+        if (BoardManagerGlobal.Instance.torreNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Caballo Negro no ataca: Torre Negra ya ejecutó al Rey.");
+            return;
+        } 
+
+        if (BoardManagerGlobal.Instance.alfilNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Caballo Negro no ataca: Torre Negra ya ejecutó al Rey.");
+            return;
+        } 
+        if (BoardManagerGlobal.Instance.caballoNegraAtaco)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Caballo Negro no ataca: Torre Negra ya ejecutó al Rey.");
+            return;
+        }
         RevisarAmenazaAPieza(posicionRey, () =>
         {
             StartCoroutine(MatarPiezaDespuesDelay(rey, posicionRey));
@@ -172,6 +194,36 @@ public class BlackKnightEnemyController : MonoBehaviour, IPointerClickHandler, I
         if (pieza is IPieceWithPosition piezaVictima)
             piezaVictima.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
 
+        if (pieza is KingController rey)
+        {
+            if (BoardManagerGlobal.Instance.reinaNegraAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Alfil Negro aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.torreNegraAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Alfil Negro aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.alfilNegraAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Alfil Negro aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            if (BoardManagerGlobal.Instance.caballoNegraAtaco)
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Alfil Negro aborta: el Rey ya fue ejecutado.");
+                yield break;
+            }
+            
+            BoardManagerGlobal.Instance.caballoNegraAtaco = true;
+            rey.GetComponent<UnityEngine.UI.Image>().enabled = false;
+            yield return new WaitForSeconds(3f);  
+                  
+        }
+
+
         if (pieza is PawnController peon)
         {
             peon.OcultarMovimientos();
@@ -206,7 +258,7 @@ public class BlackKnightEnemyController : MonoBehaviour, IPointerClickHandler, I
 
         // 🔹 Marcar ataque para jerarquía
         BoardManagerGlobal.Instance.caballoNegraAtaco = true;
-
+        SoundManager.Instance.PlaySound(5);
         yield return new WaitForSeconds(1f);
     }
 
