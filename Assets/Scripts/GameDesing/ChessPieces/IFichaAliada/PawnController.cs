@@ -232,7 +232,7 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
                 // 🔹 Consumir PA del Rey
                 rey.puntosAccionActual--;
                 BoardManagerGlobal.Instance.AgregarMensajeInterno($"⚔️ Peón consumió 1 PA del Rey. PA restantes: {rey.puntosAccionActual}");
-
+                SoundManager.Instance.PlaySound(1);
                 MostrarMovimientoPosible();
                 FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
                 BoardManagerGlobal.Instance.NotificarMovimientoAliado(posicionActual);
@@ -383,6 +383,7 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         RevisarObjetosEnCasilla();
         FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
         BoardManagerGlobal.Instance.NotificarMovimientoAliado(posicionActual);
+        SoundManager.Instance.PlaySound(0);
 
         // Coronación opcional
         if (posicionActual == new Vector2Int(7, 7))
@@ -393,6 +394,7 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
             rey.GanarVida(3);
             FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
             OcultarMovimientos();
+            SoundManager.Instance.PlaySound(2);
             Destroy(gameObject);
         }
 

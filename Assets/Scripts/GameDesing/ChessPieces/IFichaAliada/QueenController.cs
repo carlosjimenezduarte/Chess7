@@ -204,6 +204,7 @@ public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPo
                 enemigoPos.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
 
             Destroy(((MonoBehaviour)enemigo).gameObject);
+            SoundManager.Instance.PlaySound(1);
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"💀 Reina eliminó a un enemigo en {nuevaPos}.");
         }
 
@@ -220,6 +221,7 @@ public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPo
         StartCoroutine(EvaluarCasillasDeAtaque());
         FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
         BoardManagerGlobal.Instance.NotificarMovimientoAliado(posicionActual);
+        SoundManager.Instance.PlaySound(0);
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
 
         if (posicionActual == new Vector2Int(7, 7))
@@ -230,6 +232,7 @@ public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPo
             rey.GanarVida(3);
             FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
             OcultarMovimientos();
+            SoundManager.Instance.PlaySound(2);
             Destroy(gameObject);
         }
 

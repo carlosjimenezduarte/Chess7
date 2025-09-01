@@ -105,6 +105,13 @@ public class BlackRookEnemyController : MonoBehaviour, IPointerClickHandler, ITi
 
     public void RevisarSiReyLlegó(Vector2Int posicionRey, KingController rey)
     {
+        if (BoardManagerGlobal.Instance.reinaNegraAtaco)
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Torre Negra no ataca: Reina Negra ya ejecutó al Rey.");
+        return;
+    }
+
+    
         RevisarAmenazaAPieza(posicionRey, () =>
         {
             StartCoroutine(MatarPiezaDespuesDelay(rey, posicionRey));
@@ -157,54 +164,67 @@ public class BlackRookEnemyController : MonoBehaviour, IPointerClickHandler, ITi
     }
 
     private IEnumerator MatarPiezaDespuesDelay(MonoBehaviour pieza, Vector2Int posicion)
+{
+    SetPosicionActual(posicion);
+
+    if (TryGetComponent<MovableTileObject>(out var movable))
+        movable.tileCoords = posicion;
+
+    transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(posicion);
+
+    if (pieza is IPieceWithPosition piezaVictima)
+        piezaVictima.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
+
+    // ⚡ Caso especial: si la víctima es el Rey
+    if (pieza is KingController rey)
     {
-        SetPosicionActual(posicion);
-
-        if (TryGetComponent<MovableTileObject>(out var movable))
-            movable.tileCoords = posicion;
-
-        transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(posicion);
-
-        if (pieza is IPieceWithPosition piezaVictima)
-            piezaVictima.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
-
-        if (pieza is PawnController peon)
-        {
-            peon.OcultarMovimientos();
-            peon.mostrandoMovimientos = false;
-        }
-        if (pieza is RookController torre)
-        {
-            torre.OcultarMovimientos();
-            torre.mostrandoMovimientos = false;
-        }
-        if (pieza is BishopController alfil)
-        {
-            alfil.OcultarMovimientos();
-            alfil.mostrandoMovimientos = false;
-        }
-        if (pieza is KnightController caballo)
-        {
-            caballo.OcultarMovimientos();
-            caballo.mostrandoMovimientos = false;
-        }
-        if (pieza is QueenController reina)
-        {
-            reina.OcultarMovimientos();
-            reina.mostrandoMovimientos = false;
-        }
-
-        Destroy(pieza.gameObject);
-
-        BoardManagerGlobal.Instance.AgregarMensajeInterno(
-            $"💀 {pieza.name} ejecutado por la Torre Negra en {posicion}"
-        );
-
-        // 🔹 Marcar ataque para la jerarquía
-        BoardManagerGlobal.Instance.torreNegraAtaco = true;
-
-        yield return new WaitForSeconds(1f);
+        if (BoardManagerGlobal.Instance.reinaNegraAtaco || BoardManagerGlobal.Instance.torreNegraAtaco)
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("♖ Torre Negra aborta: el Rey ya fue ejecutado.");
+        yield break;
     }
+        BoardManagerGlobal.Instance.torreNegraAtaco = true;
+        yield return new WaitForSeconds(3f);        
+    }
+
+    if (pieza is PawnController peon)
+    {
+        peon.OcultarMovimientos();
+        peon.mostrandoMovimientos = false;
+    }
+    if (pieza is RookController torre)
+    {
+        torre.OcultarMovimientos();
+        torre.mostrandoMovimientos = false;
+    }
+    if (pieza is BishopController alfil)
+    {
+        alfil.OcultarMovimientos();
+        alfil.mostrandoMovimientos = false;
+    }
+    if (pieza is KnightController caballo)
+    {
+        caballo.OcultarMovimientos();
+        caballo.mostrandoMovimientos = false;
+    }
+    if (pieza is QueenController reina)
+    {
+        reina.OcultarMovimientos();
+        reina.mostrandoMovimientos = false;
+    }
+
+    Destroy(pieza.gameObject);
+
+    BoardManagerGlobal.Instance.AgregarMensajeInterno(
+        $"💀 {pieza.name} ejecutado por la Torre Negra en {posicion}"
+    );
+
+    // 🔹 Marcar ataque en jerarquía
+    BoardManagerGlobal.Instance.torreNegraAtaco = true;
+
+    yield return new WaitForSeconds(1f);
+}
+
 
     public void MostrarRangoDeAtaque()
     {

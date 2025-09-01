@@ -152,6 +152,11 @@ public class ChessGameManager : MonoBehaviour
 
         NotificarEfectosTurno();
         ActualizarHUD();
+
+        if (rey.turnosRestantes <= 0)
+        {
+            SoundManager.Instance.PlaySound(4);
+        }
     }
 
     private void NotificarEfectosTurno()
@@ -177,7 +182,7 @@ public class ChessGameManager : MonoBehaviour
     {
         turnoActivo = false;
         Debug.Log("⏸ Juego detenido, reloj pausado.");
-
+     
     }
 
     public void AgregarTiempoAlTurno(float segundos)

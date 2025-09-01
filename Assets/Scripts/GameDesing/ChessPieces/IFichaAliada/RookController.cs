@@ -209,6 +209,7 @@ public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
             enemigoPos.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
 
         Destroy(((MonoBehaviour)enemigo).gameObject);
+        SoundManager.Instance.PlaySound(1);
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"💀 Torre eliminó a un enemigo en {nuevaPos}.");
     }
 
@@ -224,6 +225,7 @@ public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
     RevisarObjetosEnCasilla();
     StartCoroutine(EvaluarCasillasDeAtaque());
     FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
+    SoundManager.Instance.PlaySound(0);
     BoardManagerGlobal.Instance.NotificarMovimientoAliado(posicionActual);
 
         if (posicionActual == new Vector2Int(7, 7))
@@ -234,6 +236,7 @@ public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
             rey.GanarVida(3);
             FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
             OcultarMovimientos();
+            SoundManager.Instance.PlaySound(2);
             Destroy(gameObject);
         }
 

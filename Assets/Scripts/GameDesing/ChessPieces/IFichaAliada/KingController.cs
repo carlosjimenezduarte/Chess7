@@ -77,11 +77,12 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         BoardManagerGlobal.Instance?.RegistrarMovimiento(this, nuevaPos);
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"♔ Rey actualizado a {nuevaPos}.");
         // 🛑 Si el Rey fue enviado a la Dimensión Divina, detener el juego
-    if (nuevaPos == BoardManagerGlobal.DimensionDivina)
-    {
-        puntosMovimientoActual = 0;
-        puntosAccionActual = 0;
-        turnosRestantes = 0;
+        if (nuevaPos == BoardManagerGlobal.DimensionDivina)
+        {
+            puntosMovimientoActual = 0;
+            puntosAccionActual = 0;
+            turnosRestantes = 0;
+            SoundManager.Instance.PlaySound(4);
        
     }
     }
@@ -346,6 +347,7 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
             BoardManagerGlobal.Instance.AgregarMensajeInterno("🚀 El Rey llegó a la meta (H8). Calculando bonus.");
             int bonus = turnosRestantes * 25;
             PlayerScore.Instance.AgregarPuntaje(bonus);
+            SoundManager.Instance.PlaySound(3);
             LevelResultUI.Instance.ShowResults(
                 LevelProgress.Instance.keysCollected,
                 LevelProgress.Instance.hasDiamond,
@@ -360,11 +362,14 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         // 💀 Se quedó sin turnos
         if (turnosRestantes <= 0)
         {
-        FindFirstObjectByType<ChessGameManager>()?.DetenerJuego();
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("💀 El Rey ha sido eliminado.");
-        StartCoroutine(MostrarResultadosTrasRetraso(3f));
+            //SoundManager.Instance.PlaySound(4);
+            FindFirstObjectByType<ChessGameManager>()?.DetenerJuego();
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("💀 El Rey ha sido eliminado.");
+            StartCoroutine(MostrarResultadosTrasRetraso(3f));
+            
         }
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+        SoundManager.Instance.PlaySound(0); 
     }
     
     private IEnumerator MostrarResultadosTrasRetraso(float segundos)
@@ -504,6 +509,7 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
             }
 
             enemigo.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
+            SoundManager.Instance.PlaySound(1);
         }
 
         Destroy(((MonoBehaviour)objetivo).gameObject);
@@ -512,6 +518,7 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         // 🔄 Actualizar posición lógica y visual del Rey
         SetPosicionActual(destino);
         transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(destino);
+        SoundManager.Instance.PlaySound(1);
 
         // ✨ Activar efectos especiales de casilla
         foreach (ITileEffect efecto in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ITileEffect>())

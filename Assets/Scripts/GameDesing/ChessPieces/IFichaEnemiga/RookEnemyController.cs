@@ -164,6 +164,11 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
         if (pieza is IPieceWithPosition piezaVictima)
             piezaVictima.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
 
+        if (pieza is KingController)
+        {
+            yield return new WaitForSeconds(3f);
+        }
+
 
         if (pieza is PawnController peon)
         {

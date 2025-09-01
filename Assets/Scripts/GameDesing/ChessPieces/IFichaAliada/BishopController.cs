@@ -226,6 +226,7 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
             enemigoPos.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
 
         Destroy(((MonoBehaviour)enemigo).gameObject);
+        SoundManager.Instance.PlaySound(1);
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"💀 Alfil eliminó a un enemigo en {nuevaPos}.");
     }
 
@@ -247,17 +248,19 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
     StartCoroutine(EvaluarCasillasDeAtaque());
     FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
     BoardManagerGlobal.Instance.NotificarMovimientoAliado(posicionActual);
+    SoundManager.Instance.PlaySound(0);
 
     if (posicionActual == new Vector2Int(7, 7))
-    {
-        BoardManagerGlobal.Instance.AgregarMensajeInterno("♕ Alfil coronado en H8. Bonificaciones aplicadas.");
-        rey.puntosAccionActual += 7;
-        rey.puntosMovimientoActual += 7;
-        rey.GanarVida(3);
-        FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
-        OcultarMovimientos();
-        Destroy(gameObject);
-    }
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno("♕ Alfil coronado en H8. Bonificaciones aplicadas.");
+            rey.puntosAccionActual += 7;
+            rey.puntosMovimientoActual += 7;
+            rey.GanarVida(3);
+            FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
+            OcultarMovimientos();
+            SoundManager.Instance.PlaySound(2);
+            Destroy(gameObject);
+        }
 
     BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }

@@ -175,7 +175,7 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
 
         SetPosicionActual(nuevaPos);
         transform.localPosition = BoardManagerGlobal.Instance.GetTileWorldPosition(nuevaPos);
-
+        SoundManager.Instance.PlaySound(0);
 
         if (enemigo != null)
         {
@@ -184,6 +184,7 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
 
             Destroy(((MonoBehaviour)enemigo).gameObject);
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"💀 Caballo eliminó a un enemigo en {nuevaPos}.");
+            SoundManager.Instance.PlaySound(1);
         }
 
         foreach (ITileEffect efecto in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ITileEffect>())
@@ -205,6 +206,7 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
         rey.GanarVida(3);
         FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
         OcultarMovimientos();
+        SoundManager.Instance.PlaySound(2);
         Destroy(gameObject);
         }
     }

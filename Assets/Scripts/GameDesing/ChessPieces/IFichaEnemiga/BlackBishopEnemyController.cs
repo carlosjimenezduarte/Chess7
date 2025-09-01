@@ -168,6 +168,13 @@ public class BlackBishopEnemyController : MonoBehaviour, IPointerClickHandler, I
         if (pieza is IPieceWithPosition piezaVictima)
             piezaVictima.SetPosicionActual(BoardManagerGlobal.DimensionDivina);
 
+        if (pieza is KingController rey)
+        {
+        yield return new WaitForSeconds(3f);        
+        }
+
+
+
         if (pieza is PawnController peon)
         {
             peon.OcultarMovimientos();

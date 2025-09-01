@@ -196,6 +196,7 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
 
         if (pieza is KingController)
         {
+            BoardManagerGlobal.Instance.reinaNegraAtaco = true;
             yield return new WaitForSeconds(3f);
         }
 
