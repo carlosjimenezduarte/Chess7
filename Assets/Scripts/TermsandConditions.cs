@@ -4,6 +4,6 @@ public class TestOpenURL : MonoBehaviour
 {
     public void AbrirWeb()
     {
-        Application.OpenURL("https://chessescapeauth.web.app/legal.html");
+        Application.OpenURL("https://chessescape.com/legal/termsandconditions.html");
     }
 }

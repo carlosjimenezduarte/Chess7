@@ -4,14 +4,39 @@ using Unity.Services.Authentication;
 using Unity.Services.Authentication.PlayerAccounts;
 using System;
 using System.Threading.Tasks;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using System.Collections;
 
 public class UnityPlayerLogin : MonoBehaviour
 {
     private bool servicesInitialized = false;
 
+    [Header("Referencias UI")]
+    public GameObject panelLogin;   // Panel con botones
+    public Button[] botonesLogin;   // Arrastra los botones de Login/Invitado
+
     private async void Start()
     {
         await InitializeUnityServices();
+
+        if (AuthenticationService.Instance.IsSignedIn)
+        {
+            Debug.Log("Usuario ya autenticado. Deshabilitando botones un instante...");
+            StartCoroutine(EsperarYRedirigir());
+        }
+        else
+        {
+            panelLogin.SetActive(true);
+            ActivarBotones(true);
+        }
+    }
+
+    private IEnumerator EsperarYRedirigir()
+    {
+        ActivarBotones(false);
+        yield return new WaitForSeconds(1f);
+        SceneManager.LoadScene(1); // Username siempre decide si Home o quedarse
     }
 
     private async Task InitializeUnityServices()
@@ -22,8 +47,6 @@ public class UnityPlayerLogin : MonoBehaviour
             servicesInitialized = true;
 
             Debug.Log("Unity Services inicializados correctamente");
-
-            // Suscribimos el evento solo si está disponible
             PlayerAccountService.Instance.SignedIn += OnPlayerAccountSignedIn;
         }
         catch (Exception e)
@@ -61,8 +84,12 @@ public class UnityPlayerLogin : MonoBehaviour
             await AuthenticationService.Instance.SignInWithUnityAsync(accessToken);
             Debug.Log("Inicio de sesión exitoso. Player ID: " + AuthenticationService.Instance.PlayerId);
 
-            // Redirigir a escena de username
-            UnityEngine.SceneManagement.SceneManager.LoadScene("Username");
+            // Guardar tipo de usuario y PlayerId
+            PlayerPrefs.SetString("userType", "unity");
+            PlayerPrefs.SetString("playerId", AuthenticationService.Instance.PlayerId);
+            PlayerPrefs.Save();
+
+            StartCoroutine(EsperarYRedirigir());
         }
         catch (AuthenticationException e)
         {
@@ -71,6 +98,14 @@ public class UnityPlayerLogin : MonoBehaviour
         catch (RequestFailedException e)
         {
             Debug.LogError("Error en la solicitud: " + e.Message);
+        }
+    }
+
+    private void ActivarBotones(bool estado)
+    {
+        foreach (var b in botonesLogin)
+        {
+            b.interactable = estado;
         }
     }
 }

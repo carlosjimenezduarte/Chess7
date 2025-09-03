@@ -2,9 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using Unity.Services.CloudSave;
 using Unity.Services.Authentication;
-using Unity.Services.Core;
-using System.Collections.Generic;
 using TMPro;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 [System.Serializable]
@@ -20,21 +19,25 @@ public class UsernameCloudSave : MonoBehaviour
     [Header("UI References")]
     public TMP_InputField usernameInput;
     public Button confirmButton;
-    public TMP_Text feedbackText;
     public Image selectedAvatar;
+
+    [Header("Feedback Texts")]
+    public TMP_Text msgEmptyName;
+    public TMP_Text msgTooLong;
+    public TMP_Text msgInvalidChars;
+    public TMP_Text msgNotAuthenticated;
+    public TMP_Text msgSaving;
 
     [Header("Avatars")]
     public List<AvatarButtonData> avatarButtons;
 
     private string currentAvatarId = "";
-
-    // Contador de usuarios para asignar un número único
-    private static int userCounter = 1; // Puede guardarse en Cloud Save si se quiere persistente
+    private static int userCounter = 1;
 
     private void Start()
     {
         confirmButton.onClick.AddListener(OnConfirmClicked);
-        feedbackText.text = "";
+        HideAllMessages();
 
         foreach (var avatar in avatarButtons)
         {
@@ -45,18 +48,16 @@ public class UsernameCloudSave : MonoBehaviour
             });
         }
 
-        // Valor por defecto: primer avatar
         if (string.IsNullOrEmpty(currentAvatarId) && avatarButtons.Count > 0)
         {
             SetSelectedAvatar(avatarButtons[0].avatarImage.sprite, avatarButtons[0].avatarId);
         }
 
-         usernameInput.onSelect.AddListener((eventData) =>
-    {
-        usernameInput.ActivateInputField(); // Esto activa el campo solo cuando se selecciona
-    });
+        usernameInput.onSelect.AddListener((eventData) =>
+        {
+            usernameInput.ActivateInputField();
+        });
 
-        // Verificar si el usuario ya está registrado
         CheckIfUserIsRegistered();
     }
 
@@ -70,85 +71,105 @@ public class UsernameCloudSave : MonoBehaviour
 
     private async void CheckIfUserIsRegistered()
     {
+        HideAllMessages();
+        
         if (!AuthenticationService.Instance.IsSignedIn)
         {
-            feedbackText.text = "Error: user not authenticated.";
+            ShowMessage(msgNotAuthenticated);
             return;
         }
 
         try
         {
-            // Usamos LoadAsync para verificar si el nombre de usuario ya está guardado
-            var playerData = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string> { "username" });
+            var playerData = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string> { "username", "avatarId" });
 
-            // Si encuentra la clave "username", significa que el usuario ya está registrado
             if (playerData.ContainsKey("username"))
             {
-                feedbackText.text = "User already registered.";
-                UnityEngine.SceneManagement.SceneManager.LoadScene("Home"); // Redirigir a la escena Home
+                string savedUsername = playerData["username"].Value.GetAs<string>();
+                string savedAvatarId = playerData["avatarId"].Value.GetAs<string>();
+
+                PlayerPrefs.SetString("username", savedUsername);
+                PlayerPrefs.SetString("avatarId", savedAvatarId);
+                PlayerPrefs.Save();
+
+                UnityEngine.SceneManagement.SceneManager.LoadScene(2); // Home
             }
         }
         catch (System.Exception e)
         {
-            // Si no se encuentra la clave "username" o hay algún error, continuar con el registro
             Debug.LogError("Error checking registration: " + e.Message);
         }
     }
 
-    private async void OnConfirmClicked()
+    public async void OnConfirmClicked()
     {
+        HideAllMessages();
+
         string username = Capitalize(usernameInput.text.Trim());
 
-        // Validación: básico
         if (string.IsNullOrEmpty(username))
         {
-            feedbackText.text = "The name cannot be empty.";
+            ShowMessage(msgEmptyName);
             return;
         }
         if (username.Length > 12)
         {
-            feedbackText.text = "Maximum 12 characters.";
+            ShowMessage(msgTooLong);
             return;
         }
         if (!System.Text.RegularExpressions.Regex.IsMatch(username, @"^[a-zA-Z0-9]+$"))
         {
-            feedbackText.text = "Use only letters and numbers (no spaces or symbols).";
+            ShowMessage(msgInvalidChars);
             return;
         }
         if (!AuthenticationService.Instance.IsSignedIn)
         {
-            feedbackText.text = "Error: user not authenticated.";
+            ShowMessage(msgNotAuthenticated);
             return;
         }
 
         try
         {
-            feedbackText.text = "Saving username...";
+            ShowMessage(msgSaving);
 
-            // Asignar un número único al usuario
             int userNumber = userCounter++;
-            string userIdKey = "user_number_" + username.ToLower(); // Usamos el nombre como base para la clave global
-
-            // Guardar los datos del usuario en Player Data
             var playerData = new Dictionary<string, object>
             {
                 { "username", username },
                 { "avatarId", currentAvatarId },
                 { "joined_at", System.DateTime.UtcNow.ToString("o") },
-                { "userNumber", userNumber } // Guardamos el número único aquí
+                { "userNumber", userNumber }
             };
 
-            // Guardar en Player Data en Cloud Save
             await CloudSaveService.Instance.Data.Player.SaveAsync(playerData);
 
-            feedbackText.text = "Saved successfully.";
-            UnityEngine.SceneManagement.SceneManager.LoadScene("Home"); // Redirigir a la escena Home
+            PlayerPrefs.SetString("username", username);
+            PlayerPrefs.SetString("avatarId", currentAvatarId);
+            PlayerPrefs.SetString("joined_at", System.DateTime.UtcNow.ToString("o"));
+            PlayerPrefs.SetInt("userNumber", userNumber);
+            PlayerPrefs.Save();
+
+            UnityEngine.SceneManagement.SceneManager.LoadScene(2); // Home
         }
         catch (System.Exception e)
         {
-            feedbackText.text = "An unexpected error occurred.";
             Debug.LogError("Username Save Error: " + e.Message);
         }
+    }
+
+    private void HideAllMessages()
+    {
+        if (msgEmptyName) msgEmptyName.gameObject.SetActive(false);
+        if (msgTooLong) msgTooLong.gameObject.SetActive(false);
+        if (msgInvalidChars) msgInvalidChars.gameObject.SetActive(false);
+        if (msgNotAuthenticated) msgNotAuthenticated.gameObject.SetActive(false);
+        if (msgSaving) msgSaving.gameObject.SetActive(false);
+    }
+
+    private void ShowMessage(TMP_Text msg)
+    {
+        HideAllMessages();
+        if (msg != null) msg.gameObject.SetActive(true);
     }
 
     private string Capitalize(string input)

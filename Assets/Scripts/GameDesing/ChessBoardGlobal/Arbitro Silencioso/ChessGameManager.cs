@@ -110,6 +110,7 @@ public class ChessGameManager : MonoBehaviour
 
         ActualizarHUD();
         NotificarEfectosTurno();
+        MusicManager.Instance.PlayMusic();
         SoundManager.Instance.PlaySound(6);
     }
 
@@ -185,6 +186,7 @@ public class ChessGameManager : MonoBehaviour
     {
         turnoActivo = false;
         Debug.Log("⏸ Juego detenido, reloj pausado.");
+        MusicManager.Instance.StopMusic();
      
     }
 
