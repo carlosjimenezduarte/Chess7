@@ -50,7 +50,7 @@ public class ChessGameManager : MonoBehaviour
         paText.text = "";
 
         ActualizarHUD();
-        
+        //MusicManager.Instance.PlayMusic();
     }
 
     private void Update()

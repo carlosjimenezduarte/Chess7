@@ -7,7 +7,13 @@ public class LevelResultUI : MonoBehaviour
 {
     public static LevelResultUI Instance { get; private set; }
 
+    [Header("Donaciones")]
+    public GameObject donationPanel;   // ⬅️ Asignar en el inspector (mockup de Willow)
+
+
     [Header("Referencias UI")]
+
+    
     public GameObject resultPanel;
 
     [Header("Llave Maestra (niveles 201–203)")]
@@ -21,16 +27,16 @@ public class LevelResultUI : MonoBehaviour
     //public TMP_Text CondecorationText;
     public GameObject Condecoracion;
     public GameObject CondecoracionEnabled;
-    public GameObject CondecorationTextObtenida;    
-    public GameObject CondecorationTextNoObtenida; 
+    public GameObject CondecorationTextObtenida;
+    public GameObject CondecorationTextNoObtenida;
 
     [Header("Ganar o perder")]
     public GameObject youWinText;
-    public GameObject youLoseText; 
+    public GameObject youLoseText;
 
-    [Header("Pergamino")]   
+    [Header("Pergamino")]
     public GameObject ParchmentText;
-    public GameObject Parchment2Text; 
+    public GameObject Parchment2Text;
 
     public GameObject Pergamino;
     public GameObject PergaminoEnabled;
@@ -38,12 +44,12 @@ public class LevelResultUI : MonoBehaviour
     [Header("Trofeo")]
     public GameObject Trophy;
     public GameObject TrophyEnabled;
-    public GameObject TrophyTextObtenido;     
-    public GameObject TrophyTextNoObtenido;  
+    public GameObject TrophyTextObtenido;
+    public GameObject TrophyTextNoObtenido;
 
     [Header("Llaves")]
     public TMP_Text keysText;
-    
+
     public GameObject key1;
     public GameObject key2;
     public GameObject key3;
@@ -67,7 +73,7 @@ public class LevelResultUI : MonoBehaviour
     [Header("Ganó o perdió")]
     //public TMP_Text winLoseText;
     //public TMP_Text winLoseText2;
-    
+
 
     [Header("Tiempo")]
     public TMP_Text timeLabelText; // 🔥 Nuevo: texto para el título ("Time")
@@ -216,11 +222,11 @@ public class LevelResultUI : MonoBehaviour
 
         Trophy.SetActive(false);
         TrophyEnabled.SetActive(false);
-        
+
 
         Condecoracion.SetActive(false);
         CondecoracionEnabled.SetActive(false);
-        
+
 
         // 🔹 Mostrar pergamino según el estado
         PergaminoEnabled.SetActive(true);
@@ -295,7 +301,7 @@ public class LevelResultUI : MonoBehaviour
 
         Condecoracion.SetActive(false);
         CondecoracionEnabled.SetActive(false);
-        
+
 
         // 🔹 Mostrar trofeo según el estado
         TrophyEnabled.SetActive(true);
@@ -372,7 +378,7 @@ public class LevelResultUI : MonoBehaviour
 
         Trophy.SetActive(false);
         TrophyEnabled.SetActive(false);
-        
+
 
         // 🔹 Mostrar condecoración según el estado
         CondecoracionEnabled.SetActive(true);
@@ -530,13 +536,15 @@ public class LevelResultUI : MonoBehaviour
     public void OnBackToHomeClicked()
     {
         // Carga la escena del menú principal
-        SceneManager.LoadScene("GameHome"); // Asegúrate que el nombre coincide en Build Settings
+        SceneManager.LoadScene(4); // Asegúrate que el nombre coincide en Build Settings
     }
 
     public void OnNextLevelClicked()
     {
-        // Ejemplo: cargar siguiente nivel según índice
-        //int currentIndex = SceneManager.GetActiveScene().buildIndex;
-        //SceneManager.LoadScene(currentIndex + 1);
+        
+            donationPanel.SetActive(true); // 🔹 Abre el panel de donación
+        
+    
     }
+    
 }
