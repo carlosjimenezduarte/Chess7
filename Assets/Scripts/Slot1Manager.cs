@@ -26,9 +26,14 @@ public class Slot1Manager : MonoBehaviour
 
     public void OnPlay()
     {
+        // Guardar que este es el slot activo
+        PlayerPrefs.SetString("slotActivo", "slot1");
+
+        // Activar slot si es la primera vez
         PlayerPrefs.SetString(slotKey, "active");
         PlayerPrefs.Save();
-        SceneManager.LoadScene(4); // GameHome
+
+        SceneManager.LoadScene(4); // Ir a GameHome
     }
 
     public void OnReiniciar()
@@ -40,7 +45,8 @@ public class Slot1Manager : MonoBehaviour
 
     public void OnConfirmYes()
     {
-        PlayerPrefs.DeleteKey("slot1_progress");
+        // 🔄 Borrar progreso del slot
+        PlayerPrefs.DeleteKey("slot1_progress"); 
         PlayerPrefs.SetString(slotKey, "empty");
         PlayerPrefs.Save();
         UpdateUI();

@@ -1,3 +1,4 @@
+// 🎵 MusicManager.cs
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
@@ -9,33 +10,27 @@ public class MusicManager : MonoBehaviour
     public AudioClip musicaNivel;
 
     private AudioSource audioSource;
+    private bool musicOn = true;
 
     void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject); // Si quieres que sobreviva entre escenas
-        }
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
+        Instance = this;
 
         audioSource = GetComponent<AudioSource>();
         audioSource.loop = true;
         audioSource.playOnAwake = false;
-        audioSource.spatialBlend = 0f;       // 2D
-        audioSource.ignoreListenerPause = true; 
+        audioSource.spatialBlend = 0f;
+        audioSource.ignoreListenerPause = true;
+
+        // Cargar estado guardado
+        musicOn = PlayerPrefs.GetInt("musicOn", 1) == 1;
     }
 
     public void PlayMusic(float volume = 0.4f)
     {
-        if (musicaNivel == null) return;
+        if (!musicOn || musicaNivel == null) return;
 
-        if (audioSource.clip == musicaNivel && audioSource.isPlaying)
-            return;
+        if (audioSource.clip == musicaNivel && audioSource.isPlaying) return;
 
         audioSource.clip = musicaNivel;
         audioSource.volume = volume;
@@ -46,4 +41,16 @@ public class MusicManager : MonoBehaviour
     {
         audioSource.Stop();
     }
+
+    public void SetMusicState(bool enabled)
+    {
+        musicOn = enabled;
+        PlayerPrefs.SetInt("musicOn", enabled ? 1 : 0);
+        PlayerPrefs.Save();
+
+        if (!enabled) StopMusic();
+        else PlayMusic();
+    }
+
+    public bool IsMusicOn() => musicOn;
 }

@@ -26,6 +26,7 @@ public class Slot3Manager : MonoBehaviour
 
     public void OnPlay()
     {
+        PlayerPrefs.SetString("slotActivo", "slot3");        
         PlayerPrefs.SetString(slotKey, "active");
         PlayerPrefs.Save();
         SceneManager.LoadScene(4); // GameHome

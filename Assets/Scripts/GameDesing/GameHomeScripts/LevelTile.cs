@@ -3,30 +3,25 @@ using UnityEngine.UI;
 
 public class LevelTile : MonoBehaviour
 {
+    [Header("Referencias UI")]
     public Image backgroundImage;
-    public GameObject keyIcon;
+    public GameObject keyIcon; // 👈 arrastra el icono de llave/trofeo/etc.
 
-    public enum TileState
-    {
-        Locked,
-        Unlocked,
-        Completed
-    }
-
+    public enum TileState { Locked, Unlocked, Completed }
     public TileState state = TileState.Locked;
 
     private void Start()
     {
-        UpdateVisual();
+        UpdateVisual(false);
     }
 
-    public void SetState(TileState newState)
+    public void SetState(TileState newState, bool mostrarIcono = false)
     {
         state = newState;
-        UpdateVisual();
+        UpdateVisual(mostrarIcono);
     }
 
-    private void UpdateVisual()
+    private void UpdateVisual(bool mostrarIcono)
     {
         switch (state)
         {
@@ -42,19 +37,8 @@ public class LevelTile : MonoBehaviour
 
             case TileState.Completed:
                 backgroundImage.color = Color.white;
-                keyIcon.SetActive(true);
+                keyIcon.SetActive(mostrarIcono);
                 break;
         }
-    }
-
-    // Método de test: lo puedes llamar desde un botón o evento
-    public void ToggleState()
-    {
-        if (state == TileState.Locked)
-            SetState(TileState.Unlocked);
-        else if (state == TileState.Unlocked)
-            SetState(TileState.Completed);
-        else
-            SetState(TileState.Locked);
     }
 }

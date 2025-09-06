@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class BoardManager : MonoBehaviour
+public class GameHomeBoardManager : MonoBehaviour
 {
     public List<LevelTile> tiles = new List<LevelTile>();
     private int currentLevelIndex = 0;

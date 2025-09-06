@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LevelProgress : MonoBehaviour
 {
@@ -113,33 +114,66 @@ public class LevelProgress : MonoBehaviour
     }
 
     public void FinalizarNivel(int vidas, int score)
+{
+    // 💾 Guardar progreso automáticamente en el slot activo
+    string slotActivo = PlayerPrefs.GetString("slotActivo", "slot1");
+    int nivelActual = SceneManager.GetActiveScene().buildIndex;
+
+    // Guardamos progreso en PlayerPrefs con protección anti-farmeo
+    ProgressSaver.GuardarResultado(
+        slotActivo,
+        nivelActual,
+        score,
+        keysCollected,
+        hasDiamond,
+        hasParchment,
+        hasTrophy,
+        hasMedal,
+        hasMasterKey3
+    );
+
+    Debug.Log($"💾 Progreso guardado en {slotActivo} -> Nivel {nivelActual}");
+
+    // 📌 Determinar si este nivel debe mostrar ícono en el mapa (objeto clave recogido)
+    bool obtuvoObjetoClave =
+        (keysCollected >= 3) || // todas las llaves
+        hasParchment ||         // pergamino
+        hasTrophy ||            // trofeo
+        hasMedal ||             // medalla
+        hasMasterKey3;          // fragmento de llave
+
+    // ✅ Avisar al GameHomeManager para actualizar visual del tablero
+    if (GameHomeManager.Instance != null)
     {
-        if (esNivelPergamino)
-        {
-            LevelResultUI.Instance.ShowParchmentResult(score, vidas, hasDiamond, hasParchment);
-        }
-        else if (esNivelTrofeo)
-        {
-            LevelResultUI.Instance.ShowTrophyResult(score, vidas, hasDiamond, hasTrophy);
-        }
-        else if (esNivelMedalla)
-        {
-            LevelResultUI.Instance.ShowMedalResult(score, vidas, hasDiamond, hasMedal);
-        }
-        else if (esNivelMasterKey)
-        {
-            LevelResultUI.Instance.ShowMasterKeyResult(score, vidas, hasMasterKey3);
-        }
-        else
-        {
-            // Nivel normal
-            LevelResultUI.Instance.ShowResults(keysCollected, hasDiamond, vidas, score);
-        }
+        GameHomeManager.Instance.MarcarNivelCompletado(nivelActual, obtuvoObjetoClave);
+    }
+
+    // 📊 Mostrar resultados en UI según el tipo de nivel
+    if (esNivelPergamino)
+    {
+        LevelResultUI.Instance.ShowParchmentResult(score, vidas, hasDiamond, hasParchment);
+    }
+    else if (esNivelTrofeo)
+    {
+        LevelResultUI.Instance.ShowTrophyResult(score, vidas, hasDiamond, hasTrophy);
+    }
+    else if (esNivelMedalla)
+    {
+         LevelResultUI.Instance.ShowMedalResult(score, vidas, hasDiamond, hasMedal);
+    }
+    else if (esNivelMasterKey)
+    {
+        LevelResultUI.Instance.ShowMasterKeyResult(score, vidas, hasMasterKey3);
+    }
+    else
+    {
+        // Nivel normal (3 llaves + diamante, o 1 llave + diamante)
+        LevelResultUI.Instance.ShowResults(keysCollected, hasDiamond, vidas, score);
+    }
+}
+
+
     
 }
 
 
-
-
-
-}

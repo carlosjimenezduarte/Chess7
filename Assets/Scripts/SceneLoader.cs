@@ -7,7 +7,7 @@ public class SceneLoader : MonoBehaviour
     public void LoadScene(int sceneIndex)
     {
         Debug.Log("🎵 Sonando antes de cargar escena...");
-        //SoundManager.Instance.PlaySound(8); // 🔊 Primero sonido
+        SoundManager.Instance.PlaySound(8); // 🔊 Primero sonido
         StartCoroutine(LoadSceneDelay(sceneIndex, 0.5f)); // ⏳ Luego esperamos un poco
     }
 
