@@ -204,7 +204,7 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
             
               LevelResultUI.Instance.ShowResults(
                 LevelProgress.Instance.keysCollected,
-                LevelProgress.Instance.hasDiamond,
+                LevelProgress.Instance.diamondsCollected,
                 0, // vidas = 0
                 PlayerScore.Instance.GetTotalScore()
             );
@@ -605,8 +605,7 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
                     {
                         if (fichaAliada is KingController rey)
                         {
-                            rey.GanarPuntoMovimiento(-2);
-                            rey.turnosRestantes -= 1;
+                            rey.GanarPuntoMovimiento(-1);                            
                             BoardManagerGlobal.Instance.AgregarMensajeInterno(
                                 $"♜ Torre Roja penaliza al Rey en {paso}. PA: {rey.puntosAccionActual}"
                             );
@@ -614,6 +613,14 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
                         else if (fichaAliada is PawnController peon)
                         {
                             peon.RecibirPenalizacionTorre();
+                        }
+                        else if (fichaAliada is RookController torre)
+                        {
+                            torre.RecibirPenalizacionTorre();
+                        }
+                        else if (fichaAliada is BishopController alfil)
+                        {
+                            alfil.RecibirPenalizacionTorre();
                         }
                     }
                 }

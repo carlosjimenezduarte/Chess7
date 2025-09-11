@@ -1,12 +1,8 @@
 using UnityEngine;
-using TMPro;
 
 public class PlayerScore : MonoBehaviour
 {
     public static PlayerScore Instance { get; private set; }
-
-    [Header("UI")]
-    public TMP_Text scoreText;
 
     private int totalScore = 0;
 
@@ -23,26 +19,29 @@ public class PlayerScore : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-        ActualizarHUD();
-    }
-
+    /// <summary>
+    /// Agrega puntos al score total.
+    /// </summary>
     public void AgregarPuntaje(int puntos)
     {
         totalScore += puntos;
         Debug.Log($"💰 Score actualizado: +{puntos} pts -> Total: {totalScore}");
-        ActualizarHUD();
     }
 
-    private void ActualizarHUD()
-    {
-        if (scoreText != null)
-            scoreText.text = totalScore.ToString();
-    }
-
+    /// <summary>
+    /// Devuelve el score acumulado.
+    /// </summary>
     public int GetTotalScore()
     {
         return totalScore;
+    }
+
+    /// <summary>
+    /// Reinicia el score (por ejemplo, al iniciar un nivel).
+    /// </summary>
+    public void ResetScore()
+    {
+        totalScore = 0;
+        Debug.Log("🔄 Score reiniciado a 0.");
     }
 }

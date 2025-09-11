@@ -26,7 +26,7 @@ public class SettingsManager : MonoBehaviour
         {
             MusicManager.Instance?.SetMusicState(true);
             UpdateMusicUI(true);
-            SoundManager.Instance?.PlaySound(0); // 🔊 sonido especial al activar
+            SoundManager.Instance?.PlaySound(36); // 🔊 sonido especial al activar
         });
 
         musicOffButton.onClick.AddListener(() =>

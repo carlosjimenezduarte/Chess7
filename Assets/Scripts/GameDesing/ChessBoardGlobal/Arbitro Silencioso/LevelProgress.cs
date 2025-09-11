@@ -1,79 +1,70 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class LevelProgress : MonoBehaviour
 {
     public static LevelProgress Instance { get; private set; }
 
     [Header("Tipo de nivel")]
-
     public bool esNivelMasterKey = false;
     public bool esNivelPergamino = false;
-
     public bool esNivelTrofeo = false;
-
     public bool esNivelMedalla = false;
 
+    [Header("Config de nivel")]
+    public int maxKeys = 3;        // por defecto 3 llaves
+    public int maxDiamonds = 1;    // por defecto 1 diamante
 
-    [Header("Estado del nivel")]
-    public int keysCollected = 0;
-    public bool hasDiamond = false;
-    
-    public bool hasParchment = false;
-
-    public bool hasTrophy = false;
-
-    public bool hasMedal = false;
-
-    public bool hasMasterKey3 = false;
+     [Header("Estado del nivel (runtime, no editable)")]
+    [HideInInspector] public int keysCollected = 0;
+    [HideInInspector] public int diamondsCollected = 0;
+    [HideInInspector] public bool hasParchment = false;
+    [HideInInspector] public bool hasTrophy = false;
+    [HideInInspector] public bool hasMedal = false;
+    [HideInInspector] public bool hasMasterKey3 = false;
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
     }
 
+    // 🔹 Métodos de recolección
     public void Key()
     {
-        if (keysCollected < 3)
-        {
-            keysCollected++;
-            Debug.Log($"🗝️ Llaves recogidas: {keysCollected}");
-        }
+        int before = keysCollected;
+        keysCollected = Mathf.Clamp(keysCollected + 1, 0, maxKeys);
+        Debug.Log($"🗝️ Llaves recogidas: {keysCollected}/{maxKeys} (antes {before})");
     }
 
     public void Diamond()
     {
-        if (!hasDiamond)
-        {
-            hasDiamond = true;
-            Debug.Log($"💎 ¡Diamante recogido!");
-        }
+        int before = diamondsCollected;
+        diamondsCollected = Mathf.Clamp(diamondsCollected + 1, 0, maxDiamonds);
+        Debug.Log($"💎 Diamantes recogidos: {diamondsCollected}/{maxDiamonds} (antes {before})");
     }
+
+    // 🔹 Penalizaciones
     public void Padlock()
     {
-        keysCollected--; // Permitir valores negativos
-        Debug.Log($"🔒 Llaves después de candado: {keysCollected}");
+        int before = keysCollected;
+        keysCollected = Mathf.Clamp(keysCollected - 1, 0, maxKeys);
+        Debug.Log($"🔒 Candado -> Llaves ahora: {keysCollected}/{maxKeys} (antes {before})");
     }
 
     public void Talisman()
     {
-        hasDiamond = false;
-        Debug.Log($"💎 ¡Diamante perdido!");
+        int before = diamondsCollected;
+        diamondsCollected = Mathf.Clamp(diamondsCollected - 1, 0, maxDiamonds);
+        Debug.Log($"🔮 Talismán -> Diamantes ahora: {diamondsCollected}/{maxDiamonds} (antes {before})");
     }
 
+    // 🔹 Objetos especiales
     public void Parchment()
     {
         if (!hasParchment)
         {
             hasParchment = true;
-            Debug.Log($"💎 ¡Pergamino obtenido!");
+            Debug.Log($"📜 ¡Pergamino obtenido!");
         }
     }
 
@@ -100,80 +91,20 @@ public class LevelProgress : MonoBehaviour
         if (!hasMasterKey3)
         {
             hasMasterKey3 = true;
-            Debug.Log($"🗝️ Fragmento de llave recogido: {hasMasterKey3}");
+            Debug.Log($"🗝️ Fragmento de llave recogido.");
         }
     }
 
+    // 🔹 Reset al empezar/reintentar nivel
     public void ResetProgress()
     {
         keysCollected = 0;
-        hasDiamond = false;
+        diamondsCollected = 0;
         hasParchment = false;
         hasTrophy = false;
-        hasMedal = false;    
-    }
+        hasMedal = false;
+        hasMasterKey3 = false;
 
-    public void FinalizarNivel(int vidas, int score)
-{
-    // 💾 Guardar progreso automáticamente en el slot activo
-    string slotActivo = PlayerPrefs.GetString("slotActivo", "slot1");
-    int nivelActual = SceneManager.GetActiveScene().buildIndex;
-
-    // Guardamos progreso en PlayerPrefs con protección anti-farmeo
-    ProgressSaver.GuardarResultado(
-        slotActivo,
-        nivelActual,
-        score,
-        keysCollected,
-        hasDiamond,
-        hasParchment,
-        hasTrophy,
-        hasMedal,
-        hasMasterKey3
-    );
-
-    Debug.Log($"💾 Progreso guardado en {slotActivo} -> Nivel {nivelActual}");
-
-    // 📌 Determinar si este nivel debe mostrar ícono en el mapa (objeto clave recogido)
-    bool obtuvoObjetoClave =
-        (keysCollected >= 3) || // todas las llaves
-        hasParchment ||         // pergamino
-        hasTrophy ||            // trofeo
-        hasMedal ||             // medalla
-        hasMasterKey3;          // fragmento de llave
-
-    // ✅ Avisar al GameHomeManager para actualizar visual del tablero
-    if (GameHomeManager.Instance != null)
-    {
-        GameHomeManager.Instance.MarcarNivelCompletado(nivelActual, obtuvoObjetoClave);
-    }
-
-    // 📊 Mostrar resultados en UI según el tipo de nivel
-    if (esNivelPergamino)
-    {
-        LevelResultUI.Instance.ShowParchmentResult(score, vidas, hasDiamond, hasParchment);
-    }
-    else if (esNivelTrofeo)
-    {
-        LevelResultUI.Instance.ShowTrophyResult(score, vidas, hasDiamond, hasTrophy);
-    }
-    else if (esNivelMedalla)
-    {
-         LevelResultUI.Instance.ShowMedalResult(score, vidas, hasDiamond, hasMedal);
-    }
-    else if (esNivelMasterKey)
-    {
-        LevelResultUI.Instance.ShowMasterKeyResult(score, vidas, hasMasterKey3);
-    }
-    else
-    {
-        // Nivel normal (3 llaves + diamante, o 1 llave + diamante)
-        LevelResultUI.Instance.ShowResults(keysCollected, hasDiamond, vidas, score);
+        Debug.Log("🔄 Progreso del nivel reiniciado.");
     }
 }
-
-
-    
-}
-
-

@@ -16,8 +16,7 @@ public class MusicManager : MonoBehaviour
     {
         Instance = this;
 
-        audioSource = GetComponent<AudioSource>();
-        audioSource.loop = true;
+        audioSource = GetComponent<AudioSource>();        
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = 0f;
         audioSource.ignoreListenerPause = true;

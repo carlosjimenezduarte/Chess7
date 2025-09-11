@@ -265,7 +265,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
             
               LevelResultUI.Instance.ShowResults(
                 LevelProgress.Instance.keysCollected,
-                LevelProgress.Instance.hasDiamond,
+                LevelProgress.Instance.diamondsCollected,
                 0, // vidas = 0
                 PlayerScore.Instance.GetTotalScore()
             );
@@ -716,15 +716,22 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
                         // 🔹 Penalización por estar en rango visual
                         if (fichaAliada is KingController rey)
                         {
-                            rey.GanarPuntoMovimiento(-2);
-                            rey.turnosRestantes -= 1;
+                            rey.GanarPuntoMovimiento(-1);                            
                             BoardManagerGlobal.Instance.AgregarMensajeInterno(
                                 $"♛ Reina Roja penaliza al Rey en {paso}. PA: {rey.puntosAccionActual}"
                             );
                         }
                         else if (fichaAliada is PawnController peon)
                         {
-                            peon.RecibirPenalizacionTorre();
+                            peon.RecibirPenalizacionReina();
+                        }
+                        else if (fichaAliada is RookController torre)
+                        {
+                            torre.RecibirPenalizacionReina();
+                        }
+                        else if (fichaAliada is BishopController alfil)
+                        {
+                            alfil.RecibirPenalizacionReina();
                         }
 
                         // Penalización no rompe la exploración, sigue buscando otras víctimas

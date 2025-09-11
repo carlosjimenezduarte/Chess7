@@ -350,7 +350,7 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
             SoundManager.Instance.PlaySound(3);
             LevelResultUI.Instance.ShowResults(
                 LevelProgress.Instance.keysCollected,
-                LevelProgress.Instance.hasDiamond,
+                LevelProgress.Instance.diamondsCollected,
                 turnosRestantes,
                 PlayerScore.Instance.GetTotalScore()
             );
@@ -379,7 +379,7 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
         LevelResultUI.Instance.ShowResults(
         LevelProgress.Instance.keysCollected,
-        LevelProgress.Instance.hasDiamond, 
+        LevelProgress.Instance.diamondsCollected, 
         0,
         PlayerScore.Instance.GetTotalScore()
     );
@@ -437,7 +437,7 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
             LevelResultUI.Instance.ShowResults(
                 LevelProgress.Instance.keysCollected,
-                LevelProgress.Instance.hasDiamond,
+                LevelProgress.Instance.diamondsCollected,
                 0,
                 PlayerScore.Instance.GetTotalScore()
             );

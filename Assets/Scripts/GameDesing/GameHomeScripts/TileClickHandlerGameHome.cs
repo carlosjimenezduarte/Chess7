@@ -5,8 +5,10 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(LevelTile))]
 public class TileClickHandlerGameHome : MonoBehaviour, IPointerClickHandler
 {
-    [Header("Identificador del nivel")]
-    public int levelId; // 👈 asigna desde el inspector (ej: 1, 2, 3...)
+    [Header("Identificadores del nivel")]
+    [Tooltip("Número que corresponde al Build Index en File -> Build Settings")]
+    public int buildIndex;   // 👈 índice real de escena
+    public int nivelLogico;  // 👈 número visible (1, 2, 3...)
 
     private LevelTile levelTile;
 
@@ -19,17 +21,16 @@ public class TileClickHandlerGameHome : MonoBehaviour, IPointerClickHandler
     {
         if (levelTile.state == LevelTile.TileState.Locked)
         {
-            Debug.Log($"⛔ Nivel {levelId} está bloqueado.");
+            Debug.Log($"⛔ Nivel {nivelLogico} está bloqueado.");
             return;
         }
 
-        // Guardar nivel activo
-        PlayerPrefs.SetInt("nivelActivo", levelId);
+        // Guardar el nivel lógico activo
+        PlayerPrefs.SetInt("nivelActivo", nivelLogico);
         PlayerPrefs.Save();
 
-        // Cargar escena (ajusta nombres a tu esquema real)
-        string sceneName = $"Level {levelId} - A{levelId}";
-        Debug.Log($"▶️ Entrando a {sceneName}");
-        SceneManager.LoadScene(sceneName);
+        Debug.Log($"▶️ Entrando al nivel lógico {nivelLogico} (BuildIndex={buildIndex})");
+        SceneManager.LoadScene(buildIndex); // 👈 aquí usamos el índice real de escena
     }
 }
+

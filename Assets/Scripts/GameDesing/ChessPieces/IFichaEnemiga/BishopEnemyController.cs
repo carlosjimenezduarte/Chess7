@@ -241,7 +241,7 @@ public class BishopEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
 
             LevelResultUI.Instance.ShowResults(
               LevelProgress.Instance.keysCollected,
-              LevelProgress.Instance.hasDiamond,
+              LevelProgress.Instance.diamondsCollected,
               0, // vidas = 0
               PlayerScore.Instance.GetTotalScore()
           );
@@ -617,8 +617,7 @@ public class BishopEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
                         // 🔹 Penalización por estar en rango visual
                         if (fichaAliada is KingController rey)
                         {
-                            rey.GanarPuntoMovimiento(-2);
-                            rey.turnosRestantes -= 1;
+                            rey.GanarPuntoMovimiento(-1);                            
                             BoardManagerGlobal.Instance.AgregarMensajeInterno(
                                 $"♝ Alfil Rojo penaliza al Rey en {paso}. PA: {rey.puntosAccionActual}"
                             );
@@ -626,6 +625,14 @@ public class BishopEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
                         else if (fichaAliada is PawnController peon)
                         {
                             peon.RecibirPenalizacionAlfil();
+                        }
+                        else if (fichaAliada is RookController torre)
+                        {
+                            torre.RecibirPenalizacionAlfil();
+                        }
+                        else if (fichaAliada is BishopController alfil)
+                        {
+                            alfil.RecibirPenalizacionAlfil();
                         }
                     }
                 }

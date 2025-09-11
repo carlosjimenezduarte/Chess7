@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 public class Slot1Manager : MonoBehaviour
 {
@@ -45,10 +46,14 @@ public class Slot1Manager : MonoBehaviour
 
     public void OnConfirmYes()
     {
-        // 🔄 Borrar progreso del slot
-        PlayerPrefs.DeleteKey("slot1_progress"); 
+        // 🔄 Borrar TODO el progreso asociado al slot1
+        BorrarProgresoSlot("slot1");
+
+        // Marcar slot como vacío
         PlayerPrefs.SetString(slotKey, "empty");
         PlayerPrefs.Save();
+
+        Debug.Log("🧹 Slot1 completamente reiniciado.");
         UpdateUI();
     }
 
@@ -57,5 +62,44 @@ public class Slot1Manager : MonoBehaviour
         PlayerPrefs.SetString(slotKey, "active");
         PlayerPrefs.Save();
         UpdateUI();
+    }
+
+    // 🔹 Método auxiliar para limpiar todas las claves de un slot específico
+    private void BorrarProgresoSlot(string slotId)
+    {
+        // Lista de claves que sabemos que existen
+        string[] claves = {
+            "_nivelMax",
+            "_scoreTotal",
+            "_keysTotal",
+            "_diamondsTotal",
+            "_parchmentsTotal",
+            "_trophiesTotal",
+            "_medalsTotal",
+            "_masterKeysTotal"
+        };
+
+        // Borrar progresos de niveles individuales (hasta 300 como margen)
+        for (int lvl = 1; lvl <= 300; lvl++)
+        {
+            PlayerPrefs.DeleteKey(slotId + "_level_" + lvl + "_completed");
+            PlayerPrefs.DeleteKey(slotId + "_level_" + lvl + "_score");
+            PlayerPrefs.DeleteKey(slotId + "_level_" + lvl + "_keys");
+            PlayerPrefs.DeleteKey(slotId + "_level_" + lvl + "_diamond");   // boolean “intento perfecto”
+            PlayerPrefs.DeleteKey(slotId + "_level_" + lvl + "_diamonds");  // 👈 NUEVA: conteo real (plural)
+            PlayerPrefs.DeleteKey(slotId + "_level_" + lvl + "_parchment");
+            PlayerPrefs.DeleteKey(slotId + "_level_" + lvl + "_trophy");
+            PlayerPrefs.DeleteKey(slotId + "_level_" + lvl + "_medal");
+            PlayerPrefs.DeleteKey(slotId + "_level_" + lvl + "_masterKey");
+        }
+
+
+        // Borrar acumulados globales
+        foreach (var c in claves)
+        {
+            PlayerPrefs.DeleteKey(slotId + c);
+        }
+
+        PlayerPrefs.Save();
     }
 }

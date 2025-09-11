@@ -229,7 +229,7 @@ public class PawnEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
             
               LevelResultUI.Instance.ShowResults(
                 LevelProgress.Instance.keysCollected,
-                LevelProgress.Instance.hasDiamond,
+                LevelProgress.Instance.diamondsCollected,
                 0, // vidas = 0
                 PlayerScore.Instance.GetTotalScore()
             );
