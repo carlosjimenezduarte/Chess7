@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 
-
 public class Bag : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRecoleccionableEspecial, IPieceWithPosition
 {
     public Vector2Int tileCoords;
@@ -38,23 +37,26 @@ public class Bag : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRe
 
         yaRecolectado = true;
         SoundManager.Instance.PlaySound(15);
-        BoardManagerGlobal.Instance?.AgregarMensajeInterno($"💰 Bolsa recolectada por {ficha.GetType().Name} en {posicion}.");
+        BoardManagerGlobal.Instance?.AgregarMensajeInterno(
+            $"💰 Bolsa recolectada por {ficha.GetType().Name} en {posicion}."
+        );
 
-        // Puntaje
-        var score = FindFirstObjectByType<PlayerScore>();
-        if (score != null)
-            score.AgregarPuntaje(ObtenerValorPuntaje());
+        // Score del intento
+        if (PlayerScore.Instance != null)
+            PlayerScore.Instance.AgregarPuntaje(ObtenerValorPuntaje(), TipoObjetoScore.Bag);
 
-        // Recolectar y destruir
+        // Contador runtime de este nivel (para ProgressSaver deltas)
+        LevelProgress.Instance?.AddBag();
+
         Destroy(gameObject);
     }
+
 
     public void RevisarSiPeonLlegó(Vector2Int posicion, PawnController peon) =>
         RevisarSiFichaAliadaLlegó(posicion, peon);
 
     public void RevisarSiReyLlegó(Vector2Int posicion, KingController rey) =>
         RevisarSiFichaAliadaLlegó(posicion, rey);
-
 
     public void RevisarSiFichaLlegó(Vector2Int posicion, IFicha ficha)
     {
@@ -97,72 +99,19 @@ public class Bag : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRe
     public bool EstaRealmenteEnTablero() =>
         tileCoords.x >= 0 && tileCoords.y >= 0 && tileCoords.x <= 7 && tileCoords.y <= 7;
 
-    public void RevisarSiAlfilLlegó(Vector2Int posicionAlfil, BishopController alfil)
-    {
-        //
-    }
-
-    public void RevisarSiCaballoLlegó(Vector2Int posicionCaballo, KnightController caballo)
-    {
-        //
-    }
-
-    public void RevisarSiTorreLlegó(Vector2Int posicionTorre, RookController torre)
-    {
-        //
-    }
-
-    public void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina)
-    {
-        //
-    }
-    public void RevisarSiReinaNegraEnemigaLlegó(Vector2Int posicion, BlackQueenEnemyController reinaenemiga)
-    {
-        //
-    }
-
-    public void RevisarSiTorreNegraEnemigaLlegó(Vector2Int posicion, BlackRookEnemyController torrenegraenemiga)
-    {
-        //
-    }
-    public void RevisarSiAlfilNegroEnemigoLlegó(Vector2Int posicion, BlackBishopEnemyController alfilnegroenemigo)
-    {
-        //
-    }
-
-    public void RevisarSiCaballoNegroEnemigoLlegó(Vector2Int posicion, BlackKnightEnemyController caballonegroenemigo)
-    {
-        //
-
-    }
-
-    public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga)
-    {
-        //RevisarSiReinaEnemigaLlegó(posicion, rey);
-    }
-
-    public void RevisarSiTorreEnemigaLlegó(Vector2Int posicion, RookEnemyController torreenemiga)
-    {
-        //
-    }
-
-    public void RevisarSiAlfilEnemigoLlegó(Vector2Int posicion, BishopEnemyController alfilenemigo)
-    {
-        //
-    }
-
-    public void RevisarSiCaballoEnemigoLlegó(Vector2Int posicion, KnightEnemyController caballoenemigo)
-    {
-        //
-    }
-
-    public void RevisarSiPeonEnemigoLlegó(Vector2Int posicion, PawnEnemyController peonenemigo)
-    {
-        //   
-    }
-    public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre)
-    {
-        //
-    }
-       
+    // 🔹 Métodos vacíos para cumplir contratos
+    public void RevisarSiAlfilLlegó(Vector2Int posicionAlfil, BishopController alfil) {}
+    public void RevisarSiCaballoLlegó(Vector2Int posicionCaballo, KnightController caballo) {}
+    public void RevisarSiTorreLlegó(Vector2Int posicionTorre, RookController torre) {}
+    public void RevisarSiReinaLlegó(Vector2Int posicionReina, QueenController reina) {}
+    public void RevisarSiReinaNegraEnemigaLlegó(Vector2Int posicion, BlackQueenEnemyController reinaenemiga) {}
+    public void RevisarSiTorreNegraEnemigaLlegó(Vector2Int posicion, BlackRookEnemyController torrenegraenemiga) {}
+    public void RevisarSiAlfilNegroEnemigoLlegó(Vector2Int posicion, BlackBishopEnemyController alfilnegroenemigo) {}
+    public void RevisarSiCaballoNegroEnemigoLlegó(Vector2Int posicion, BlackKnightEnemyController caballonegroenemigo) {}
+    public void RevisarSiReinaEnemigaLlegó(Vector2Int posicion, QueenEnemyController reinaenemiga) {}
+    public void RevisarSiTorreEnemigaLlegó(Vector2Int posicion, RookEnemyController torreenemiga) {}
+    public void RevisarSiAlfilEnemigoLlegó(Vector2Int posicion, BishopEnemyController alfilenemigo) {}
+    public void RevisarSiCaballoEnemigoLlegó(Vector2Int posicion, KnightEnemyController caballoenemigo) {}
+    public void RevisarSiPeonEnemigoLlegó(Vector2Int posicion, PawnEnemyController peonenemigo) {}
+    public void RevisarSiReyLibreLlegó(Vector2Int posicion, KingFree reyLibre) {}
 }

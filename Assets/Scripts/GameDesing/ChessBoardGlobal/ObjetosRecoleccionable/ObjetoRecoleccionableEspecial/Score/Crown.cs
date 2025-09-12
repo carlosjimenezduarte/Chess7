@@ -38,16 +38,21 @@ public class Crown : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjeto
 
         yaRecolectado = true;
         SoundManager.Instance.PlaySound(17);
-        BoardManagerGlobal.Instance?.AgregarMensajeInterno($"👑 Corona recolectada por {ficha.GetType().Name} en {posicion}.");
+        BoardManagerGlobal.Instance?.AgregarMensajeInterno(
+            $"👑 Corona recolectada por {ficha.GetType().Name} en {posicion}."
+        );
 
-        // Puntaje
-        var score = FindFirstObjectByType<PlayerScore>();
-        if (score != null)
-            score.AgregarPuntaje(ObtenerValorPuntaje());
+        // Score del intento
+        if (PlayerScore.Instance != null)
+            PlayerScore.Instance.AgregarPuntaje(ObtenerValorPuntaje(), TipoObjetoScore.Crown);
 
-        // Recolectar y destruir
+        // Contador runtime de este nivel (para ProgressSaver deltas)
+        LevelProgress.Instance?.AddCrown();
+
         Destroy(gameObject);
     }
+
+
 
     public void RevisarSiPeonLlegó(Vector2Int posicion, PawnController peon) =>
         RevisarSiFichaAliadaLlegó(posicion, peon);

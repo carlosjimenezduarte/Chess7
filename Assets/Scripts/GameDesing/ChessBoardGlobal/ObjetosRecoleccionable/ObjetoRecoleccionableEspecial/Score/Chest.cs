@@ -38,16 +38,20 @@ public class Chest : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjeto
 
         yaRecolectado = true;
         SoundManager.Instance.PlaySound(16);
-        BoardManagerGlobal.Instance?.AgregarMensajeInterno($"💎💰💎 Cofre recolectado por {ficha.GetType().Name} en {posicion}.");
+        BoardManagerGlobal.Instance?.AgregarMensajeInterno(
+            $"💎 Cofre recolectado por {ficha.GetType().Name} en {posicion}."
+        );
 
-        // Puntaje
-        var score = FindFirstObjectByType<PlayerScore>();
-        if (score != null)
-            score.AgregarPuntaje(ObtenerValorPuntaje());
+        // Score del intento
+        if (PlayerScore.Instance != null)
+            PlayerScore.Instance.AgregarPuntaje(ObtenerValorPuntaje(), TipoObjetoScore.Chest);
 
-        // Recolectar y destruir
+        // Contador runtime de este nivel (para ProgressSaver deltas)
+        LevelProgress.Instance?.AddChest();
+
         Destroy(gameObject);
     }
+
 
     public void RevisarSiPeonLlegó(Vector2Int posicion, PawnController peon) =>
         RevisarSiFichaAliadaLlegó(posicion, peon);

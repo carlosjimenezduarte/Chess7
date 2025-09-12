@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections.Generic;
+using TMPro;
 
 public class Slot1Manager : MonoBehaviour
 {
@@ -9,7 +9,11 @@ public class Slot1Manager : MonoBehaviour
     public GameObject panelPlay;
     public GameObject panelReset;
 
+    [Header("Texto de progreso global (opcional)")]
+    public TMP_Text levelsProgressText; // 👈 arrastra aquí el mismo TMP del GameHome si quieres
+
     private string slotKey = "slot1_state";
+    private const int TOTAL_NIVELES = 204;
 
     private void Start()
     {
@@ -27,10 +31,7 @@ public class Slot1Manager : MonoBehaviour
 
     public void OnPlay()
     {
-        // Guardar que este es el slot activo
         PlayerPrefs.SetString("slotActivo", "slot1");
-
-        // Activar slot si es la primera vez
         PlayerPrefs.SetString(slotKey, "active");
         PlayerPrefs.Save();
 
@@ -46,15 +47,17 @@ public class Slot1Manager : MonoBehaviour
 
     public void OnConfirmYes()
     {
-        // 🔄 Borrar TODO el progreso asociado al slot1
         BorrarProgresoSlot("slot1");
 
-        // Marcar slot como vacío
         PlayerPrefs.SetString(slotKey, "empty");
         PlayerPrefs.Save();
 
         Debug.Log("🧹 Slot1 completamente reiniciado.");
         UpdateUI();
+
+        // 🔹 Refrescar visualmente el contador de progreso
+        if (levelsProgressText != null)
+            levelsProgressText.text = $"0/{TOTAL_NIVELES}";
     }
 
     public void OnConfirmNo()
@@ -64,42 +67,51 @@ public class Slot1Manager : MonoBehaviour
         UpdateUI();
     }
 
-    // 🔹 Método auxiliar para limpiar todas las claves de un slot específico
     private void BorrarProgresoSlot(string slotId)
     {
-        // Lista de claves que sabemos que existen
         string[] claves = {
-            "_nivelMax",
-            "_scoreTotal",
-            "_keysTotal",
-            "_diamondsTotal",
-            "_parchmentsTotal",
-            "_trophiesTotal",
-            "_medalsTotal",
-            "_masterKeysTotal"
-        };
+        "_nivelMax",
+        "_scoreTotal",
+        "_keysTotal",
+        "_diamondsTotal",
+        "_parchmentsTotal",
+        "_trophiesTotal",
+        "_medalsTotal",
+        "_masterKeysTotal"
+    };
 
-        // Borrar progresos de niveles individuales (hasta 300 como margen)
         for (int lvl = 1; lvl <= 300; lvl++)
         {
             PlayerPrefs.DeleteKey(slotId + "_level_" + lvl + "_completed");
             PlayerPrefs.DeleteKey(slotId + "_level_" + lvl + "_score");
             PlayerPrefs.DeleteKey(slotId + "_level_" + lvl + "_keys");
-            PlayerPrefs.DeleteKey(slotId + "_level_" + lvl + "_diamond");   // boolean “intento perfecto”
-            PlayerPrefs.DeleteKey(slotId + "_level_" + lvl + "_diamonds");  // 👈 NUEVA: conteo real (plural)
+            PlayerPrefs.DeleteKey(slotId + "_level_" + lvl + "_diamond");
+            PlayerPrefs.DeleteKey(slotId + "_level_" + lvl + "_diamonds");
             PlayerPrefs.DeleteKey(slotId + "_level_" + lvl + "_parchment");
             PlayerPrefs.DeleteKey(slotId + "_level_" + lvl + "_trophy");
             PlayerPrefs.DeleteKey(slotId + "_level_" + lvl + "_medal");
             PlayerPrefs.DeleteKey(slotId + "_level_" + lvl + "_masterKey");
+
+            // ✅ Claves nuevas que sí usa ProgressSaver
+            PlayerPrefs.DeleteKey($"{slotId}_level_{lvl}_bags");
+            PlayerPrefs.DeleteKey($"{slotId}_level_{lvl}_crowns");
+            PlayerPrefs.DeleteKey($"{slotId}_level_{lvl}_chests");
+            PlayerPrefs.DeleteKey($"{slotId}_level_{lvl}_coins");
         }
 
 
-        // Borrar acumulados globales
         foreach (var c in claves)
         {
             PlayerPrefs.DeleteKey(slotId + c);
         }
 
+        // 🔹 Borrar estadísticas de Stadistics (los 4 objetos básicos)
+        PlayerPrefs.DeleteKey(slotId + "_stats_" + TipoObjetoScore.Bag.ToString());
+        PlayerPrefs.DeleteKey(slotId + "_stats_" + TipoObjetoScore.Chest.ToString());
+        PlayerPrefs.DeleteKey(slotId + "_stats_" + TipoObjetoScore.RealCoin.ToString());
+        PlayerPrefs.DeleteKey(slotId + "_stats_" + TipoObjetoScore.Crown.ToString());
+
         PlayerPrefs.Save();
     }
+
 }

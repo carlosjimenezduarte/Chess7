@@ -38,16 +38,20 @@ public class RealCoin : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObj
 
         yaRecolectado = true;
         SoundManager.Instance.PlaySound(14);
-        BoardManagerGlobal.Instance?.AgregarMensajeInterno($"💰 Moneda recolectada por {ficha.GetType().Name} en {posicion}.");
+        BoardManagerGlobal.Instance?.AgregarMensajeInterno(
+            $"💰 Moneda real recolectada por {ficha.GetType().Name} en {posicion}."
+        );
 
-        // Puntaje
-        var score = FindFirstObjectByType<PlayerScore>();
-        if (score != null)
-            score.AgregarPuntaje(ObtenerValorPuntaje());
+        // Score del intento
+        if (PlayerScore.Instance != null)
+            PlayerScore.Instance.AgregarPuntaje(ObtenerValorPuntaje(), TipoObjetoScore.RealCoin);
 
-        // Recolectar y destruir
+        // Contador runtime de este nivel (para ProgressSaver deltas)
+        LevelProgress.Instance?.AddCoin();
+
         Destroy(gameObject);
     }
+
 
     public void RevisarSiPeonLlegó(Vector2Int posicion, PawnController peon) =>
         RevisarSiFichaAliadaLlegó(posicion, peon);

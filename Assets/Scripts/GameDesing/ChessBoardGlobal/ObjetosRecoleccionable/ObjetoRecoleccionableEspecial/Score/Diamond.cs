@@ -38,17 +38,22 @@ public class Diamond : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObje
 
         yaRecolectado = true;
         SoundManager.Instance.PlaySound(13);
-        BoardManagerGlobal.Instance?.AgregarMensajeInterno($"💎 Diamante recolectada por {ficha.GetType().Name} en {posicion}.");
+        BoardManagerGlobal.Instance?.AgregarMensajeInterno(
+            $"💎 Diamante recolectado por {ficha.GetType().Name} en {posicion}."
+        );
 
-        // Puntaje
+        // 🔹 Puntaje: usamos None para no tocar Stadistics
         var score = FindFirstObjectByType<PlayerScore>();
         if (score != null)
-            score.AgregarPuntaje(ObtenerValorPuntaje());
+            score.AgregarPuntaje(ObtenerValorPuntaje(), TipoObjetoScore.None);
 
-        // Recolectar y destruir
+        // 🔹 Lógica propia de progreso
         LevelProgress.Instance?.Diamond();
+
+        // 🔹 Destruir objeto
         Destroy(gameObject);
     }
+
 
     public void RevisarSiPeonLlegó(Vector2Int posicion, PawnController peon) =>
         RevisarSiFichaAliadaLlegó(posicion, peon);

@@ -42,7 +42,7 @@ public class Parchment : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IOb
         // Puntaje
         var score = FindFirstObjectByType<PlayerScore>();
         if (score != null)
-            score.AgregarPuntaje(ObtenerValorPuntaje());
+            //score.AgregarPuntaje(ObtenerValorPuntaje());
 
         // Recolectar y destruir
         LevelProgress.Instance?.Parchment();

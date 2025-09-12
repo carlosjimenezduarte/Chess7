@@ -38,17 +38,22 @@ public class Key : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRe
 
         yaRecolectado = true;
         SoundManager.Instance.PlaySound(12);
-        BoardManagerGlobal.Instance?.AgregarMensajeInterno($"🔑 Llave recolectada por {ficha.GetType().Name} en {posicion}.");
+        BoardManagerGlobal.Instance?.AgregarMensajeInterno(
+            $"🔑 Llave recolectada por {ficha.GetType().Name} en {posicion}."
+        );
 
-        // Puntaje
+        // 🔹 Score: usamos None para no tocar Stadistics
         var score = FindFirstObjectByType<PlayerScore>();
         if (score != null)
-            score.AgregarPuntaje(ObtenerValorPuntaje());
+            score.AgregarPuntaje(ObtenerValorPuntaje(), default); // 👈 o TipoObjetoScore.None si lo defines
 
-        // Recolectar y destruir
+        // 🔹 Lógica propia de progreso
         LevelProgress.Instance?.Key();
+
+        // 🔹 Eliminar objeto
         Destroy(gameObject);
     }
+
 
     public void RevisarSiPeonLlegó(Vector2Int posicion, PawnController peon) =>
         RevisarSiFichaAliadaLlegó(posicion, peon);

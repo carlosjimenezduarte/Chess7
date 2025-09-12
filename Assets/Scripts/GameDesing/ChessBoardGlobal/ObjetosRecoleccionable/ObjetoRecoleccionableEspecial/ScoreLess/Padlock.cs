@@ -42,7 +42,7 @@ public class Padlock : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObje
         // Puntaje (opcional, puedes restar o no puntaje aquí)
         var score = FindFirstObjectByType<PlayerScore>();
         if (score != null)
-            score.AgregarPuntaje(-ObtenerValorPuntaje());
+            //score.AgregarPuntaje(-ObtenerValorPuntaje());
 
         // Restar llave y destruir
         LevelProgress.Instance?.Padlock();

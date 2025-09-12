@@ -42,7 +42,7 @@ public class Trophy : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjet
         // Puntaje
         var score = FindFirstObjectByType<PlayerScore>();
         if (score != null)
-            score.AgregarPuntaje(ObtenerValorPuntaje());
+            //score.AgregarPuntaje(ObtenerValorPuntaje());
 
         // Recolectar y destruir
         LevelProgress.Instance?.Trophy();

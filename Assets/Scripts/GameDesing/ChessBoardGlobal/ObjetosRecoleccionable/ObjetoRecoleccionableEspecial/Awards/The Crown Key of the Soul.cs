@@ -49,7 +49,7 @@ public class TheCrownKeyofTheSoul : MonoBehaviour, ITileEffect, IObjetoRecolecci
         // Puntaje
         var score = FindFirstObjectByType<PlayerScore>();
         if (score != null)
-            score.AgregarPuntaje(ObtenerValorPuntaje());
+            //score.AgregarPuntaje(ObtenerValorPuntaje());
 
         FindFirstObjectByType<CofreController>()?.SetTieneLlave(true);
         

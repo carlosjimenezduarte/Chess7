@@ -1,44 +1,35 @@
 using UnityEngine;
 
+public enum TipoObjetoScore
+{
+    None,
+    RealCoin,
+    Bag,
+    Chest,
+    Crown
+}
+
 public class PlayerScore : MonoBehaviour
 {
     public static PlayerScore Instance { get; private set; }
-
     private int totalScore = 0;
 
     private void Awake()
     {
-        // Singleton
-        if (Instance != null && Instance != this)
-        {
-            Destroy(this.gameObject);
-        }
-        else
-        {
-            Instance = this;
-        }
+        if (Instance != null && Instance != this) Destroy(this.gameObject);
+        else Instance = this;
     }
 
-    /// <summary>
-    /// Agrega puntos al score total.
-    /// </summary>
-    public void AgregarPuntaje(int puntos)
+    /// Agrega puntos al score del intento actual (feedback).
+    public void AgregarPuntaje(int puntos, TipoObjetoScore tipo)
     {
         totalScore += puntos;
         Debug.Log($"💰 Score actualizado: +{puntos} pts -> Total: {totalScore}");
+        // ⚠️ Ya NO llamar a Stadistics aquí (evita farmeo).
     }
 
-    /// <summary>
-    /// Devuelve el score acumulado.
-    /// </summary>
-    public int GetTotalScore()
-    {
-        return totalScore;
-    }
+    public int GetTotalScore() => totalScore;
 
-    /// <summary>
-    /// Reinicia el score (por ejemplo, al iniciar un nivel).
-    /// </summary>
     public void ResetScore()
     {
         totalScore = 0;

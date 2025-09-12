@@ -43,7 +43,7 @@ public class Sword : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjeto
         // Puntaje
         var score = FindFirstObjectByType<PlayerScore>();
         if (score != null)
-            score.AgregarPuntaje(ObtenerValorPuntaje());
+            //score.AgregarPuntaje(ObtenerValorPuntaje());
 
         // Recolectar y destruir
         Destroy(gameObject);

@@ -42,7 +42,7 @@ public class ToothoftheKingdom : MonoBehaviour, ITileEffect, IObjetoRecolecciona
         // Puntaje
         var score = FindFirstObjectByType<PlayerScore>();
         if (score != null)
-            score.AgregarPuntaje(ObtenerValorPuntaje());
+            //score.AgregarPuntaje(ObtenerValorPuntaje());
 
         // Recolectar y destruir
         SoundManager.Instance.PlaySound(30);

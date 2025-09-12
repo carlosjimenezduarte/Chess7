@@ -346,7 +346,10 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno("🚀 El Rey llegó a la meta (H8). Calculando bonus.");
             int bonus = turnosRestantes * 25;
-            PlayerScore.Instance.AgregarPuntaje(bonus);
+
+            // 🔹 Score: solo afecta el nivel, no Stadistics
+            PlayerScore.Instance.AgregarPuntaje(bonus, TipoObjetoScore.None);
+
             SoundManager.Instance.PlaySound(3);
             LevelResultUI.Instance.ShowResults(
                 LevelProgress.Instance.keysCollected,
@@ -354,10 +357,9 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
                 turnosRestantes,
                 PlayerScore.Instance.GetTotalScore()
             );
-
-            FindFirstObjectByType<ChessGameManager>()?.DetenerJuego();
-
         }
+
+
 
         // 💀 Se quedó sin turnos
         if (turnosRestantes <= 0)

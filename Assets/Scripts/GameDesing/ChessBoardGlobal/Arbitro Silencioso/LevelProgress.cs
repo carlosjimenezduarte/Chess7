@@ -9,6 +9,10 @@ public class LevelProgress : MonoBehaviour
     public bool esNivelPergamino = false;
     public bool esNivelTrofeo = false;
     public bool esNivelMedalla = false;
+    public int bagsCollected = 0;
+    public int crownsCollected = 0;
+    public int chestsCollected = 0;
+    public int coinsCollected = 0;
 
     [Header("Config de nivel")]
     public int maxKeys = 3;        // por defecto 3 llaves
@@ -94,6 +98,30 @@ public class LevelProgress : MonoBehaviour
             Debug.Log($"🗝️ Fragmento de llave recogido.");
         }
     }
+     public void AddBag()
+    {
+        bagsCollected++;
+        Debug.Log($"💰 Bolsa recogida. Total en este nivel: {bagsCollected}");
+    }
+
+    public void AddCrown()
+    {
+        crownsCollected++;
+        Debug.Log($"👑 Corona recogida. Total en este nivel: {crownsCollected}");
+    }
+
+    public void AddChest()
+    {
+        chestsCollected++;
+        Debug.Log($"📦 Cofre recogido. Total en este nivel: {chestsCollected}");
+    }
+
+    public void AddCoin()
+    {
+        coinsCollected++;
+        Debug.Log($"🪙 Moneda real recogida. Total en este nivel: {coinsCollected}");
+    }
+
 
     // 🔹 Reset al empezar/reintentar nivel
     public void ResetProgress()
@@ -105,6 +133,14 @@ public class LevelProgress : MonoBehaviour
         hasMedal = false;
         hasMasterKey3 = false;
 
+        // ✅ Reiniciar contadores de score-objetos por intento
+        bagsCollected = 0;
+        crownsCollected = 0;
+        chestsCollected = 0;
+        coinsCollected = 0;
+
         Debug.Log("🔄 Progreso del nivel reiniciado.");
     }
+
+
 }

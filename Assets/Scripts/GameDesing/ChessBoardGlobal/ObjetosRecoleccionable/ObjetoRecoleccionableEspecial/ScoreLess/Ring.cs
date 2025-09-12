@@ -43,7 +43,7 @@ public class Ring : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoR
         // Puntaje
         var score = FindFirstObjectByType<PlayerScore>();
         if (score != null)
-            score.AgregarPuntaje(ObtenerValorPuntaje());
+            //score.AgregarPuntaje(ObtenerValorPuntaje());
 
         // Recolectar y destruir
         Destroy(gameObject);

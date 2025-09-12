@@ -42,7 +42,7 @@ public class Medal : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjeto
         // Puntaje
         var score = FindFirstObjectByType<PlayerScore>();
         if (score != null)
-            score.AgregarPuntaje(ObtenerValorPuntaje());
+            //score.AgregarPuntaje(ObtenerValorPuntaje());
 
         // Recolectar y destruir
         SoundManager.Instance.PlaySound(27);

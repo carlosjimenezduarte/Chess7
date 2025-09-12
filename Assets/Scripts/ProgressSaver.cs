@@ -2,63 +2,160 @@ using UnityEngine;
 
 public class ProgressSaver : MonoBehaviour
 {
-    // 🔹 Método central
+    // 🔹 Método central para progreso de niveles
     private static void GuardarResultado(
      string slotId, int levelId, int score, int keys,
      int diamonds, bool parchment, bool trophy, bool medal, bool masterKey)
     {
-        string levelCompletedKey = slotId + "_level_" + levelId + "_completed";
-        string scoreKey = slotId + "_level_" + levelId + "_score";
-        string keysKey = slotId + "_level_" + levelId + "_keys";
-        string diamondKey = slotId + "_level_" + levelId + "_diamonds"; // plural
+        string levelCompletedKey = $"{slotId}_level_{levelId}_completed";
+        string scoreKey = $"{slotId}_level_{levelId}_score";
+        string keysKey = $"{slotId}_level_{levelId}_keys";
+        string diamondsKey = $"{slotId}_level_{levelId}_diamonds";
 
+        // 🔹 NUEVOS: mejores por nivel para objetos de score (anti-farmeo)
+        string bagsKey = $"{slotId}_level_{levelId}_bags";
+        string crownsKey = $"{slotId}_level_{levelId}_crowns";
+        string chestsKey = $"{slotId}_level_{levelId}_chests";
+        string coinsKey = $"{slotId}_level_{levelId}_coins";
+
+        // Previos
         int prevCompleted = PlayerPrefs.GetInt(levelCompletedKey, 0);
-        int prevScore = PlayerPrefs.GetInt(scoreKey, 0);
+        int prevScoreBest = PlayerPrefs.GetInt(scoreKey, 0);
         int prevKeys = PlayerPrefs.GetInt(keysKey, 0);
-        int prevDiamonds = PlayerPrefs.GetInt(diamondKey, 0);
+        int prevDiamonds = PlayerPrefs.GetInt(diamondsKey, 0);
 
-        int finalKeys = Mathf.Max(prevKeys, keys);
-        int finalDiamonds = Mathf.Max(prevDiamonds, diamonds);
+        int prevBags = PlayerPrefs.GetInt(bagsKey, 0);
+        int prevCrowns = PlayerPrefs.GetInt(crownsKey, 0);
+        int prevChests = PlayerPrefs.GetInt(chestsKey, 0);
+        int prevCoins = PlayerPrefs.GetInt(coinsKey, 0);
+
+        // Intento actual (runtime)
+        int runKeys = Mathf.Clamp(keys, 0, LevelProgress.Instance != null ? LevelProgress.Instance.maxKeys : 3);
+        int runDiamonds = Mathf.Clamp(diamonds, 0, LevelProgress.Instance != null ? LevelProgress.Instance.maxDiamonds : 1);
+
+        int runBags = (LevelProgress.Instance != null) ? LevelProgress.Instance.bagsCollected : 0;
+        int runCrowns = (LevelProgress.Instance != null) ? LevelProgress.Instance.crownsCollected : 0;
+        int runChests = (LevelProgress.Instance != null) ? LevelProgress.Instance.chestsCollected : 0;
+        int runCoins = (LevelProgress.Instance != null) ? LevelProgress.Instance.coinsCollected : 0;
+
+        // Max por nivel (anti-farmeo)
+        int finalKeys = Mathf.Max(prevKeys, runKeys);
+        int finalDiamonds = Mathf.Max(prevDiamonds, runDiamonds);
+        int finalBags = Mathf.Max(prevBags, runBags);
+        int finalCrowns = Mathf.Max(prevCrowns, runCrowns);
+        int finalChests = Mathf.Max(prevChests, runChests);
+        int finalCoins = Mathf.Max(prevCoins, runCoins);
 
         int deltaKeys = finalKeys - prevKeys;
         int deltaDiamonds = finalDiamonds - prevDiamonds;
-        Debug.Log($"[ProgressSaver] prevK={prevKeys}, newK={keys}, finalK={finalKeys}, ΔK={deltaKeys} | " +
-                $"prevD={prevDiamonds}, newD={diamonds}, finalD={finalDiamonds}, ΔD={deltaDiamonds}");
+        int deltaBags = finalBags - prevBags;
+        int deltaCrowns = finalCrowns - prevCrowns;
+        int deltaChests = finalChests - prevChests;
+        int deltaCoins = finalCoins - prevCoins;
 
+        Debug.Log($"[PS] Keys Δ{deltaKeys} | Diamonds Δ{deltaDiamonds} | Bags Δ{deltaBags} | Crowns Δ{deltaCrowns} | Chests Δ{deltaChests} | Coins Δ{deltaCoins}");
+
+        // 🏁 Si no mejora nada y el score tampoco mejora, salimos rápido
         if (prevCompleted == 1 &&
-            finalKeys == prevKeys &&
-            finalDiamonds == prevDiamonds &&
-            score <= prevScore)
+            deltaKeys == 0 && deltaDiamonds == 0 &&
+            deltaBags == 0 && deltaCrowns == 0 && deltaChests == 0 && deltaCoins == 0 &&
+            score <= prevScoreBest)
         {
             Debug.Log($"⚠️ Nivel {levelId} ya completado en {slotId}. No hay mejora.");
             return;
         }
 
-        // ✅ Guardar
-        PlayerPrefs.SetInt(levelCompletedKey, 1);
-        PlayerPrefs.SetInt(scoreKey, Mathf.Max(prevScore, score));
-        PlayerPrefs.SetInt(keysKey, finalKeys);
-        PlayerPrefs.SetInt(diamondKey, finalDiamonds);
-        PlayerPrefs.SetInt(slotId + "_level_" + levelId + "_parchment", parchment ? 1 : 0);
-        PlayerPrefs.SetInt(slotId + "_level_" + levelId + "_trophy", trophy ? 1 : 0);
-        PlayerPrefs.SetInt(slotId + "_level_" + levelId + "_medal", medal ? 1 : 0);
-        PlayerPrefs.SetInt(slotId + "_level_" + levelId + "_masterKey", masterKey ? 1 : 0);
+        // ✅ Guardar mejor score por nivel y sumar al Total solo el DELTA
+        int newBestScore = Mathf.Max(prevScoreBest, score);
+        int scoreDelta = newBestScore - prevScoreBest;
 
-        if (finalKeys > prevKeys || finalDiamonds > prevDiamonds || parchment || trophy || medal || masterKey)
+        PlayerPrefs.SetInt(levelCompletedKey, 1);
+        PlayerPrefs.SetInt(scoreKey, newBestScore);
+        PlayerPrefs.SetInt(keysKey, finalKeys);
+        PlayerPrefs.SetInt(diamondsKey, finalDiamonds);
+
+        // Guardar mejores por nivel de objetos de score
+        PlayerPrefs.SetInt(bagsKey, finalBags);
+        PlayerPrefs.SetInt(crownsKey, finalCrowns);
+        PlayerPrefs.SetInt(chestsKey, finalChests);
+        PlayerPrefs.SetInt(coinsKey, finalCoins);
+
+        // Awards por nivel
+        PlayerPrefs.SetInt($"{slotId}_level_{levelId}_parchment", parchment ? 1 : 0);
+        PlayerPrefs.SetInt($"{slotId}_level_{levelId}_trophy", trophy ? 1 : 0);
+        PlayerPrefs.SetInt($"{slotId}_level_{levelId}_medal", medal ? 1 : 0);
+        PlayerPrefs.SetInt($"{slotId}_level_{levelId}_masterKey", masterKey ? 1 : 0);
+
+        // Config de nivel (para GameHome)
+        if (LevelProgress.Instance != null)
         {
-            SumarAcumulados(
-                slotId,
-                score,
-                finalKeys - prevKeys,
-                finalDiamonds - prevDiamonds,
-                parchment, trophy, medal, masterKey
-            );
+            PlayerPrefs.SetInt($"{slotId}_level_{levelId}_maxKeys", LevelProgress.Instance.maxKeys);
+            PlayerPrefs.SetInt($"{slotId}_level_{levelId}_maxDiamonds", LevelProgress.Instance.maxDiamonds);
         }
 
+        // 🧮 Actualizar acumulados globales:
+        // 2.1) Score Total solo sube si mejoraste el mejor score de este nivel
+        if (scoreDelta > 0)
+        {
+            int totalScore = PlayerPrefs.GetInt($"{slotId}_scoreTotal", 0) + scoreDelta;
+            PlayerPrefs.SetInt($"{slotId}_scoreTotal", totalScore);
+            Debug.Log($"[PS] ScoreTotal +{scoreDelta} -> {totalScore}");
+        }
+
+        // 2.2) Keys/Diamonds/Awards como ya tenías
+        if (deltaKeys > 0 || deltaDiamonds > 0 || parchment || trophy || medal || masterKey)
+        {
+            SumarAcumulados(slotId, deltaKeys, deltaDiamonds, parchment, trophy, medal, masterKey);
+        }
+
+        // 2.3) Stadistics para objetos de score (solo el DELTA => sin farmeo)
+        if (deltaBags > 0) Stadistics.RegistrarObjeto(slotId, TipoObjetoScore.Bag, deltaBags);
+        if (deltaChests > 0) Stadistics.RegistrarObjeto(slotId, TipoObjetoScore.Chest, deltaChests);
+        if (deltaCrowns > 0) Stadistics.RegistrarObjeto(slotId, TipoObjetoScore.Crown, deltaCrowns);
+        if (deltaCoins > 0) Stadistics.RegistrarObjeto(slotId, TipoObjetoScore.RealCoin, deltaCoins);
+
         PlayerPrefs.Save();
-        Debug.Log($"✅ Guardado nivel {levelId}: Keys={finalKeys}, Diamonds={finalDiamonds}, Score={Mathf.Max(prevScore, score)}");
+        Debug.Log($"✅ Guardado nivel {levelId}: Keys={finalKeys}, Diamonds={finalDiamonds}, BestScore={newBestScore}");
     }
 
+
+    private static void SumarAcumulados(
+        string slotId, int keysToAdd, int diamondsToAdd,
+        bool parchment, bool trophy, bool medal, bool masterKey)
+    {
+        if (keysToAdd > 0)
+        {
+            int totalKeys = PlayerPrefs.GetInt($"{slotId}_keysTotal", 0) + keysToAdd;
+            PlayerPrefs.SetInt($"{slotId}_keysTotal", totalKeys);
+        }
+
+        if (diamondsToAdd > 0)
+        {
+            int totalDiamonds = PlayerPrefs.GetInt($"{slotId}_diamondsTotal", 0) + diamondsToAdd;
+            PlayerPrefs.SetInt($"{slotId}_diamondsTotal", totalDiamonds);
+        }
+
+        if (parchment)
+        {
+            int total = PlayerPrefs.GetInt($"{slotId}_parchmentsTotal", 0) + 1;
+            PlayerPrefs.SetInt($"{slotId}_parchmentsTotal", total);
+        }
+        if (trophy)
+        {
+            int total = PlayerPrefs.GetInt($"{slotId}_trophiesTotal", 0) + 1;
+            PlayerPrefs.SetInt($"{slotId}_trophiesTotal", total);
+        }
+        if (medal)
+        {
+            int total = PlayerPrefs.GetInt($"{slotId}_medalsTotal", 0) + 1;
+            PlayerPrefs.SetInt($"{slotId}_medalsTotal", total);
+        }
+        if (masterKey)
+        {
+            int total = PlayerPrefs.GetInt($"{slotId}_masterKeysTotal", 0) + 1;
+            PlayerPrefs.SetInt($"{slotId}_masterKeysTotal", total);
+        }
+    }
 
 
     // 🔹 Métodos especializados
@@ -66,7 +163,6 @@ public class ProgressSaver : MonoBehaviour
     {
         GuardarResultado(slotId, levelId, score, keys, diamonds, false, false, false, false);
     }
-
 
     public static void GuardarNivelPergamino(string slotId, int levelId, int score, bool parchment)
     {
@@ -131,5 +227,35 @@ public class ProgressSaver : MonoBehaviour
             int totalMasterKeys = PlayerPrefs.GetInt(slotId + "_masterKeysTotal", 0) + 1;
             PlayerPrefs.SetInt(slotId + "_masterKeysTotal", totalMasterKeys);
         }
+    }
+
+    // 🔹 Registrar recolectables globales (para logros futuros básicos)
+    public static void RegistrarObjetoRecolectado(string slotId, string tipo)
+    {
+        string key = slotId + "_" + tipo + "sTotal";
+        int prev = PlayerPrefs.GetInt(key, 0);
+        PlayerPrefs.SetInt(key, prev + 1);
+        PlayerPrefs.Save();
+
+        Debug.Log($"[ProgressSaver] ➕ Registrado {tipo} -> total ahora {prev + 1}");
+    }
+
+    // 🔹 Registrar ScoreObjects (Bag, Chest, Crown, RealCoin) sin farmeo
+    public static bool RegistrarScoreObject(string slotId, int levelId, TipoObjetoScore tipo)
+    {
+        string key = $"{slotId}_level_{levelId}_{tipo}";
+
+        if (PlayerPrefs.GetInt(key, 0) == 1)
+        {
+            Debug.Log($"⚠️ {tipo} ya registrado en nivel {levelId}. No suma otra vez en Stadistics.");
+            return false; // Ya estaba registrado
+        }
+
+        PlayerPrefs.SetInt(key, 1);
+        PlayerPrefs.Save();
+
+        Stadistics.RegistrarObjeto(slotId, tipo, 1);
+        Debug.Log($"[ProgressSaver] 📊 Nuevo registro de {tipo} en nivel {levelId}");
+        return true;
     }
 }
