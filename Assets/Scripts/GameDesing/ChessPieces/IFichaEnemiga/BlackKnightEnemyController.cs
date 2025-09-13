@@ -14,6 +14,7 @@ public class BlackKnightEnemyController : MonoBehaviour, IPointerClickHandler, I
 
     private Vector2Int posicionActual;
     private bool mostrandoRango = false;
+    private bool killContabilizada = false; 
 
     // Movimientos posibles del caballo (en L)
     private readonly Vector2Int[] movimientosL = new Vector2Int[]
@@ -52,6 +53,13 @@ public class BlackKnightEnemyController : MonoBehaviour, IPointerClickHandler, I
             return;
         }
 #endif
+        if (nuevaPos == BoardManagerGlobal.DimensionDivina && !killContabilizada)
+        {
+            killContabilizada = true;
+            LevelProgress.Instance?.AddEnemyKnightBlackKill();
+            Debug.Log("☠️ BlackKnightEnemy contado como kill (Dimensión Divina).");
+        }
+
 
         posicionActual = nuevaPos;
         if (TryGetComponent<PiecePositioner>(out var piecePositioner))
@@ -64,6 +72,17 @@ public class BlackKnightEnemyController : MonoBehaviour, IPointerClickHandler, I
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"♞ Caballo Negro actualizó su posición lógica a {nuevaPos}");
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
+
+    private void OnDestroy()
+    {
+        if (!killContabilizada && Application.isPlaying && gameObject.scene.isLoaded)
+        {
+            killContabilizada = true;
+            LevelProgress.Instance?.AddEnemyKnightBlackKill();
+            Debug.Log("☠️ BlackKnightEnemy contado en OnDestroy (fallback).");
+        }
+    }
+
 
     public Vector2Int GetPosicionActual() => posicionActual;
 

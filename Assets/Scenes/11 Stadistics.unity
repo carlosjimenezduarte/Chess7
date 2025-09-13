@@ -496,7 +496,7 @@ GameObject:
   - component: {fileID: 99347830}
   - component: {fileID: 99347829}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: RegistroReinaNegra
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -541,7 +541,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1/25
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
   m_sharedMaterial: {fileID: 532615492540030504, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
@@ -1060,7 +1060,7 @@ GameObject:
   - component: {fileID: 205953050}
   - component: {fileID: 205953049}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: RegistroTorreRoja
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1105,7 +1105,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1/25
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
   m_sharedMaterial: {fileID: 532615492540030504, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
@@ -1962,7 +1962,7 @@ GameObject:
   - component: {fileID: 434838966}
   - component: {fileID: 434838965}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: RegistroReinaRoja
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2007,7 +2007,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1/25
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
   m_sharedMaterial: {fileID: 532615492540030504, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
@@ -3201,6 +3201,34 @@ MonoBehaviour:
   parchmentText: {fileID: 468714656}
   trophyText: {fileID: 271334736}
   medalText: {fileID: 374627532}
+  enemyKillStats:
+  - tipo: 0
+    text: {fileID: 1821415917}
+    goal: 100
+  - tipo: 1
+    text: {fileID: 1503848457}
+    goal: 0
+  - tipo: 2
+    text: {fileID: 1026604277}
+    goal: 0
+  - tipo: 3
+    text: {fileID: 205953049}
+    goal: 0
+  - tipo: 4
+    text: {fileID: 434838965}
+    goal: 0
+  - tipo: 5
+    text: {fileID: 1523455245}
+    goal: 0
+  - tipo: 6
+    text: {fileID: 1967188448}
+    goal: 0
+  - tipo: 7
+    text: {fileID: 1157465762}
+    goal: 0
+  - tipo: 8
+    text: {fileID: 99347829}
+    goal: 0
 --- !u!1 &790148451
 GameObject:
   m_ObjectHideFlags: 0
@@ -3639,7 +3667,7 @@ GameObject:
   - component: {fileID: 1026604278}
   - component: {fileID: 1026604277}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: RegistroAlfilRojo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3684,7 +3712,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1/25
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
   m_sharedMaterial: {fileID: 532615492540030504, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
@@ -4152,7 +4180,7 @@ GameObject:
   - component: {fileID: 1157465763}
   - component: {fileID: 1157465762}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: RegistroTorreNegra
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4197,7 +4225,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1/25
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
   m_sharedMaterial: {fileID: 532615492540030504, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
@@ -5380,7 +5408,7 @@ GameObject:
   - component: {fileID: 1472275544}
   - component: {fileID: 1472275543}
   m_Layer: 5
-  m_Name: Panel
+  m_Name: FichasEnemigas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5484,7 +5512,7 @@ GameObject:
   - component: {fileID: 1503848458}
   - component: {fileID: 1503848457}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: RegistroCaballoRojo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5529,7 +5557,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1/25
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
   m_sharedMaterial: {fileID: 532615492540030504, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
@@ -5620,7 +5648,7 @@ GameObject:
   - component: {fileID: 1523455246}
   - component: {fileID: 1523455245}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: RegistroCaballoNegro
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5665,7 +5693,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1/25
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
   m_sharedMaterial: {fileID: 532615492540030504, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
@@ -6625,7 +6653,7 @@ GameObject:
   - component: {fileID: 1821415918}
   - component: {fileID: 1821415917}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: RegistroPeonRojo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6670,7 +6698,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1/25
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
   m_sharedMaterial: {fileID: 532615492540030504, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
@@ -7006,7 +7034,7 @@ GameObject:
   - component: {fileID: 1967188449}
   - component: {fileID: 1967188448}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: RegistroAlfilNegro
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7051,7 +7079,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1/25
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
   m_sharedMaterial: {fileID: 532615492540030504, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}

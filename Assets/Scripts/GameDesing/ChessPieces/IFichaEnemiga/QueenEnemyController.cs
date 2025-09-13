@@ -27,6 +27,7 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
 
     private List<GameObject> overlaysInstanciados = new List<GameObject>();
     private Vector2Int ultimaPosicionAmenaza = new Vector2Int(-99, -99);
+    private bool killContabilizada = false;
 
     private void Start()
     {
@@ -62,6 +63,13 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
             return;
         }
 #endif
+        if (nuevaPos == BoardManagerGlobal.DimensionDivina && !killContabilizada)
+        {
+            killContabilizada = true;
+            LevelProgress.Instance?.AddEnemyQueenKill();
+            Debug.Log("☠️ QueenEnemy contado como kill del jugador (exiliado a Dimensión Divina).");
+        }
+
 
         posicionActual = nuevaPos;
         if (TryGetComponent<PiecePositioner>(out var piecePositioner))
@@ -76,6 +84,16 @@ public class QueenEnemyController : MonoBehaviour, IPointerClickHandler, ITileEf
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
 
     }
+    private void OnDestroy()
+    {
+        if (!killContabilizada && Application.isPlaying && gameObject.scene.isLoaded)
+        {
+            killContabilizada = true;
+            LevelProgress.Instance?.AddEnemyQueenKill();
+            Debug.Log("☠️ QueenEnemy contado en OnDestroy (fallback).");
+        }
+    }
+
 
     public Vector2Int GetPosicionActual() => posicionActual;
 

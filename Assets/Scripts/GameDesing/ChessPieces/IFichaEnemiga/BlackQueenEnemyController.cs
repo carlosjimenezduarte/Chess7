@@ -18,6 +18,8 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
     private Vector2Int posicionActual;
     private bool mostrandoRango = false;
 
+    private bool killContabilizada = false;
+
     private void Start()
     {
         // 1️⃣ Determinar posición inicial
@@ -52,6 +54,13 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
             return;
         }
 #endif
+        if (nuevaPos == BoardManagerGlobal.DimensionDivina && !killContabilizada)
+        {
+            killContabilizada = true;
+            LevelProgress.Instance?.AddEnemyQueenBlackKill();
+            Debug.Log("☠️ BlackQueenEnemy contado como kill (exiliado a Dimensión Divina).");
+        }
+
 
         posicionActual = nuevaPos;
         if (TryGetComponent<PiecePositioner>(out var piecePositioner))
@@ -66,6 +75,17 @@ public class BlackQueenEnemyController : MonoBehaviour, IPointerClickHandler, IT
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
 
     }
+
+    private void OnDestroy()
+    {
+        if (!killContabilizada && Application.isPlaying && gameObject.scene.isLoaded)
+        {
+            killContabilizada = true;
+            LevelProgress.Instance?.AddEnemyQueenBlackKill();
+            Debug.Log("☠️ BlackQueenEnemy contado en OnDestroy (fallback).");
+        }
+    }
+
 
     public Vector2Int GetPosicionActual() => posicionActual;
 

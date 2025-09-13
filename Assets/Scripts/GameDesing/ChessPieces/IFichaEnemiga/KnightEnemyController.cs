@@ -15,6 +15,7 @@ public class KnightEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
 
     private Vector2Int posicionActual;
     private bool mostrandoRango = false;
+    private bool killContabilizada = false;
 
 
     // Movimientos tipo L del Caballo
@@ -47,24 +48,37 @@ public class KnightEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
     public void SetPosicionActual(Vector2Int nuevaPos)
     {
 #if UNITY_EDITOR
-        if (!Application.isPlaying)
-        {
-            posicionActual = nuevaPos;
-            return;
-        }
+        if (!Application.isPlaying) { posicionActual = nuevaPos; return; }
 #endif
+        // ✅ Si lo exilian a Dimensión Divina, cuenta como kill del jugador
+        if (nuevaPos == BoardManagerGlobal.DimensionDivina && !killContabilizada)
+        {
+            killContabilizada = true;
+            LevelProgress.Instance?.AddEnemyKnightKill();
+            Debug.Log("☠️ KnightEnemy contado como kill del jugador (exiliado a Dimensión Divina).");
+        }
+
         posicionActual = nuevaPos;
+
         if (TryGetComponent<PiecePositioner>(out var piecePositioner))
             piecePositioner.tileCoords = nuevaPos;
 
         foreach (var efecto in BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual).OfType<ITileEffect>())
-        {
             efecto.RevisarSiCaballoEnemigoLlegó(posicionActual, this);
-        }
 
         BoardManagerGlobal.Instance?.RegistrarMovimiento(this, nuevaPos);
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"♞ Caballo actualizó su posición lógica a {nuevaPos}");
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    }
+
+    private void OnDestroy() // 👈 NUEVO fallback seguro
+    {
+        if (!killContabilizada && Application.isPlaying && gameObject.scene.isLoaded)
+        {
+            killContabilizada = true;
+            LevelProgress.Instance?.AddEnemyKnightKill();
+            Debug.Log("☠️ KnightEnemy contado en OnDestroy (fallback).");
+        }
     }
 
     public Vector2Int GetPosicionActual() => posicionActual;

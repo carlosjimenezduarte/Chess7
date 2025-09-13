@@ -9613,7 +9613,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7152812545711828707, guid: 9b4b6f63aa09f634586847e935bc0b58, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7152812545711828707, guid: 9b4b6f63aa09f634586847e935bc0b58, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -23231,10 +23231,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e0383908d154554294892df3bd722ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelIdInspector: -1
   esNivelMasterKey: 0
   esNivelPergamino: 0
   esNivelTrofeo: 0
   esNivelMedalla: 0
+  bagsCollected: 0
+  crownsCollected: 0
+  chestsCollected: 0
+  coinsCollected: 0
+  enemyPawnsKilled: 0
+  enemyKnightsKilled: 0
+  enemyBishopsKilled: 0
   maxKeys: 1
   maxDiamonds: 2
   keysCollected: 0
@@ -27489,11 +27497,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3496011328526929195, guid: 3b15d314c24b6994881d93d8b53a7dbf, type: 3}
       propertyPath: tileCoords.x
-      value: 7
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3496011328526929195, guid: 3b15d314c24b6994881d93d8b53a7dbf, type: 3}
       propertyPath: tileCoords.y
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4868378563451727136, guid: 3b15d314c24b6994881d93d8b53a7dbf, type: 3}
       propertyPath: m_Name
@@ -27501,11 +27509,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4868378563451727136, guid: 3b15d314c24b6994881d93d8b53a7dbf, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6952282971677779345, guid: 3b15d314c24b6994881d93d8b53a7dbf, type: 3}
       propertyPath: tileCoords.x
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6952282971677779345, guid: 3b15d314c24b6994881d93d8b53a7dbf, type: 3}
       propertyPath: tileCoords.y
@@ -27573,7 +27581,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8074439536547913115, guid: 3b15d314c24b6994881d93d8b53a7dbf, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 337.5
+      value: 202.5
       objectReference: {fileID: 0}
     - target: {fileID: 8074439536547913115, guid: 3b15d314c24b6994881d93d8b53a7dbf, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -28813,7 +28821,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3467275742675161866, guid: fba098d8187ab704b9ae4079b10235fa, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4189447909479342326, guid: fba098d8187ab704b9ae4079b10235fa, type: 3}
       propertyPath: dangerOverlayParent
@@ -32875,7 +32883,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2778276491829888320, guid: 0cd691eb53f8ca54caf7c857f9b5a835, type: 3}
       propertyPath: tileCoords.x
-      value: 2
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 2778276491829888320, guid: 0cd691eb53f8ca54caf7c857f9b5a835, type: 3}
       propertyPath: tileCoords.y
@@ -32883,7 +32891,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6097026074547481537, guid: 0cd691eb53f8ca54caf7c857f9b5a835, type: 3}
       propertyPath: tileCoords.x
-      value: 2
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6097026074547481537, guid: 0cd691eb53f8ca54caf7c857f9b5a835, type: 3}
       propertyPath: tileCoords.y
@@ -32899,7 +32907,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8553458106220473261, guid: 0cd691eb53f8ca54caf7c857f9b5a835, type: 3}
       propertyPath: tileCoords.x
-      value: 2
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 8553458106220473261, guid: 0cd691eb53f8ca54caf7c857f9b5a835, type: 3}
       propertyPath: tileCoords.y
@@ -32967,7 +32975,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9208670791116837518, guid: 0cd691eb53f8ca54caf7c857f9b5a835, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -202.5
+      value: 472.5
       objectReference: {fileID: 0}
     - target: {fileID: 9208670791116837518, guid: 0cd691eb53f8ca54caf7c857f9b5a835, type: 3}
       propertyPath: m_AnchoredPosition.y

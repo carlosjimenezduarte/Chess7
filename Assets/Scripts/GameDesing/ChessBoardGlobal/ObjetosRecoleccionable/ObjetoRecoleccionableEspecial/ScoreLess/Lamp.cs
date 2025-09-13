@@ -43,7 +43,7 @@ public class Lamp : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoR
         // Puntaje
         var score = FindFirstObjectByType<PlayerScore>();
         if (score != null)
-            //score.AgregarPuntaje(ObtenerValorPuntaje());
+            score.AgregarPuntaje(ObtenerValorPuntaje(), TipoObjetoScore.None);
 
         // Recolectar y destruir
         Destroy(gameObject);

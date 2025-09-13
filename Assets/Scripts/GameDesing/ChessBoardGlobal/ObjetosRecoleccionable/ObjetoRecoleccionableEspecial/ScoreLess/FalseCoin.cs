@@ -43,7 +43,7 @@ public class FalseCoin : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IOb
         // Puntaje
         var score = FindFirstObjectByType<PlayerScore>();
         if (score != null)
-            //score.AgregarPuntaje(ObtenerValorPuntaje());
+             score.AgregarPuntaje(ObtenerValorPuntaje(), TipoObjetoScore.None); 
 
         // Recolectar y destruir
         Destroy(gameObject);

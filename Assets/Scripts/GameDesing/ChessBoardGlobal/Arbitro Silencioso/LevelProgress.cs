@@ -1,8 +1,20 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LevelProgress : MonoBehaviour
 {
     public static LevelProgress Instance { get; private set; }
+
+    [Header("Identificadores")]
+    public int levelIdInspector = -1; // opcional por inspector
+    private int _levelId;
+    private string _slotId;
+
+    private void Start()
+    {
+        _slotId = PlayerPrefs.GetString("slotActivo", "slot1");
+        _levelId = (levelIdInspector > 0) ? levelIdInspector : SceneManager.GetActiveScene().buildIndex;
+    }
 
     [Header("Tipo de nivel")]
     public bool esNivelMasterKey = false;
@@ -14,11 +26,24 @@ public class LevelProgress : MonoBehaviour
     public int chestsCollected = 0;
     public int coinsCollected = 0;
 
+    [Header("Fichas Enemigas")]
+    public int enemyPawnsKilled = 0;
+    public int enemyKnightsKilled = 0;   // 👈 NUEVO
+    public int enemyBishopsKilled = 0;   // 👈 NUEVO
+    public int enemyRooksKilled = 0;    // 👈 NUEVO
+    public int enemyQueensKilled = 0;   // 👈 NUEVO
+    public int enemyRooksBlackKilled = 0;   // 👈 NUEVO
+    public int enemyQueensBlackKilled = 0;  // 👈 NUEVO
+
+    public int enemyBishopsBlackKilled = 0;  // NUEVO
+    public int enemyKnightsBlackKilled = 0;  // NUEVO
+
+
     [Header("Config de nivel")]
     public int maxKeys = 3;        // por defecto 3 llaves
     public int maxDiamonds = 1;    // por defecto 1 diamante
 
-     [Header("Estado del nivel (runtime, no editable)")]
+    [Header("Estado del nivel (runtime, no editable)")]
     [HideInInspector] public int keysCollected = 0;
     [HideInInspector] public int diamondsCollected = 0;
     [HideInInspector] public bool hasParchment = false;
@@ -98,7 +123,7 @@ public class LevelProgress : MonoBehaviour
             Debug.Log($"🗝️ Fragmento de llave recogido.");
         }
     }
-     public void AddBag()
+    public void AddBag()
     {
         bagsCollected++;
         Debug.Log($"💰 Bolsa recogida. Total en este nivel: {bagsCollected}");
@@ -139,8 +164,212 @@ public class LevelProgress : MonoBehaviour
         chestsCollected = 0;
         coinsCollected = 0;
 
+        enemyPawnsKilled = 0;
+        enemyKnightsKilled = 0;  // 👈 NUEVO
+        enemyBishopsKilled = 0;  // 👈 NUEVO
+        enemyRooksKilled = 0;   // 👈
+        enemyQueensKilled = 0;  // 👈
+        enemyRooksBlackKilled = 0;   // 👈
+        enemyQueensBlackKilled = 0;  // 👈
+        enemyBishopsBlackKilled = 0;  // NUEVO
+        enemyKnightsBlackKilled = 0;  // NUEVO
+
+
+
+
         Debug.Log("🔄 Progreso del nivel reiniciado.");
     }
+
+    public void AddEnemyPawnKill()
+    {
+        enemyPawnsKilled++;
+        Debug.Log($"☠️ Peón enemigo eliminado. Total en este nivel: {enemyPawnsKilled}");
+
+        // Anti-farmeo inmediato: solo sumar al global si superaste tu mejor marca de este nivel
+        string perLevelKey = $"{_slotId}_level_{_levelId}_killsPawn";
+        int prevBest = PlayerPrefs.GetInt(perLevelKey, 0);
+
+        if (enemyPawnsKilled > prevBest)
+        {
+            int delta = enemyPawnsKilled - prevBest;              // lo nuevo que SÍ cuenta
+            PlayerPrefs.SetInt(perLevelKey, enemyPawnsKilled);
+            PlayerPrefs.Save();
+
+            Stadistics.RegistrarKill(_slotId, Stadistics.EnemyKillType.PawnRed, delta);
+            Debug.Log($"[LP] ΔPawnRed={delta} (best={enemyPawnsKilled}) aplicado al global.");
+
+            FindFirstObjectByType<Stadistics>()?.RefrescarUI();   // refresco visible si hay UI cargada
+        }
+
+
+    }
+
+    public void AddEnemyKnightKill() // 👈 NUEVO
+    {
+        enemyKnightsKilled++;
+        Debug.Log($"☠️ Caballo enemigo eliminado. Total en este nivel: {enemyKnightsKilled}");
+
+        string perLevelKey = $"{_slotId}_level_{_levelId}_killsKnight";
+        int prevBest = PlayerPrefs.GetInt(perLevelKey, 0);
+
+        if (enemyKnightsKilled > prevBest)
+        {
+            int delta = enemyKnightsKilled - prevBest;
+            PlayerPrefs.SetInt(perLevelKey, enemyKnightsKilled);
+            PlayerPrefs.Save();
+
+            Stadistics.RegistrarKill(_slotId, Stadistics.EnemyKillType.KnightRed, delta);
+            Debug.Log($"[LP] ΔKnightRed={delta} (best={enemyKnightsKilled}) aplicado al global.");
+            FindFirstObjectByType<Stadistics>()?.RefrescarUI();
+        }
+    }
+
+    public void AddEnemyBishopKill() // 👈 NUEVO
+    {
+        enemyBishopsKilled++;
+        Debug.Log($"☠️ Alfil enemigo eliminado. Total en este nivel: {enemyBishopsKilled}");
+
+        string perLevelKey = $"{_slotId}_level_{_levelId}_killsBishop";
+        int prevBest = PlayerPrefs.GetInt(perLevelKey, 0);
+
+        if (enemyBishopsKilled > prevBest)
+        {
+            int delta = enemyBishopsKilled - prevBest;
+            PlayerPrefs.SetInt(perLevelKey, enemyBishopsKilled);
+            PlayerPrefs.Save();
+
+            Stadistics.RegistrarKill(_slotId, Stadistics.EnemyKillType.BishopRed, delta);
+            Debug.Log($"[LP] ΔBishopRed={delta} (best={enemyBishopsKilled}) aplicado al global.");
+            FindFirstObjectByType<Stadistics>()?.RefrescarUI();
+        }
+    }
+    public void AddEnemyRookKill()   // 👈 NUEVO
+    {
+        enemyRooksKilled++;
+        Debug.Log($"☠️ Torre enemiga eliminada. Total en este nivel: {enemyRooksKilled}");
+
+        string perLevelKey = $"{_slotId}_level_{_levelId}_killsRook";
+        int prevBest = PlayerPrefs.GetInt(perLevelKey, 0);
+
+        if (enemyRooksKilled > prevBest)
+        {
+            int delta = enemyRooksKilled - prevBest;
+            PlayerPrefs.SetInt(perLevelKey, enemyRooksKilled);
+            PlayerPrefs.Save();
+
+            Stadistics.RegistrarKill(_slotId, Stadistics.EnemyKillType.RookRed, delta);
+            Debug.Log($"[LP] ΔRookRed={delta} (best={enemyRooksKilled}) aplicado al global.");
+            FindFirstObjectByType<Stadistics>()?.RefrescarUI();
+        }
+    }
+
+
+    public void AddEnemyQueenKill()  // 👈 NUEVO
+    {
+        enemyQueensKilled++;
+        Debug.Log($"☠️ Reina enemiga eliminada. Total en este nivel: {enemyQueensKilled}");
+
+        string perLevelKey = $"{_slotId}_level_{_levelId}_killsQueen";
+        int prevBest = PlayerPrefs.GetInt(perLevelKey, 0);
+
+        if (enemyQueensKilled > prevBest)
+        {
+            int delta = enemyQueensKilled - prevBest;
+            PlayerPrefs.SetInt(perLevelKey, enemyQueensKilled);
+            PlayerPrefs.Save();
+
+            Stadistics.RegistrarKill(_slotId, Stadistics.EnemyKillType.QueenRed, delta);
+            Debug.Log($"[LP] ΔQueenRed={delta} (best={enemyQueensKilled}) aplicado al global.");
+            FindFirstObjectByType<Stadistics>()?.RefrescarUI();
+        }
+    }
+
+    public void AddEnemyRookBlackKill()
+    {
+        enemyRooksBlackKilled++;
+        Debug.Log($"☠️ Torre NEGRA eliminada. Total en este nivel: {enemyRooksBlackKilled}");
+
+        string perLevelKey = $"{_slotId}_level_{_levelId}_killsRookBlack";
+        int prevBest = PlayerPrefs.GetInt(perLevelKey, 0);
+
+        if (enemyRooksBlackKilled > prevBest)
+        {
+            int delta = enemyRooksBlackKilled - prevBest;
+            PlayerPrefs.SetInt(perLevelKey, enemyRooksBlackKilled);
+            PlayerPrefs.Save();
+
+            Stadistics.RegistrarKill(_slotId, Stadistics.EnemyKillType.RookBlack, delta);
+            Debug.Log($"[LP] ΔRookBlack={delta} (best={enemyRooksBlackKilled}) aplicado al global.");
+            FindFirstObjectByType<Stadistics>()?.RefrescarUI();
+        }
+    }
+
+
+    public void AddEnemyQueenBlackKill()
+    {
+        enemyQueensBlackKilled++;
+        Debug.Log($"☠️ Reina NEGRA eliminada. Total en este nivel: {enemyQueensBlackKilled}");
+
+        string perLevelKey = $"{_slotId}_level_{_levelId}_killsQueenBlack";
+        int prevBest = PlayerPrefs.GetInt(perLevelKey, 0);
+
+        if (enemyQueensBlackKilled > prevBest)
+        {
+            int delta = enemyQueensBlackKilled - prevBest;
+            PlayerPrefs.SetInt(perLevelKey, enemyQueensBlackKilled);
+            PlayerPrefs.Save();
+
+            Stadistics.RegistrarKill(_slotId, Stadistics.EnemyKillType.QueenBlack, delta);
+            Debug.Log($"[LP] ΔQueenBlack={delta} (best={enemyQueensBlackKilled}) aplicado al global.");
+            FindFirstObjectByType<Stadistics>()?.RefrescarUI();
+        }
+    }
+
+    public void AddEnemyBishopBlackKill()
+    {
+        enemyBishopsBlackKilled++;
+        Debug.Log($"☠️ Alfil NEGRO eliminado. Total en este nivel: {enemyBishopsBlackKilled}");
+
+        string perLevelKey = $"{_slotId}_level_{_levelId}_killsBishopBlack";
+        int prevBest = PlayerPrefs.GetInt(perLevelKey, 0);
+
+        if (enemyBishopsBlackKilled > prevBest)
+        {
+            int delta = enemyBishopsBlackKilled - prevBest;
+            PlayerPrefs.SetInt(perLevelKey, enemyBishopsBlackKilled);
+            PlayerPrefs.Save();
+
+            Stadistics.RegistrarKill(_slotId, Stadistics.EnemyKillType.BishopBlack, delta);
+            Debug.Log($"[LP] ΔBishopBlack={delta} (best={enemyBishopsBlackKilled}) aplicado al global.");
+            FindFirstObjectByType<Stadistics>()?.RefrescarUI();
+        }
+    }
+
+
+    public void AddEnemyKnightBlackKill()
+    {
+        enemyKnightsBlackKilled++;
+        Debug.Log($"☠️ Caballo NEGRO eliminado. Total en este nivel: {enemyKnightsBlackKilled}");
+
+        string perLevelKey = $"{_slotId}_level_{_levelId}_killsKnightBlack";
+        int prevBest = PlayerPrefs.GetInt(perLevelKey, 0);
+
+        if (enemyKnightsBlackKilled > prevBest)
+        {
+            int delta = enemyKnightsBlackKilled - prevBest;
+            PlayerPrefs.SetInt(perLevelKey, enemyKnightsBlackKilled);
+            PlayerPrefs.Save();
+
+            Stadistics.RegistrarKill(_slotId, Stadistics.EnemyKillType.KnightBlack, delta);
+            Debug.Log($"[LP] ΔKnightBlack={delta} (best={enemyKnightsBlackKilled}) aplicado al global.");
+            FindFirstObjectByType<Stadistics>()?.RefrescarUI();
+        }
+    }
+
+
+
+
+
 
 
 }

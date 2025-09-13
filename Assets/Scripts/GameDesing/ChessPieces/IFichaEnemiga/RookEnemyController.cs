@@ -22,6 +22,8 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
     private List<GameObject> overlaysInstanciados = new List<GameObject>();
     private Vector2Int ultimaPosicionAmenaza = new Vector2Int(-99, -99);
 
+    private bool killContabilizada = false; 
+
     private void Start()
     {
         PiecePositioner piecePositioner = GetComponent<PiecePositioner>();
@@ -50,6 +52,13 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
             return;
         }
 #endif
+        if (nuevaPos == BoardManagerGlobal.DimensionDivina && !killContabilizada)
+        {
+            killContabilizada = true;
+            LevelProgress.Instance?.AddEnemyRookKill();
+            Debug.Log("☠️ RookEnemy contado como kill del jugador (exiliado a Dimensión Divina).");
+        }
+
         posicionActual = nuevaPos;
         if (TryGetComponent<PiecePositioner>(out var piecePositioner))
             piecePositioner.tileCoords = nuevaPos;
@@ -62,6 +71,17 @@ public class RookEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"♜ Torre actualizó su posición lógica a {nuevaPos}");
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
+
+    private void OnDestroy()
+    {
+        if (!killContabilizada && Application.isPlaying && gameObject.scene.isLoaded)
+        {
+            killContabilizada = true;
+            LevelProgress.Instance?.AddEnemyRookKill();
+            Debug.Log("☠️ RookEnemy contado en OnDestroy (fallback).");
+        }
+    }
+
 
     public Vector2Int GetPosicionActual() => posicionActual;
 

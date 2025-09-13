@@ -14,6 +14,7 @@ public class BlackBishopEnemyController : MonoBehaviour, IPointerClickHandler, I
 
     private Vector2Int posicionActual;
     private bool mostrandoRango = false;
+    private bool killContabilizada = false; // NUEVO
 
     private void Start()
     {
@@ -43,6 +44,13 @@ public class BlackBishopEnemyController : MonoBehaviour, IPointerClickHandler, I
             return;
         }
 #endif
+        if (nuevaPos == BoardManagerGlobal.DimensionDivina && !killContabilizada)
+        {
+            killContabilizada = true;
+            LevelProgress.Instance?.AddEnemyBishopBlackKill();
+            Debug.Log("☠️ BlackBishopEnemy contado como kill (Dimensión Divina).");
+        }
+
 
         posicionActual = nuevaPos;
         if (TryGetComponent<PiecePositioner>(out var piecePositioner))
@@ -55,6 +63,17 @@ public class BlackBishopEnemyController : MonoBehaviour, IPointerClickHandler, I
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"♗ Alfil Negro actualizó su posición lógica a {nuevaPos}");
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
+
+    private void OnDestroy()
+    {
+        if (!killContabilizada && Application.isPlaying && gameObject.scene.isLoaded)
+        {
+            killContabilizada = true;
+            LevelProgress.Instance?.AddEnemyBishopBlackKill();
+            Debug.Log("☠️ BlackBishopEnemy contado en OnDestroy (fallback).");
+        }
+    }
+
 
     public Vector2Int GetPosicionActual() => posicionActual;
 

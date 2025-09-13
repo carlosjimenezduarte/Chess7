@@ -14,6 +14,7 @@ public class BlackRookEnemyController : MonoBehaviour, IPointerClickHandler, ITi
 
     private Vector2Int posicionActual;
     private bool mostrandoRango = false;
+    private bool killContabilizada = false; // 👈 NUEVO
 
     private void Start()
     {
@@ -43,6 +44,13 @@ public class BlackRookEnemyController : MonoBehaviour, IPointerClickHandler, ITi
             return;
         }
 #endif
+        if (nuevaPos == BoardManagerGlobal.DimensionDivina && !killContabilizada)
+        {
+            killContabilizada = true;
+            LevelProgress.Instance?.AddEnemyRookBlackKill();
+            Debug.Log("☠️ BlackRookEnemy contado como kill (exiliado a Dimensión Divina).");
+        }
+
 
         posicionActual = nuevaPos;
         if (TryGetComponent<PiecePositioner>(out var piecePositioner))
@@ -55,6 +63,17 @@ public class BlackRookEnemyController : MonoBehaviour, IPointerClickHandler, ITi
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"♖ Torre Negra actualizó su posición lógica a {nuevaPos}");
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
+
+    private void OnDestroy()
+    {
+        if (!killContabilizada && Application.isPlaying && gameObject.scene.isLoaded)
+        {
+            killContabilizada = true;
+            LevelProgress.Instance?.AddEnemyRookBlackKill();
+            Debug.Log("☠️ BlackRookEnemy contado en OnDestroy (fallback).");
+        }
+    }
+
 
     public Vector2Int GetPosicionActual() => posicionActual;
 

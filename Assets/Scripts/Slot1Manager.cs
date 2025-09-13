@@ -97,6 +97,21 @@ public class Slot1Manager : MonoBehaviour
             PlayerPrefs.DeleteKey($"{slotId}_level_{lvl}_crowns");
             PlayerPrefs.DeleteKey($"{slotId}_level_{lvl}_chests");
             PlayerPrefs.DeleteKey($"{slotId}_level_{lvl}_coins");
+            PlayerPrefs.DeleteKey($"{slotId}_level_{lvl}_killsPawn"); // 👈 per-level best (anti-farmeo)
+            PlayerPrefs.DeleteKey($"{slotId}_level_{lvl}_killsKnight"); // NUEVO
+            PlayerPrefs.DeleteKey($"{slotId}_level_{lvl}_killsBishop");
+            PlayerPrefs.DeleteKey($"{slotId}_level_{lvl}_killsRook");   // 👈 NUEVO
+            PlayerPrefs.DeleteKey($"{slotId}_level_{lvl}_killsQueen");  // 👈 NUEVO
+            PlayerPrefs.DeleteKey($"{slotId}_level_{lvl}_killsRookBlack");   // 👈 NUEVO
+            PlayerPrefs.DeleteKey($"{slotId}_level_{lvl}_killsQueenBlack");  // 👈 NUEVO
+            PlayerPrefs.DeleteKey($"{slotId}_level_{lvl}_killsBishopBlack");  // NUEVO
+            PlayerPrefs.DeleteKey($"{slotId}_level_{lvl}_killsKnightBlack");  // NUEVO
+
+
+            
+
+
+
         }
 
 
@@ -111,6 +126,19 @@ public class Slot1Manager : MonoBehaviour
         PlayerPrefs.DeleteKey(slotId + "_stats_" + TipoObjetoScore.RealCoin.ToString());
         PlayerPrefs.DeleteKey(slotId + "_stats_" + TipoObjetoScore.Crown.ToString());
 
+        PlayerPrefs.DeleteKey($"{slotId}_stats_kill_PawnRed"); // 👈 global visible en Stadistics
+        PlayerPrefs.DeleteKey($"{slotId}_stats_kill_KnightRed"); // NUEVO
+        PlayerPrefs.DeleteKey($"{slotId}_stats_kill_BishopRed"); 
+        PlayerPrefs.DeleteKey($"{slotId}_stats_kill_RookRed");   // 👈 NUEVO
+        PlayerPrefs.DeleteKey($"{slotId}_stats_kill_QueenRed");  // 👈 NUEVO
+        PlayerPrefs.DeleteKey($"{slotId}_stats_kill_RookBlack");   // 👈 NUEVO
+        PlayerPrefs.DeleteKey($"{slotId}_stats_kill_QueenBlack");  // 👈 NUEVO
+        PlayerPrefs.DeleteKey($"{slotId}_stats_kill_BishopBlack");  // NUEVO
+        PlayerPrefs.DeleteKey($"{slotId}_stats_kill_KnightBlack");  // NUEVO
+
+        PlayerPrefs.DeleteKey($"{slotId}_lastRunDebt");
+
+        
         PlayerPrefs.Save();
     }
 

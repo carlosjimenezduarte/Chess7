@@ -73,7 +73,19 @@ public class GameHomeManager : MonoBehaviour
         int totalKeys = PlayerPrefs.GetInt(slotActivo + "_keysTotal", 0);
         int totalDiamonds = PlayerPrefs.GetInt(slotActivo + "_diamondsTotal", 0);
 
-        if (scoreText != null) scoreText.text = totalScore.ToString();
+        // 👇 NUEVO: leer deuda del último intento
+        int lastRunDebt = PlayerPrefs.GetInt($"{slotActivo}_lastRunDebt", 0);
+
+        if (scoreText != null)
+        {
+            // Si hay deuda (<0), muéstrala a la derecha en rojo
+            if (lastRunDebt < 0)
+                scoreText.text = $"{totalScore}  <color=#FF5555>({lastRunDebt})</color>";
+            else
+                scoreText.text = totalScore.ToString();
+
+        }
+        
         if (keysText != null) keysText.text = totalKeys.ToString();
         if (diamondsText != null) diamondsText.text = totalDiamonds.ToString();
 

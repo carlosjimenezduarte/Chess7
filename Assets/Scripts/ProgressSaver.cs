@@ -4,39 +4,42 @@ public class ProgressSaver : MonoBehaviour
 {
     // 🔹 Método central para progreso de niveles
     private static void GuardarResultado(
-     string slotId, int levelId, int score, int keys,
-     int diamonds, bool parchment, bool trophy, bool medal, bool masterKey)
+    string slotId, int levelId, int score, int keys,
+    int diamonds, bool parchment, bool trophy, bool medal, bool masterKey)
     {
         string levelCompletedKey = $"{slotId}_level_{levelId}_completed";
         string scoreKey = $"{slotId}_level_{levelId}_score";
         string keysKey = $"{slotId}_level_{levelId}_keys";
         string diamondsKey = $"{slotId}_level_{levelId}_diamonds";
 
-        // 🔹 NUEVOS: mejores por nivel para objetos de score (anti-farmeo)
+        // 🔹 Mejores por nivel (anti-farmeo)
         string bagsKey = $"{slotId}_level_{levelId}_bags";
         string crownsKey = $"{slotId}_level_{levelId}_crowns";
         string chestsKey = $"{slotId}_level_{levelId}_chests";
         string coinsKey = $"{slotId}_level_{levelId}_coins";
+
+        // 🔹 NUEVO: kills de peón enemigo por nivel (anti-farmeo)
+        string pawnKillsKey = $"{slotId}_level_{levelId}_killsPawn";
 
         // Previos
         int prevCompleted = PlayerPrefs.GetInt(levelCompletedKey, 0);
         int prevScoreBest = PlayerPrefs.GetInt(scoreKey, 0);
         int prevKeys = PlayerPrefs.GetInt(keysKey, 0);
         int prevDiamonds = PlayerPrefs.GetInt(diamondsKey, 0);
-
         int prevBags = PlayerPrefs.GetInt(bagsKey, 0);
         int prevCrowns = PlayerPrefs.GetInt(crownsKey, 0);
         int prevChests = PlayerPrefs.GetInt(chestsKey, 0);
         int prevCoins = PlayerPrefs.GetInt(coinsKey, 0);
+        int prevPawnKills = PlayerPrefs.GetInt(pawnKillsKey, 0); // 👈
 
         // Intento actual (runtime)
         int runKeys = Mathf.Clamp(keys, 0, LevelProgress.Instance != null ? LevelProgress.Instance.maxKeys : 3);
         int runDiamonds = Mathf.Clamp(diamonds, 0, LevelProgress.Instance != null ? LevelProgress.Instance.maxDiamonds : 1);
-
         int runBags = (LevelProgress.Instance != null) ? LevelProgress.Instance.bagsCollected : 0;
         int runCrowns = (LevelProgress.Instance != null) ? LevelProgress.Instance.crownsCollected : 0;
         int runChests = (LevelProgress.Instance != null) ? LevelProgress.Instance.chestsCollected : 0;
         int runCoins = (LevelProgress.Instance != null) ? LevelProgress.Instance.coinsCollected : 0;
+        int runPawnKills = (LevelProgress.Instance != null) ? LevelProgress.Instance.enemyPawnsKilled : 0; // 👈
 
         // Max por nivel (anti-farmeo)
         int finalKeys = Mathf.Max(prevKeys, runKeys);
@@ -45,20 +48,24 @@ public class ProgressSaver : MonoBehaviour
         int finalCrowns = Mathf.Max(prevCrowns, runCrowns);
         int finalChests = Mathf.Max(prevChests, runChests);
         int finalCoins = Mathf.Max(prevCoins, runCoins);
+        int finalPawnKills = Mathf.Max(prevPawnKills, runPawnKills); // 👈
 
+        // Deltas
         int deltaKeys = finalKeys - prevKeys;
         int deltaDiamonds = finalDiamonds - prevDiamonds;
         int deltaBags = finalBags - prevBags;
         int deltaCrowns = finalCrowns - prevCrowns;
         int deltaChests = finalChests - prevChests;
         int deltaCoins = finalCoins - prevCoins;
+        int deltaPawnKills = finalPawnKills - prevPawnKills; // 👈
 
-        Debug.Log($"[PS] Keys Δ{deltaKeys} | Diamonds Δ{deltaDiamonds} | Bags Δ{deltaBags} | Crowns Δ{deltaCrowns} | Chests Δ{deltaChests} | Coins Δ{deltaCoins}");
+        Debug.Log($"[PS] Keys Δ{deltaKeys} | Diamonds Δ{deltaDiamonds} | Bags Δ{deltaBags} | Crowns Δ{deltaCrowns} | Chests Δ{deltaChests} | Coins Δ{deltaCoins} | PawnKills Δ{deltaPawnKills}");
 
-        // 🏁 Si no mejora nada y el score tampoco mejora, salimos rápido
+        // 🏁 Si no mejora nada y el score tampoco mejora, salimos
         if (prevCompleted == 1 &&
             deltaKeys == 0 && deltaDiamonds == 0 &&
             deltaBags == 0 && deltaCrowns == 0 && deltaChests == 0 && deltaCoins == 0 &&
+            deltaPawnKills == 0 && // 👈 considera kills
             score <= prevScoreBest)
         {
             Debug.Log($"⚠️ Nivel {levelId} ya completado en {slotId}. No hay mejora.");
@@ -80,6 +87,9 @@ public class ProgressSaver : MonoBehaviour
         PlayerPrefs.SetInt(chestsKey, finalChests);
         PlayerPrefs.SetInt(coinsKey, finalCoins);
 
+        // 👇 NUEVO: mejores kills por nivel
+        PlayerPrefs.SetInt(pawnKillsKey, finalPawnKills);
+
         // Awards por nivel
         PlayerPrefs.SetInt($"{slotId}_level_{levelId}_parchment", parchment ? 1 : 0);
         PlayerPrefs.SetInt($"{slotId}_level_{levelId}_trophy", trophy ? 1 : 0);
@@ -93,8 +103,7 @@ public class ProgressSaver : MonoBehaviour
             PlayerPrefs.SetInt($"{slotId}_level_{levelId}_maxDiamonds", LevelProgress.Instance.maxDiamonds);
         }
 
-        // 🧮 Actualizar acumulados globales:
-        // 2.1) Score Total solo sube si mejoraste el mejor score de este nivel
+        // 🧮 Acumulados globales
         if (scoreDelta > 0)
         {
             int totalScore = PlayerPrefs.GetInt($"{slotId}_scoreTotal", 0) + scoreDelta;
@@ -102,21 +111,29 @@ public class ProgressSaver : MonoBehaviour
             Debug.Log($"[PS] ScoreTotal +{scoreDelta} -> {totalScore}");
         }
 
-        // 2.2) Keys/Diamonds/Awards como ya tenías
         if (deltaKeys > 0 || deltaDiamonds > 0 || parchment || trophy || medal || masterKey)
-        {
             SumarAcumulados(slotId, deltaKeys, deltaDiamonds, parchment, trophy, medal, masterKey);
-        }
 
-        // 2.3) Stadistics para objetos de score (solo el DELTA => sin farmeo)
+        // Stadistics objetos de score (Δ)
         if (deltaBags > 0) Stadistics.RegistrarObjeto(slotId, TipoObjetoScore.Bag, deltaBags);
         if (deltaChests > 0) Stadistics.RegistrarObjeto(slotId, TipoObjetoScore.Chest, deltaChests);
         if (deltaCrowns > 0) Stadistics.RegistrarObjeto(slotId, TipoObjetoScore.Crown, deltaCrowns);
         if (deltaCoins > 0) Stadistics.RegistrarObjeto(slotId, TipoObjetoScore.RealCoin, deltaCoins);
 
+        // 👇 NUEVO: estadística global de kills de peón (Δ) — sin depender de Stadistics
+        /*if (deltaPawnKills > 0)
+        {
+            Stadistics.RegistrarKill(slotId, Stadistics.EnemyKillType.PawnRed, deltaPawnKills);
+        }*/
+        // --- Deuda del último intento (solo para mostrar en GameHome; NO afecta acumulado global) ---
+        int lastRunDebt = Mathf.Min(score, 0); // si score > 0 => 0; si score < 0 => queda negativo
+        PlayerPrefs.SetInt($"{slotId}_lastRunDebt", lastRunDebt);
+        Debug.Log($"[PS] Snapshot lastRunDebt = {lastRunDebt}");
+
         PlayerPrefs.Save();
-        Debug.Log($"✅ Guardado nivel {levelId}: Keys={finalKeys}, Diamonds={finalDiamonds}, BestScore={newBestScore}");
+        Debug.Log($"✅ Guardado nivel {levelId}: Keys={finalKeys}, Diamonds={finalDiamonds}, BestScore={newBestScore}, PawnKillsBest={finalPawnKills}");
     }
+
 
 
     private static void SumarAcumulados(
@@ -155,6 +172,7 @@ public class ProgressSaver : MonoBehaviour
             int total = PlayerPrefs.GetInt($"{slotId}_masterKeysTotal", 0) + 1;
             PlayerPrefs.SetInt($"{slotId}_masterKeysTotal", total);
         }
+        FindFirstObjectByType<Stadistics>()?.RefrescarUI();
     }
 
 

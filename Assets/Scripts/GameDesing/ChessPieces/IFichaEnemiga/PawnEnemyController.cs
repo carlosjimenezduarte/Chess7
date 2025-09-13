@@ -14,6 +14,8 @@ public class PawnEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
     private Vector2Int posicionActual;
     private bool mostrandoRango = false;
 
+    private bool killContabilizada = false; 
+
 
     private void Start()
     {
@@ -40,27 +42,46 @@ public class PawnEnemyController : MonoBehaviour, IPointerClickHandler, ITileEff
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
-    public void SetPosicionActual(Vector2Int nuevaPos)
+     public void SetPosicionActual(Vector2Int nuevaPos)
     {
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
         if (!Application.isPlaying)
         {
             posicionActual = nuevaPos;
             return;
         }
-#endif
+    #endif
+        // ✅ Si me mandan a la Dimensión Divina, es porque me mató el jugador
+        if (nuevaPos == BoardManagerGlobal.DimensionDivina && !killContabilizada)
+        {
+            killContabilizada = true;
+            LevelProgress.Instance?.AddEnemyPawnKill();
+            Debug.Log("☠️ PawnEnemy contado como kill del jugador (exiliado a Dimensión Divina).");
+        }
+
         posicionActual = nuevaPos;
+
         if (TryGetComponent<PiecePositioner>(out var piecePositioner))
             piecePositioner.tileCoords = nuevaPos;
 
         foreach (var efecto in BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual).OfType<ITileEffect>())
-        {
             efecto.RevisarSiPeonEnemigoLlegó(posicionActual, this);
-        }
 
         BoardManagerGlobal.Instance?.RegistrarMovimiento(this, nuevaPos);
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"♙ Peón actualizó su posición lógica a {nuevaPos}");
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    }
+
+    // (opcional) por si algún atacante no llama SetPosicionActual antes de Destroy
+    private void OnDestroy()
+    {
+        if (!killContabilizada && Application.isPlaying && gameObject.scene.isLoaded)
+        {
+            killContabilizada = true;
+            LevelProgress.Instance?.AddEnemyPawnKill();
+            Debug.Log("☠️ PawnEnemy contado en OnDestroy (fallback).");
+        }
+    
     }
 
     public Vector2Int GetPosicionActual() => posicionActual;

@@ -21,6 +21,8 @@ public class BishopEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
     private Vector2Int posicionActual;
     private bool mostrandoRango = false;
 
+    private bool killContabilizada = false;
+
     private List<GameObject> overlaysInstanciados = new List<GameObject>();
     private Vector2Int ultimaPosicionAmenaza = new Vector2Int(-99, -99);
 
@@ -52,24 +54,37 @@ public class BishopEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
     public void SetPosicionActual(Vector2Int nuevaPos)
     {
 #if UNITY_EDITOR
-        if (!Application.isPlaying)
-        {
-            posicionActual = nuevaPos;
-            return;
-        }
+        if (!Application.isPlaying) { posicionActual = nuevaPos; return; }
 #endif
+        // ✅ Kill del jugador si es enviado a Dimensión Divina
+        if (nuevaPos == BoardManagerGlobal.DimensionDivina && !killContabilizada)
+        {
+            killContabilizada = true;
+            LevelProgress.Instance?.AddEnemyBishopKill();
+            Debug.Log("☠️ BishopEnemy contado como kill del jugador (exiliado a Dimensión Divina).");
+        }
+
         posicionActual = nuevaPos;
+
         if (TryGetComponent<PiecePositioner>(out var piecePositioner))
             piecePositioner.tileCoords = nuevaPos;
 
         foreach (var efecto in BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual).OfType<ITileEffect>())
-        {
             efecto.RevisarSiAlfilEnemigoLlegó(posicionActual, this);
-        }
 
         BoardManagerGlobal.Instance?.RegistrarMovimiento(this, nuevaPos);
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"♝ Alfil actualizó su posición lógica a {nuevaPos}");
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    }
+
+    private void OnDestroy() // 👈 NUEVO fallback seguro
+    {
+        if (!killContabilizada && Application.isPlaying && gameObject.scene.isLoaded)
+        {
+            killContabilizada = true;
+            LevelProgress.Instance?.AddEnemyBishopKill();
+            Debug.Log("☠️ BishopEnemy contado en OnDestroy (fallback).");
+        }
     }
 
     public Vector2Int GetPosicionActual() => posicionActual;
