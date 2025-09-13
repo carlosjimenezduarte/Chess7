@@ -4,6 +4,7 @@ using System.Linq;
 
 public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPosition, IFicha, IFichaAliada
 {
+    
     [Header("Rango de Movimiento")]
     public bool tieneEscudo = false;
     public int rangoMovimientoBase { get; set; } = 1;    
@@ -389,6 +390,12 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         if (posicionActual == new Vector2Int(7, 7))
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno("♕ Peón coronado en H8. Bonificaciones aplicadas.");
+
+            // 👇 DESBLOQUEO DEL LOGRO (una sola vez + suma 1000 al _scoreTotal del slot)
+            AchievementsManager.ReportPawnCoronation();
+            
+            BoardManagerGlobal.Instance?.NotifyAllyCoronated(BoardManagerGlobal.AllyKind.Pawn);
+
             rey.puntosAccionActual += 7;
             rey.puntosMovimientoActual += 7;
             rey.GanarVida(3);

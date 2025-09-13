@@ -5,6 +5,9 @@ using System.Text;
 
 public class BoardManagerGlobal : MonoBehaviour
 {
+    private readonly HashSet<AllyKind> coronatedThisLevel = new HashSet<AllyKind>();
+    public enum AllyKind { Pawn, Knight, Bishop, Rook, Queen }
+    
     public static BoardManagerGlobal Instance;
     public bool reinaNegraAtaco = false;
     public bool torreNegraAtaco = false;
@@ -41,12 +44,14 @@ public class BoardManagerGlobal : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        coronatedThisLevel.Clear();
 
         foreach (Tile tile in tiles)
         {
             tableroOcupacion[tile.tileCoords] = new List<IPieceWithPosition>();
             AgregarMensajeInterno($"📋 Tile inicializado en {tile.tileCoords}");
         }
+
     }
 
     private void Start()
@@ -1050,5 +1055,30 @@ public class BoardManagerGlobal : MonoBehaviour
 
         fichasConEscudo.Clear();
     }
+
+
+    public void NotifyAllyCoronated(AllyKind kind)
+{
+    if (!coronatedThisLevel.Add(kind))
+    {
+        AgregarMensajeInterno($"ℹ️ Coronación repetida de {kind} ignorada para Liberador.");
+        return;
+    }
+
+    AgregarMensajeInterno($"🏁 Coronó aliado: {kind}. Progreso Liberador: {coronatedThisLevel.Count}/5");
+
+    string slotId = PlayerPrefs.GetString("slotActivo", "slot1");
+
+    if (coronatedThisLevel.Count == 5 && !AchievementsManager.IsUnlocked(slotId, AchievementId.Liberador))
+    {
+        AchievementsManager.TryUnlock(
+            slotId,
+            AchievementId.Liberador,
+            5000,
+            "Logro desbloqueado: Liberador",
+            "+5000 puntos por coronar a todas las fichas en un mismo nivel."
+        );
+    }
+}
 
 }

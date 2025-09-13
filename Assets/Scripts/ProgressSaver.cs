@@ -144,6 +144,10 @@ public class ProgressSaver : MonoBehaviour
         {
             int totalKeys = PlayerPrefs.GetInt($"{slotId}_keysTotal", 0) + keysToAdd;
             PlayerPrefs.SetInt($"{slotId}_keysTotal", totalKeys);
+
+            // 👇 Pistola de cuerda: dispara todos los hitos con el total actualizado
+            AchievementsManager.ReportKeysProgress(totalKeys);
+        
         }
 
         if (diamondsToAdd > 0)

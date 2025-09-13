@@ -227,6 +227,8 @@ public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPo
         if (posicionActual == new Vector2Int(7, 7))
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno("♕ Reina coronada en H8. Bonificaciones aplicadas.");
+
+            BoardManagerGlobal.Instance?.NotifyAllyCoronated(BoardManagerGlobal.AllyKind.Queen);
             rey.puntosAccionActual += 7;
             rey.puntosMovimientoActual += 7;
             rey.GanarVida(3);

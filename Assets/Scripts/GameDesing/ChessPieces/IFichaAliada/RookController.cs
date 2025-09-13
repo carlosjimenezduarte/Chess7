@@ -231,6 +231,7 @@ public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         if (posicionActual == new Vector2Int(7, 7))
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno("♕ Torre coronada en H8. Bonificaciones aplicadas.");
+            BoardManagerGlobal.Instance?.NotifyAllyCoronated(BoardManagerGlobal.AllyKind.Rook);
             rey.puntosAccionActual += 7;
             rey.puntosMovimientoActual += 7;
             rey.GanarVida(3);

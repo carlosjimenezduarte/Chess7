@@ -253,6 +253,7 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
     if (posicionActual == new Vector2Int(7, 7))
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno("♕ Alfil coronado en H8. Bonificaciones aplicadas.");
+            BoardManagerGlobal.Instance?.NotifyAllyCoronated(BoardManagerGlobal.AllyKind.Bishop);
             rey.puntosAccionActual += 7;
             rey.puntosMovimientoActual += 7;
             rey.GanarVida(3);

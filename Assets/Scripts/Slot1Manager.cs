@@ -107,6 +107,23 @@ public class Slot1Manager : MonoBehaviour
             PlayerPrefs.DeleteKey($"{slotId}_level_{lvl}_killsBishopBlack");  // NUEVO
             PlayerPrefs.DeleteKey($"{slotId}_level_{lvl}_killsKnightBlack");  // NUEVO
 
+            
+            // 🧹 Achievements y Notificaciones
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.PawnIsGold}"); // y futuros
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Liberador}");  
+            
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Keys10}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Keys50}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Keys100}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Keys250}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Keys500}");
+
+
+            PlayerPrefs.DeleteKey($"{slotId}_scoreFromAchievements");
+
+            PlayerPrefs.DeleteKey($"{slotId}_notif_queue");
+
+
 
             
 
