@@ -105,7 +105,7 @@ public class LevelResultUI : MonoBehaviour
 
     private void MostrarResultadosSegunNivel(int keysCollected, int diamondsCollected, int livesRemaining, int totalScore)
     {
-        const int OFFSET_NIVELES = 8;
+        const int OFFSET_NIVELES = 14;
 
         string slotActivo = PlayerPrefs.GetString("slotActivo", "slot1");
         int buildIndex = SceneManager.GetActiveScene().buildIndex;

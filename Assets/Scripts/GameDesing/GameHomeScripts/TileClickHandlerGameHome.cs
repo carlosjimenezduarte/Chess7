@@ -7,6 +7,8 @@ public class TileClickHandlerGameHome : MonoBehaviour, IPointerClickHandler
 {
     [Header("Identificadores del nivel")]
     [Tooltip("Número que corresponde al Build Index en File -> Build Settings")]
+
+    public const int BUILD_OFFSET = 14;
     public int buildIndex;   // 👈 índice real de escena
     public int nivelLogico;  // 👈 número visible (1, 2, 3...)
 
@@ -32,5 +34,4 @@ public class TileClickHandlerGameHome : MonoBehaviour, IPointerClickHandler
         Debug.Log($"▶️ Entrando al nivel lógico {nivelLogico} (BuildIndex={buildIndex})");
         SceneManager.LoadScene(buildIndex); // 👈 aquí usamos el índice real de escena
     }
-}
-
+} 

@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
 
+
+
 public class GameHomeManager : MonoBehaviour
 {
     public static GameHomeManager Instance { get; private set; }
