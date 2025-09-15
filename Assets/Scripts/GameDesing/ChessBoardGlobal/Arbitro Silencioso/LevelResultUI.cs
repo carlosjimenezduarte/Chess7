@@ -203,7 +203,7 @@ public class LevelResultUI : MonoBehaviour
         if (diamond2Enabled != null) diamond2Enabled.SetActive(false);
 
         // 🔹 Leer cuántos diamantes debería tener este nivel
-        const int OFFSET_NIVELES = 8;
+        const int OFFSET_NIVELES = 14;
         string slotActivo = PlayerPrefs.GetString("slotActivo", "slot1");
         int buildIndex = SceneManager.GetActiveScene().buildIndex;
         int nivelLogico = buildIndex - OFFSET_NIVELES;

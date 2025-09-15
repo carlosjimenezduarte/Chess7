@@ -2291,7 +2291,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 175
+  m_text: 184
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
   m_sharedMaterial: {fileID: 532615492540030504, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
@@ -10094,6 +10094,8 @@ MonoBehaviour:
   key3Enabled: {fileID: 103443751}
   diamond: {fileID: 779223553}
   diamondEnabled: {fileID: 1023207354}
+  diamond2: {fileID: 0}
+  diamond2Enabled: {fileID: 0}
   livesText: {fileID: 411987002}
   up: {fileID: 1559121290}
   upEnabled: {fileID: 966935955}
@@ -22925,10 +22927,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e0383908d154554294892df3bd722ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelIdInspector: -1
   esNivelMasterKey: 0
   esNivelPergamino: 0
   esNivelTrofeo: 0
   esNivelMedalla: 0
+  bagsCollected: 0
+  crownsCollected: 0
+  chestsCollected: 0
+  coinsCollected: 0
+  enemyPawnsKilled: 0
+  enemyKnightsKilled: 0
+  enemyBishopsKilled: 0
+  enemyRooksKilled: 0
+  enemyQueensKilled: 0
+  enemyRooksBlackKilled: 0
+  enemyQueensBlackKilled: 0
+  enemyBishopsBlackKilled: 0
+  enemyKnightsBlackKilled: 0
   maxKeys: 1
   maxDiamonds: 2
   keysCollected: 0

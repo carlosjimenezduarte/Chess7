@@ -11,6 +11,13 @@ public class TileClickHandlerGameHome : MonoBehaviour, IPointerClickHandler
     public const int BUILD_OFFSET = 14;
     public int buildIndex;   // 👈 índice real de escena
     public int nivelLogico;  // 👈 número visible (1, 2, 3...)
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if (nivelLogico > 0)
+            buildIndex = nivelLogico + BUILD_OFFSET;
+    }
+#endif
 
     private LevelTile levelTile;
 
