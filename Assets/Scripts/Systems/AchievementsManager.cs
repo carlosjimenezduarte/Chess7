@@ -6,9 +6,27 @@ using System.Collections.Generic;
 public enum AchievementId
 {
     PawnIsGold,   // “El Peón vale Oro”
-    Liberador,  
-    Keys10, Keys50, Keys100, Keys250, Keys500 
+    Liberador,
+    Keys10, Keys50, Keys100, Keys250, Keys500,
     // ... futuros
+    // ---- RANGOS ----
+    Rank_CaminanteMisterio,
+    Rank_CaballeroVerdad,
+    Rank_ElegidoEstrellas,
+    Rank_AlmaVictoriosa,
+    Rank_VencedorTiempo,
+    Rank_CaballeroPaz,
+    Rank_MaestroTableros,
+    Rank_MaestroSilencio,
+    Rank_MaestroIndomable,
+    Rank_GuardianReino,
+    Rank_GuardianUmbral,
+    Rank_GuardianLuz,
+    Rank_AprendizRey,
+    Rank_ReyEstrellas,
+    Rank_ReyMisterio,
+    Rank_ReyLibre,
+    Rank_ReyCoronado
 }
 
 public static class AchievementsManager

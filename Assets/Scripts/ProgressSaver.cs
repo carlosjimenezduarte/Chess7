@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class ProgressSaver : MonoBehaviour
 {
+    public enum EspecialTipo { Parchment, Trophy, Medal, MasterKey }
     // 🔹 Método central para progreso de niveles
     private static void GuardarResultado(
     string slotId, int levelId, int score, int keys,
@@ -147,7 +148,7 @@ public class ProgressSaver : MonoBehaviour
 
             // 👇 Pistola de cuerda: dispara todos los hitos con el total actualizado
             AchievementsManager.ReportKeysProgress(totalKeys);
-        
+
         }
 
         if (diamondsToAdd > 0)
@@ -280,4 +281,6 @@ public class ProgressSaver : MonoBehaviour
         Debug.Log($"[ProgressSaver] 📊 Nuevo registro de {tipo} en nivel {levelId}");
         return true;
     }
+  
+
 }

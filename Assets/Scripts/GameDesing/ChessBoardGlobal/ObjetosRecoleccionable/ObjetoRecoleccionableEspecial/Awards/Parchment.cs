@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 
 public class Parchment : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRecoleccionableEspecial, IPieceWithPosition
@@ -42,10 +43,14 @@ public class Parchment : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IOb
         // Puntaje
         var score = FindFirstObjectByType<PlayerScore>();
         if (score != null)
-            //score.AgregarPuntaje(ObtenerValorPuntaje());
+            score.AgregarPuntaje(ObtenerValorPuntaje(), TipoObjetoScore.None); 
 
         // Recolectar y destruir
         LevelProgress.Instance?.Parchment();
+        RankSystem.Instance?.ReportParchment();
+
+         // ✅ Registrar en ProgressSaver (anti-farmeo por nivel + Stadistics en caliente)
+       
         SoundManager.Instance.PlaySound(25);
         Destroy(gameObject);
     }

@@ -49,10 +49,10 @@ public class TheCrownKeyofTheSoul : MonoBehaviour, ITileEffect, IObjetoRecolecci
         // Puntaje
         var score = FindFirstObjectByType<PlayerScore>();
         if (score != null)
-            //score.AgregarPuntaje(ObtenerValorPuntaje());
+            score.AgregarPuntaje(ObtenerValorPuntaje(), TipoObjetoScore.None); 
 
         FindFirstObjectByType<CofreController>()?.SetTieneLlave(true);
-        
+        RankSystem.Instance?.ReportLegendKey(); 
         Destroy(gameObject);
     }
 

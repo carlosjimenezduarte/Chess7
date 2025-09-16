@@ -2175,7 +2175,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1/4
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
   m_sharedMaterial: {fileID: 532615492540030504, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
@@ -2687,7 +2687,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1/6
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
   m_sharedMaterial: {fileID: 532615492540030504, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
@@ -2959,7 +2959,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1/10
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
   m_sharedMaterial: {fileID: 532615492540030504, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
@@ -4523,7 +4523,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &796103041
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6512,6 +6512,138 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1251761431}
   m_CullTransparentMesh: 1
+--- !u!1 &1286408716
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1286408718}
+  - component: {fileID: 1286408717}
+  m_Layer: 0
+  m_Name: RankSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1286408717
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1286408716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 800f16b42cddfdd49a3bd1cc1e18675e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rules:
+  - nivelLogico: 10
+    trigger: 0
+    rank: 0
+    achievement: 7
+  - nivelLogico: 20
+    trigger: 0
+    rank: 1
+    achievement: 8
+  - nivelLogico: 40
+    trigger: 1
+    rank: 2
+    achievement: 9
+  - nivelLogico: 50
+    trigger: 0
+    rank: 3
+    achievement: 10
+  - nivelLogico: 60
+    trigger: 1
+    rank: 4
+    achievement: 11
+  - nivelLogico: 70
+    trigger: 0
+    rank: 5
+    achievement: 12
+  - nivelLogico: 80
+    trigger: 0
+    rank: 6
+    achievement: 13
+  - nivelLogico: 100
+    trigger: 1
+    rank: 7
+    achievement: 14
+  - nivelLogico: 110
+    trigger: 0
+    rank: 8
+    achievement: 15
+  - nivelLogico: 120
+    trigger: 0
+    rank: 9
+    achievement: 16
+  - nivelLogico: 130
+    trigger: 1
+    rank: 10
+    achievement: 17
+  - nivelLogico: 150
+    trigger: 0
+    rank: 11
+    achievement: 18
+  - nivelLogico: 160
+    trigger: 0
+    rank: 12
+    achievement: 19
+  - nivelLogico: 170
+    trigger: 1
+    rank: 13
+    achievement: 20
+  - nivelLogico: 180
+    trigger: 0
+    rank: 14
+    achievement: 21
+  - nivelLogico: 200
+    trigger: 1
+    rank: 15
+    achievement: 22
+  - nivelLogico: 204
+    trigger: 2
+    rank: 16
+    achievement: 23
+  rankPanels:
+  - {fileID: 215986419}
+  - {fileID: 355991643}
+  - {fileID: 235673714}
+  - {fileID: 472277228}
+  - {fileID: 1608045763}
+  - {fileID: 1964889678}
+  - {fileID: 48372553}
+  - {fileID: 984560214}
+  - {fileID: 649169869}
+  - {fileID: 1914746142}
+  - {fileID: 1995031425}
+  - {fileID: 1912455138}
+  - {fileID: 124413410}
+  - {fileID: 883301735}
+  - {fileID: 1473911085}
+  - {fileID: 239016902}
+  - {fileID: 796103040}
+  noRankPanel: {fileID: 308665625}
+--- !u!4 &1286408718
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1286408716}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1300302505
 GameObject:
   m_ObjectHideFlags: 0
@@ -9971,3 +10103,4 @@ SceneRoots:
   - {fileID: 170053882}
   - {fileID: 1975798981}
   - {fileID: 745849556}
+  - {fileID: 1286408718}

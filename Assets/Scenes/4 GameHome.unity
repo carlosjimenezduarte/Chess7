@@ -45388,7 +45388,7 @@ GameObject:
   - component: {fileID: 1607830392}
   - component: {fileID: 1607830391}
   m_Layer: 5
-  m_Name: KeyIcon9
+  m_Name: KeyIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46389,6 +46389,157 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!1 &1635399160
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1635399162}
+  - component: {fileID: 1635399161}
+  m_Layer: 0
+  m_Name: RankSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1635399161
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1635399160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 800f16b42cddfdd49a3bd1cc1e18675e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rules:
+  - nivelLogico: 10
+    trigger: 0
+    rank: 0
+    achievement: 7
+    title: Caminante del Misterio
+  - nivelLogico: 20
+    trigger: 0
+    rank: 1
+    achievement: 8
+    title: Caballero de la Verdad
+  - nivelLogico: 40
+    trigger: 1
+    rank: 2
+    achievement: 9
+    title: Elegido de las Estrellas
+  - nivelLogico: 50
+    trigger: 0
+    rank: 3
+    achievement: 10
+    title: Alma Victoriosa
+  - nivelLogico: 60
+    trigger: 1
+    rank: 4
+    achievement: 11
+    title: Vencedor del Tiempo
+  - nivelLogico: 70
+    trigger: 0
+    rank: 5
+    achievement: 12
+    title: Caballero de la Paz
+  - nivelLogico: 80
+    trigger: 0
+    rank: 6
+    achievement: 13
+    title: Maestro de Tableros
+  - nivelLogico: 100
+    trigger: 1
+    rank: 7
+    achievement: 14
+    title: Maestro del Silencio
+  - nivelLogico: 110
+    trigger: 0
+    rank: 8
+    achievement: 15
+    title: Maestro Indomable
+  - nivelLogico: 120
+    trigger: 0
+    rank: 9
+    achievement: 16
+    title: "Guardi\xE1n del Reino"
+  - nivelLogico: 130
+    trigger: 1
+    rank: 10
+    achievement: 17
+    title: "Guardi\xE1n del Umbral"
+  - nivelLogico: 150
+    trigger: 0
+    rank: 11
+    achievement: 18
+    title: "Guardi\xE1n de la Luz"
+  - nivelLogico: 160
+    trigger: 0
+    rank: 12
+    achievement: 19
+    title: Aprendiz de Rey
+  - nivelLogico: 170
+    trigger: 1
+    rank: 13
+    achievement: 20
+    title: Rey de las Estrellas
+  - nivelLogico: 180
+    trigger: 0
+    rank: 14
+    achievement: 21
+    title: Rey del Misterio
+  - nivelLogico: 200
+    trigger: 1
+    rank: 15
+    achievement: 22
+    title: Rey Libre
+  - nivelLogico: 204
+    trigger: 2
+    rank: 16
+    achievement: 23
+    title: Rey Coronado
+  rankLabels:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  lockedColor: {r: 0.65, g: 0.65, b: 0.65, a: 1}
+  unlockedColor: {r: 0.13, g: 0.66, b: 0.28, a: 1}
+  currentColor: {r: 0.95, g: 0.72, b: 0.17, a: 1}
+--- !u!4 &1635399162
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1635399160}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1636606357
 GameObject:
   m_ObjectHideFlags: 0
@@ -59947,3 +60098,4 @@ SceneRoots:
   - {fileID: 1819965290}
   - {fileID: 1319414329}
   - {fileID: 1043004914}
+  - {fileID: 1635399162}

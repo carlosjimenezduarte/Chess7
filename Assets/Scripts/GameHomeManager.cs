@@ -20,7 +20,7 @@ public class GameHomeManager : MonoBehaviour
     public TMP_Text levelsProgressText; // 👈 arrastra aquí el TextMeshPro en el inspector
     private const int TOTAL_NIVELES = 204;
 
-    private const int OFFSET_NIVELES = 8;
+    private const int OFFSET_NIVELES = 14;
 
     private void Awake()
     {

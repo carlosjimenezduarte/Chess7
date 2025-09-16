@@ -5698,7 +5698,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: You can support Saint Martin Games directly through donations at ChessEscape.com
+  m_text: Are you ready to discover what lies beyond this door?
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
   m_sharedMaterial: {fileID: 532615492540030504, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
@@ -5733,7 +5733,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -5791,9 +5791,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_StringReference:
     m_TableReference:
-      m_TableCollectionName: GUID:a94897f31e5666c4a923a28f062a6933
+      m_TableCollectionName: GUID:d30a74d5a5b367642a823a78f3e04710
     m_TableEntryReference:
-      m_KeyId: 39297634304
+      m_KeyId: 93446098944
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
@@ -7274,7 +7274,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 653b28f09db15324e96d3a8e2debc182, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 529f5b68f4619ac42b0ddc77939da3fe, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -12023,14 +12023,14 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1226723001}
-        m_TargetAssemblyTypeName: Donaciones, Assembly-CSharp
-        m_MethodName: AbrirWeb
-        m_Mode: 1
+      - m_Target: {fileID: 475386978}
+        m_TargetAssemblyTypeName: SceneLoader, Assembly-CSharp
+        m_MethodName: LoadScene
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 4
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -14582,14 +14582,14 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1226723000}
-        m_TargetAssemblyTypeName: DonationPanelController, Assembly-CSharp
-        m_MethodName: OnCloseClicked
-        m_Mode: 1
+      - m_Target: {fileID: 475386978}
+        m_TargetAssemblyTypeName: SceneLoader, Assembly-CSharp
+        m_MethodName: LoadScene
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 4
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -20833,9 +20833,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_StringReference:
     m_TableReference:
-      m_TableCollectionName: GUID:a94897f31e5666c4a923a28f062a6933
+      m_TableCollectionName: GUID:d30a74d5a5b367642a823a78f3e04710
     m_TableEntryReference:
-      m_KeyId: 163209957376
+      m_KeyId: 143375093760
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
@@ -20879,7 +20879,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Saber m\xE1s"
+  m_text: You can!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
   m_sharedMaterial: {fileID: 532615492540030504, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
@@ -22125,7 +22125,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Willow\u2019s kibble doesn\u2019t pay for itself!"
+  m_text: This journey comes to an end!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
   m_sharedMaterial: {fileID: 532615492540030504, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
@@ -22218,9 +22218,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_StringReference:
     m_TableReference:
-      m_TableCollectionName: GUID:a94897f31e5666c4a923a28f062a6933
+      m_TableCollectionName: GUID:d30a74d5a5b367642a823a78f3e04710
     m_TableEntryReference:
-      m_KeyId: 53583433728
+      m_KeyId: 61904932864
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0

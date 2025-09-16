@@ -3603,19 +3603,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2062129631136883389, guid: f15aa520be3745d458d86be54052c1b8, type: 3}
       propertyPath: tileCoords.x
-      value: 0
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2062129631136883389, guid: f15aa520be3745d458d86be54052c1b8, type: 3}
       propertyPath: tileCoords.y
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2243250832241142952, guid: f15aa520be3745d458d86be54052c1b8, type: 3}
       propertyPath: tileCoords.x
-      value: 0
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2243250832241142952, guid: f15aa520be3745d458d86be54052c1b8, type: 3}
       propertyPath: tileCoords.y
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2994443515095739344, guid: f15aa520be3745d458d86be54052c1b8, type: 3}
       propertyPath: m_Pivot.x
@@ -3679,11 +3679,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2994443515095739344, guid: f15aa520be3745d458d86be54052c1b8, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -472.5
+      value: 337.5
       objectReference: {fileID: 0}
     - target: {fileID: 2994443515095739344, guid: f15aa520be3745d458d86be54052c1b8, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -472.5
+      value: 202.5
       objectReference: {fileID: 0}
     - target: {fileID: 2994443515095739344, guid: f15aa520be3745d458d86be54052c1b8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -5155,7 +5155,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &368676654
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7694,7 +7694,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1508319572370253285, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: tileCoords.x
-      value: 1
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1508319572370253285, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: tileCoords.y
@@ -7702,7 +7702,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2363457754959323134, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: tileCoords.x
-      value: 1
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2363457754959323134, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: tileCoords.y
@@ -7710,7 +7710,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4150324266566796357, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: tileCoords.x
-      value: 1
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4150324266566796357, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: tileCoords.y
@@ -7722,7 +7722,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5063045070520871796, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5666605346156485819, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: m_Pivot.x
@@ -7786,7 +7786,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5666605346156485819, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -337.5
+      value: 337.5
       objectReference: {fileID: 0}
     - target: {fileID: 5666605346156485819, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -23091,7 +23091,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelIdInspector: -1
   esNivelMasterKey: 0
-  esNivelPergamino: 0
+  esNivelPergamino: 1
   esNivelTrofeo: 0
   esNivelMedalla: 0
   bagsCollected: 0
@@ -25079,7 +25079,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2040516625
 RectTransform:
   m_ObjectHideFlags: 0
@@ -26053,7 +26053,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1508319572370253285, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: tileCoords.x
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1508319572370253285, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: tileCoords.y
@@ -26061,7 +26061,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2363457754959323134, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: tileCoords.x
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2363457754959323134, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: tileCoords.y
@@ -26069,7 +26069,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4150324266566796357, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: tileCoords.x
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4150324266566796357, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: tileCoords.y
@@ -26081,7 +26081,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5063045070520871796, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5666605346156485819, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: m_Pivot.x
@@ -26145,7 +26145,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5666605346156485819, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 337.5
+      value: 202.5
       objectReference: {fileID: 0}
     - target: {fileID: 5666605346156485819, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -31099,7 +31099,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -3304998072817644646, guid: c0f1252f9a60c6b4083ae2e9b73c53e1, type: 3}
       propertyPath: tileCoords.x
-      value: 4
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: -3304998072817644646, guid: c0f1252f9a60c6b4083ae2e9b73c53e1, type: 3}
       propertyPath: tileCoords.y
@@ -31107,7 +31107,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -760393281887842964, guid: c0f1252f9a60c6b4083ae2e9b73c53e1, type: 3}
       propertyPath: tileCoords.x
-      value: 4
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: -760393281887842964, guid: c0f1252f9a60c6b4083ae2e9b73c53e1, type: 3}
       propertyPath: tileCoords.y
@@ -31115,7 +31115,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3535261093609866281, guid: c0f1252f9a60c6b4083ae2e9b73c53e1, type: 3}
       propertyPath: tileCoords.x
-      value: 4
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3535261093609866281, guid: c0f1252f9a60c6b4083ae2e9b73c53e1, type: 3}
       propertyPath: tileCoords.y
@@ -31183,7 +31183,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4359507329992073506, guid: c0f1252f9a60c6b4083ae2e9b73c53e1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 67.5
+      value: 337.5
       objectReference: {fileID: 0}
     - target: {fileID: 4359507329992073506, guid: c0f1252f9a60c6b4083ae2e9b73c53e1, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -31601,7 +31601,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1508319572370253285, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: tileCoords.x
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1508319572370253285, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: tileCoords.y
@@ -31609,7 +31609,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2363457754959323134, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: tileCoords.x
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2363457754959323134, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: tileCoords.y
@@ -31617,7 +31617,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4150324266566796357, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: tileCoords.x
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4150324266566796357, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: tileCoords.y
@@ -31629,7 +31629,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5063045070520871796, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5666605346156485819, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: m_Pivot.x
@@ -31693,7 +31693,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5666605346156485819, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -67.5
+      value: 202.5
       objectReference: {fileID: 0}
     - target: {fileID: 5666605346156485819, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -32634,7 +32634,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 814922904587673358, guid: ffb97260de46f744989fd771f6598350, type: 3}
       propertyPath: tileCoords.x
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 814922904587673358, guid: ffb97260de46f744989fd771f6598350, type: 3}
       propertyPath: tileCoords.y
@@ -32642,7 +32642,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2348961028170081620, guid: ffb97260de46f744989fd771f6598350, type: 3}
       propertyPath: tileCoords.x
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2348961028170081620, guid: ffb97260de46f744989fd771f6598350, type: 3}
       propertyPath: tileCoords.y
@@ -32718,7 +32718,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2780921323176446652, guid: ffb97260de46f744989fd771f6598350, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -67.5
+      value: 202.5
       objectReference: {fileID: 0}
     - target: {fileID: 2780921323176446652, guid: ffb97260de46f744989fd771f6598350, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -32742,7 +32742,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7632785110765257922, guid: ffb97260de46f744989fd771f6598350, type: 3}
       propertyPath: tileCoords.x
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7632785110765257922, guid: ffb97260de46f744989fd771f6598350, type: 3}
       propertyPath: tileCoords.y
@@ -32754,7 +32754,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8867357768293156711, guid: ffb97260de46f744989fd771f6598350, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

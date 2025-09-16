@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
-
+using UnityEngine.SceneManagement;
 
 public class Medal : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRecoleccionableEspecial, IPieceWithPosition
 {
@@ -42,11 +42,16 @@ public class Medal : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjeto
         // Puntaje
         var score = FindFirstObjectByType<PlayerScore>();
         if (score != null)
-            //score.AgregarPuntaje(ObtenerValorPuntaje());
+            score.AgregarPuntaje(ObtenerValorPuntaje(), TipoObjetoScore.None); 
 
         // Recolectar y destruir
         SoundManager.Instance.PlaySound(27);
-        LevelProgress.Instance?.Medal();         
+        LevelProgress.Instance?.Medal();
+        RankSystem.Instance?.ReportMedal();
+
+        // ✅ Registrar especial por nivel + refresco Stadistics
+       
+
         Destroy(gameObject);
     }
 

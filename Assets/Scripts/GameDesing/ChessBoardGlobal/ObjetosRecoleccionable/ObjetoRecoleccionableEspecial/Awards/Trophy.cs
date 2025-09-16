@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Linq;
 
 
+
 public class Trophy : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjetoRecoleccionableEspecial, IPieceWithPosition
 {
     public Vector2Int tileCoords;
@@ -42,10 +43,11 @@ public class Trophy : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjet
         // Puntaje
         var score = FindFirstObjectByType<PlayerScore>();
         if (score != null)
-            //score.AgregarPuntaje(ObtenerValorPuntaje());
+                 score.AgregarPuntaje(ObtenerValorPuntaje(), TipoObjetoScore.None); 
 
-        // Recolectar y destruir
-        LevelProgress.Instance?.Trophy();
+            // Recolectar y destruir
+        
+        LevelProgress.Instance?.Trophy();               
         SoundManager.Instance.PlaySound(26);
         Destroy(gameObject);
     }

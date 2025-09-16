@@ -107,11 +107,11 @@ public class Slot1Manager : MonoBehaviour
             PlayerPrefs.DeleteKey($"{slotId}_level_{lvl}_killsBishopBlack");  // NUEVO
             PlayerPrefs.DeleteKey($"{slotId}_level_{lvl}_killsKnightBlack");  // NUEVO
 
-            
+
             // 🧹 Achievements y Notificaciones
             PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.PawnIsGold}"); // y futuros
-            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Liberador}");  
-            
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Liberador}");
+
             PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Keys10}");
             PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Keys50}");
             PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Keys100}");
@@ -122,6 +122,28 @@ public class Slot1Manager : MonoBehaviour
             PlayerPrefs.DeleteKey($"{slotId}_scoreFromAchievements");
 
             PlayerPrefs.DeleteKey($"{slotId}_notif_queue");
+
+            // 🔹 Rango máximo alcanzado (stadistics)            
+            PlayerPrefs.DeleteKey($"{slotId}_rankMaxIndex");
+
+            // 🔹 Achievements de rango (17)
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Rank_CaminanteMisterio}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Rank_CaballeroVerdad}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Rank_ElegidoEstrellas}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Rank_AlmaVictoriosa}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Rank_VencedorTiempo}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Rank_CaballeroPaz}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Rank_MaestroTableros}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Rank_MaestroSilencio}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Rank_MaestroIndomable}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Rank_GuardianReino}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Rank_GuardianUmbral}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Rank_GuardianLuz}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Rank_AprendizRey}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Rank_ReyEstrellas}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Rank_ReyMisterio}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Rank_ReyLibre}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Rank_ReyCoronado}");
 
 
 
