@@ -1,25 +1,29 @@
-using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 using System;
 using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
-/// <summary>
-/// Gestor único de notificaciones internas basadas en paneles preexistentes.
-/// - En la escena "Notificaciones": asigna los paneles (inactivos por defecto) y el contenedor del ScrollView.
-/// - En la escena "GameHome": asigna el badge (texto y burbuja roja).
-/// - Persistencia por slot: cada panel se cierra una sola vez (PlayerPrefs).
-/// - Se integra con AchievementsManager: llámalo desde TryUnlock (ver parche abajo).
-/// </summary>
+[DisallowMultipleComponent]
 public class NotificationCenter : MonoBehaviour
 {
+    [Tooltip("Activa/desactiva automáticamente burbuja y texto del badge según el conteo.")]
+    public bool autoToggleBadgeObjects = true;
+
     [Serializable]
+    
+    
     public struct PanelBinding
     {
-        [Tooltip("ID de la notificación (usa el mismo nombre que AchievementId, ej: PawnIsGold)")]
-        public string id;
+
+        [Tooltip("Selecciona el logro (enum), en vez de escribir texto.")]
+        public AchievementId id;
+
+
         [Tooltip("Panel ya diseñado dentro del ScrollView. Déjalo INACTIVO por defecto.")]
+
         public GameObject panel;
+
         [Tooltip("Botón de cerrar del panel (opcional si ya lo conectas en el Inspector)")]
         public Button closeButton;
     }
@@ -29,31 +33,39 @@ public class NotificationCenter : MonoBehaviour
     [Header("Escena: Notificaciones (opcional)")]
     [Tooltip("Contenedor del ScrollView (no obligatorio, solo informativo)")]
     public Transform scrollContent;
-    [Tooltip("Lista de paneles preexistentes a controlar")]
+
+    [Tooltip("Lista de paneles preexistentes a controlar (asignación MANUAL por enum).")]
     public List<PanelBinding> paneles = new List<PanelBinding>();
 
     [Header("Escena: GameHome (opcional)")]
     [Tooltip("Burbuja roja del badge (se oculta si count=0)")]
     public GameObject badgeBubble;
+
     [Tooltip("Texto del badge (ej: 3)")]
     public TMP_Text badgeText;
 
     [Header("Config")]
     [Tooltip("Si no hay slotActivo, usar este por defecto")]
     public string fallbackSlotId = "slot1";
+
     [Tooltip("Imprime logs útiles")]
     public bool verbose = false;
 
-    // Mapa rápido id->panel
-    private readonly Dictionary<string, PanelBinding> _map = new Dictionary<string, PanelBinding>(StringComparer.Ordinal);
+    [Tooltip("Si está activo, el badge cuenta SOLO los achievements que tienen panel enlazado.\nSi está desactivado, cuenta todos los AchievementId del enum.")]
+    public bool badgeCountsOnlyMapped = true;
 
+    // Mapa rápido id->panel
+    private readonly Dictionary<AchievementId, PanelBinding> _map =
+        new Dictionary<AchievementId, PanelBinding>();
+
+    // ==========================
+    // Ciclo de vida
+    // ==========================
     private void Awake()
     {
         if (Instance != null && Instance != this)
         {
-            // Reusar el singleton y pasarle referencias de la escena actual (bindings y badge),
-            // luego destruir el duplicado.
-            if (verbose) Debug.Log("[NC] Ya existe instancia. Actualizando referencias de escena…");
+            if (verbose) Debug.Log("[NC] Ya existe instancia. Actualizando refs de escena…");
             Instance.AbsorbSceneRefsFrom(this);
             Destroy(gameObject);
             return;
@@ -61,6 +73,7 @@ public class NotificationCenter : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
         BuildMap();
         WireCloseButtonsIfNeeded();
         RefreshPanelsFromPrefs();
@@ -69,30 +82,28 @@ public class NotificationCenter : MonoBehaviour
 
     private void Start()
     {
-        // Por si los references se asignan tarde en el ciclo de vida (no es obligatorio)
+        // Por si las refs llegan tarde
         RefreshBadge();
         RefreshPanelsFromPrefs();
     }
 
-    /// <summary>
-    /// Copia referencias de la escena actual a la instancia persistente.
-    /// Útil cuando pones este componente en varias escenas (GameHome y Notificaciones).
-    /// </summary>
+    /// <summary>Copiar referencias de otra instancia (cuando existe en varias escenas).</summary>
     public void AbsorbSceneRefsFrom(NotificationCenter other)
     {
         if (other == null) return;
 
-        // Mezclar/actualizar bindings (prioridad a los que trae la escena actual si no existen)
+        // Mezcla/actualiza bindings nuevos
         foreach (var b in other.paneles)
         {
-            if (b.panel == null || string.IsNullOrWhiteSpace(b.id)) continue;
-            if (!_map.ContainsKey(b.id)) _map[b.id] = b;
+            if (b.panel == null) continue;
+            if (!_map.ContainsKey(b.id))
+                _map[b.id] = b;
         }
 
-        // Actualizar refs de UI de escena
+        // Actualiza refs de UI
         if (other.scrollContent != null) scrollContent = other.scrollContent;
-        if (other.badgeBubble != null) badgeBubble = other.badgeBubble;
-        if (other.badgeText != null) badgeText = other.badgeText;
+        if (other.badgeBubble != null)   badgeBubble   = other.badgeBubble;
+        if (other.badgeText != null)     badgeText     = other.badgeText;
 
         WireCloseButtonsIfNeeded();
         RefreshPanelsFromPrefs();
@@ -104,8 +115,10 @@ public class NotificationCenter : MonoBehaviour
         _map.Clear();
         foreach (var b in paneles)
         {
-            if (b.panel == null || string.IsNullOrWhiteSpace(b.id)) continue;
-            if (!_map.ContainsKey(b.id)) _map.Add(b.id, b);
+            if (b.panel == null) continue;
+            if (!_map.ContainsKey(b.id))
+                _map.Add(b.id, b);
+
             // Asegura inactivo por defecto
             b.panel.SetActive(false);
         }
@@ -115,12 +128,13 @@ public class NotificationCenter : MonoBehaviour
     {
         foreach (var kv in _map)
         {
+            var id = kv.Key;
             var pb = kv.Value;
             if (pb.closeButton != null)
             {
-                string idCopy = pb.id; // capturar
-                pb.closeButton.onClick.RemoveListener(() => { });
-                pb.closeButton.onClick.AddListener(() => ClosePanelById(idCopy));
+                pb.closeButton.onClick.RemoveAllListeners();
+                var idCopy = id; // captura
+                pb.closeButton.onClick.AddListener(() => ClosePanelByEnum(idCopy));
             }
         }
     }
@@ -136,24 +150,22 @@ public class NotificationCenter : MonoBehaviour
     public void OnAchievementUnlocked(string slotId, AchievementId id, string title = null, string body = null)
     {
         if (string.IsNullOrEmpty(slotId)) slotId = GetActiveSlot();
-        string notifId = id.ToString();
 
-        // Marca como "no cerrado" para que aparezca en la pantalla de notificaciones
-        SetDismissed(slotId, notifId, false);
+        // Marca como "no cerrado" para esta notificación
+        SetDismissed(slotId, id, false);
 
-        // Si el panel de esta notificación está mapeado en esta escena, activarlo.
-        ActivatePanelIfPresent(notifId);
+        // Si hay panel mapeado, activarlo
+        ActivatePanelIfPresent(id);
 
-        if (verbose) Debug.Log($"[NC] OnAchievementUnlocked -> {notifId} (slot {slotId}).");
+        if (verbose) Debug.Log($"[NC] OnAchievementUnlocked -> {id} (slot {slotId}).");
 
         RefreshBadge(slotId);
     }
 
     /// <summary>
-    /// Cerrar panel y persistir el cierre (no volverá a mostrarse).
-    /// Conectar este método al botón [X] del panel (vía Inspector), pasando el ID.
+    /// Cerrar panel (método tipado). Conéctalo al botón [X] pasando el enum.
     /// </summary>
-    public void ClosePanelById(string id)
+    public void ClosePanelByEnum(AchievementId id)
     {
         string slotId = GetActiveSlot();
         SetDismissed(slotId, id, true);
@@ -162,47 +174,60 @@ public class NotificationCenter : MonoBehaviour
             pb.panel.SetActive(false);
 
         if (verbose) Debug.Log($"[NC] ClosePanel -> {id} (slot {slotId})");
-
         RefreshBadge(slotId);
     }
 
     /// <summary>
-    /// Actualiza badge en GameHome.
+    /// Wrapper de compatibilidad si tienes botones viejos que pasan string.
     /// </summary>
-    /*public void RefreshBadge(string slotId = null)
+    public void ClosePanelById(string idAsString)
     {
-        slotId ??= GetActiveSlot();
+        if (Enum.TryParse(idAsString, out AchievementId parsed))
+            ClosePanelByEnum(parsed);
+        else if (verbose)
+            Debug.LogWarning($"[NC] ClosePanelById: '{idAsString}' no coincide con AchievementId.");
+    }
 
-        // Contar notificaciones desbloqueadas y NO cerradas para IDs que conocemos (paneles registrados)
-        int count = 0;
-        foreach (var id in _map.Keys)
-        {
-            if (IsUnlocked(slotId, id) && !IsDismissed(slotId, id))
-                count++;
-        }
-
-        if (badgeBubble != null) badgeBubble.SetActive(count > 0);
-        if (badgeText != null) badgeText.text = count.ToString();
-
-        if (verbose) Debug.Log($"[NC] Badge actualizado => {count}");
-    }*/
+    /// <summary>Actualiza badge en GameHome.</summary>
     public void RefreshBadge(string slotId = null)
     {
         slotId ??= GetActiveSlot();
+
+        // 1) Conteo con fallback:
         int count = 0;
-        foreach (var name in Enum.GetNames(typeof(AchievementId)))
-            if (IsUnlocked(slotId, name) && !IsDismissed(slotId, name))
-                count++;
+        if (badgeCountsOnlyMapped && _map.Count > 0)
+        {
+            // Solo los mapeados (comportamiento tipo Honors manual)
+            foreach (var id in _map.Keys)
+                if (IsUnlocked(slotId, id) && !IsDismissed(slotId, id))
+                    count++;
+        }
+        else
+        {
+            // Fallback: cuenta todo el enum (útil cuando GameHome no tiene paneles mapeados)
+            foreach (AchievementId id in Enum.GetValues(typeof(AchievementId)))
+                if (IsUnlocked(slotId, id) && !IsDismissed(slotId, id))
+                    count++;
+        }
 
-        if (badgeBubble != null) badgeBubble.SetActive(count > 0);
+        bool show = count > 0;
+
+        // 2) Activar/Desactivar ambos objetos del badge
+        if (autoToggleBadgeObjects)
+        {
+            if (badgeBubble != null) badgeBubble.SetActive(show);
+            if (badgeText != null) badgeText.gameObject.SetActive(show);
+        }
+
+        // 3) Actualizar el número
         if (badgeText != null) badgeText.text = count.ToString();
-        if (verbose) Debug.Log($"[NC] Badge actualizado => {count}");
 
+        if (verbose) Debug.Log($"[NC] Badge actualizado => {count} (show={show})");
     }
 
 
     /// <summary>
-    /// Llamar cuando entras a la escena de Notificaciones para reflejar estado actual.
+    /// Llamar al entrar a la escena de Notificaciones para reflejar estado actual.
     /// </summary>
     public void RefreshPanelsFromPrefs()
     {
@@ -210,7 +235,7 @@ public class NotificationCenter : MonoBehaviour
 
         foreach (var kv in _map)
         {
-            string id = kv.Key;
+            var id = kv.Key;
             var pb = kv.Value;
 
             bool visible = IsUnlocked(slotId, id) && !IsDismissed(slotId, id);
@@ -224,7 +249,7 @@ public class NotificationCenter : MonoBehaviour
     // Helpers de estado
     // ==========================
 
-    private void ActivatePanelIfPresent(string id)
+    private void ActivatePanelIfPresent(AchievementId id)
     {
         if (_map.TryGetValue(id, out var pb) && pb.panel != null)
             pb.panel.SetActive(true);
@@ -235,25 +260,23 @@ public class NotificationCenter : MonoBehaviour
         return PlayerPrefs.GetString("slotActivo", fallbackSlotId);
     }
 
-    private static string KeyAch(string slotId, string notifId) => $"{slotId}_ach_{notifId}";
-    private static string KeyDismissed(string slotId, string notifId) => $"{slotId}_notif_{notifId}_dismissed";
+    private static string KeyAch(string slotId, AchievementId id) => $"{slotId}_ach_{id}";
+    private static string KeyDismissed(string slotId, AchievementId id) => $"{slotId}_notif_{id}_dismissed";
 
-    // Unlocked lo escribe AchievementsManager (TryUnlock). Aquí solo lo leemos.
-    private bool IsUnlocked(string slotId, string notifId)
+    // "Unlocked" lo escribe AchievementsManager (TryUnlock). Aquí solo lo leemos.
+    private bool IsUnlocked(string slotId, AchievementId id)
     {
-        return PlayerPrefs.GetInt(KeyAch(slotId, notifId), 0) == 1;
+        return PlayerPrefs.GetInt(KeyAch(slotId, id), 0) == 1;
     }
 
-    private bool IsDismissed(string slotId, string notifId)
+    private bool IsDismissed(string slotId, AchievementId id)
     {
-        return PlayerPrefs.GetInt(KeyDismissed(slotId, notifId), 0) == 1;
+        return PlayerPrefs.GetInt(KeyDismissed(slotId, id), 0) == 1;
     }
 
-    private void SetDismissed(string slotId, string notifId, bool dismissed)
+    private void SetDismissed(string slotId, AchievementId id, bool dismissed)
     {
-        PlayerPrefs.SetInt(KeyDismissed(slotId, notifId), dismissed ? 1 : 0);
+        PlayerPrefs.SetInt(KeyDismissed(slotId, id), dismissed ? 1 : 0);
         PlayerPrefs.Save();
     }
-
-    
 }

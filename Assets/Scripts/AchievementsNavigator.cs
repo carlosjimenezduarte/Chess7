@@ -27,7 +27,8 @@ public class AchievementsNavigator : MonoBehaviour
     private int rangoTitulosStart = 20;
     private int rangoTitulosEnd = 21;
     private int indexTrofeos = 22;
-    private int indexCondecoraciones = 23;
+    private int indexCondecoracionesStart = 23;
+    private int indexCondecoracionesEnd = 24;
 
     private int currentIndex = 0;
     private List<int> indicesActivos = new List<int>();
@@ -102,8 +103,11 @@ public class AchievementsNavigator : MonoBehaviour
         if (toggleCondecoraciones != null && toggleCondecoraciones.isOn)
         {
             indicesActivos.Clear();
-            indicesActivos.Add(indexCondecoraciones);
-            currentIndex = indexCondecoraciones;
+            /*indicesActivos.Add(indexCondecoraciones);
+            currentIndex = indexCondecoraciones;*/            
+            for (int i = indexCondecoracionesStart; i <= indexCondecoracionesEnd; i++)
+                indicesActivos.Add(i);
+            currentIndex = indicesActivos[0];
             MostrarLogro(currentIndex);
             MostrarTitulo("Decorations");
             return;

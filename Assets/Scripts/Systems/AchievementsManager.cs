@@ -5,11 +5,36 @@ using System.Collections.Generic;
 
 public enum AchievementId
 {
-    PawnIsGold,   // “El Peón vale Oro”
+    PawnIsGold,
     Liberador,
     Keys10, Keys50, Keys100, Keys250, Keys500,
-    // ... futuros
-    // ---- RANGOS ----
+    Diamonds10, Diamonds25, Diamonds50, Diamonds100, Diamonds200,
+    Crown10, Crown20, Crown30, Crown40, Crown50,
+    Chest10, Chest25, Chest50, Chest75, Chest100,
+    Bag10, Bag50, Bag100, Bag200, Bag300,
+    RealCoin10, RealCoin100, RealCoin250, RealCoin500, RealCoin1000, 
+    BlackQueen1, BlackQueen3, BlackQueen5, BlackQueen7, BlackQueen10,
+    BlackRook1, BlackRook3, BlackRook5, BlackRook7, BlackRook10,
+    BlackBishop1, BlackBishop3, BlackBishop5, BlackBishop7, BlackBishop10,
+    BlackKnight1, BlackKnight3, BlackKnight5, BlackKnight7, BlackKnight10,
+    RedQueen1, RedQueen15, RedQueen30, RedQueen40, RedQueen50,
+    RedRook1, RedRook10, RedRook20, RedRook30, RedRook40,
+    RedBishop1, RedBishop5, RedBishop15, RedBishop20, RedBishop30,
+    RedKnight1, RedKnight5,RedKnight15, RedKnight20, RedKnight30,
+    RedPawn1, RedPawn25, RedPawn50, RedPawn75, RedPawn100,
+    FirstTrophy, SecondTrophy, ThirdTrophy, FourthTrophy,
+    All100,
+
+    LegendaryChest,    
+    
+    Trophy1, Trophy2, Trophy3, Trophy4,
+    Score1, Score2, Score3, Score4, Score5,
+    Score6, Score7, Score8, Score9, Score10,
+    Score11, Score12, Score13, Score14, Score15,
+    Score16,
+  
+
+   
     Rank_CaminanteMisterio,
     Rank_CaballeroVerdad,
     Rank_ElegidoEstrellas,
