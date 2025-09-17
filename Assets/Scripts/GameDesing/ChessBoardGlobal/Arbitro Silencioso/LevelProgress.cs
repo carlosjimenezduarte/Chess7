@@ -199,6 +199,10 @@ public class LevelProgress : MonoBehaviour
             Debug.Log($"[LP] ΔPawnRed={delta} (best={enemyPawnsKilled}) aplicado al global.");
 
             FindFirstObjectByType<Stadistics>()?.RefrescarUI();   // refresco visible si hay UI cargada
+            // 🔫 Pistola de cuerda: total global actualizado -> chequear milestones
+            int totalPawnRed = Stadistics.ObtenerKills(_slotId, Stadistics.EnemyKillType.PawnRed);
+            AchievementsManager.ReportRedPawnKillsProgress(totalPawnRed);
+    
         }
 
 
@@ -221,6 +225,9 @@ public class LevelProgress : MonoBehaviour
             Stadistics.RegistrarKill(_slotId, Stadistics.EnemyKillType.KnightRed, delta);
             Debug.Log($"[LP] ΔKnightRed={delta} (best={enemyKnightsKilled}) aplicado al global.");
             FindFirstObjectByType<Stadistics>()?.RefrescarUI();
+            // 🔫 Pistola de cuerda: total global actualizado -> chequear milestones
+            int totalKnightRed = Stadistics.ObtenerKills(_slotId, Stadistics.EnemyKillType.KnightRed);
+            AchievementsManager.ReportRedKnightKillsProgress(totalKnightRed);
         }
     }
 
@@ -241,6 +248,10 @@ public class LevelProgress : MonoBehaviour
             Stadistics.RegistrarKill(_slotId, Stadistics.EnemyKillType.BishopRed, delta);
             Debug.Log($"[LP] ΔBishopRed={delta} (best={enemyBishopsKilled}) aplicado al global.");
             FindFirstObjectByType<Stadistics>()?.RefrescarUI();
+            // 🔫 Pistola de cuerda: total global actualizado -> chequear milestones
+            int totalBishopRed = Stadistics.ObtenerKills(_slotId, Stadistics.EnemyKillType.BishopRed);
+            AchievementsManager.ReportRedBishopKillsProgress(totalBishopRed);
+
         }
     }
     public void AddEnemyRookKill()   // 👈 NUEVO
@@ -260,6 +271,9 @@ public class LevelProgress : MonoBehaviour
             Stadistics.RegistrarKill(_slotId, Stadistics.EnemyKillType.RookRed, delta);
             Debug.Log($"[LP] ΔRookRed={delta} (best={enemyRooksKilled}) aplicado al global.");
             FindFirstObjectByType<Stadistics>()?.RefrescarUI();
+            // 🔫 Pistola de cuerda: total global actualizado -> chequear milestones
+            int totalRookRed = Stadistics.ObtenerKills(_slotId, Stadistics.EnemyKillType.RookRed);
+            AchievementsManager.ReportRedRookKillsProgress(totalRookRed);
         }
     }
 
@@ -281,6 +295,10 @@ public class LevelProgress : MonoBehaviour
             Stadistics.RegistrarKill(_slotId, Stadistics.EnemyKillType.QueenRed, delta);
             Debug.Log($"[LP] ΔQueenRed={delta} (best={enemyQueensKilled}) aplicado al global.");
             FindFirstObjectByType<Stadistics>()?.RefrescarUI();
+            // 🔫 Pistola de cuerda: total global actualizado -> chequear milestones
+            int totalQueenRed = Stadistics.ObtenerKills(_slotId, Stadistics.EnemyKillType.QueenRed);
+            AchievementsManager.ReportRedQueenKillsProgress(totalQueenRed);
+
         }
     }
 
@@ -301,6 +319,9 @@ public class LevelProgress : MonoBehaviour
             Stadistics.RegistrarKill(_slotId, Stadistics.EnemyKillType.RookBlack, delta);
             Debug.Log($"[LP] ΔRookBlack={delta} (best={enemyRooksBlackKilled}) aplicado al global.");
             FindFirstObjectByType<Stadistics>()?.RefrescarUI();
+            int totalRookBlack = Stadistics.ObtenerKills(_slotId, Stadistics.EnemyKillType.RookBlack);
+            AchievementsManager.ReportBlackRookKillsProgress(totalRookBlack);
+
         }
     }
 
@@ -322,6 +343,9 @@ public class LevelProgress : MonoBehaviour
             Stadistics.RegistrarKill(_slotId, Stadistics.EnemyKillType.QueenBlack, delta);
             Debug.Log($"[LP] ΔQueenBlack={delta} (best={enemyQueensBlackKilled}) aplicado al global.");
             FindFirstObjectByType<Stadistics>()?.RefrescarUI();
+            int totalQueenBlack = Stadistics.ObtenerKills(_slotId, Stadistics.EnemyKillType.QueenBlack);
+            AchievementsManager.ReportBlackQueenKillsProgress(totalQueenBlack);
+
         }
     }
 
@@ -342,6 +366,11 @@ public class LevelProgress : MonoBehaviour
             Stadistics.RegistrarKill(_slotId, Stadistics.EnemyKillType.BishopBlack, delta);
             Debug.Log($"[LP] ΔBishopBlack={delta} (best={enemyBishopsBlackKilled}) aplicado al global.");
             FindFirstObjectByType<Stadistics>()?.RefrescarUI();
+            int totalBishopBlack = Stadistics.ObtenerKills(_slotId, Stadistics.EnemyKillType.BishopBlack);
+            AchievementsManager.ReportBlackBishopKillsProgress(totalBishopBlack);
+            int totalKnightBlack = Stadistics.ObtenerKills(_slotId, Stadistics.EnemyKillType.KnightBlack);
+            AchievementsManager.ReportBlackKnightKillsProgress(totalKnightBlack);
+
         }
     }
 

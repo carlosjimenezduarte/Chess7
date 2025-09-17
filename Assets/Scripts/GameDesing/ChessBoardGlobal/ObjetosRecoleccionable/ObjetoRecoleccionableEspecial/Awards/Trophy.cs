@@ -48,6 +48,7 @@ public class Trophy : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjet
             // Recolectar y destruir
         
         LevelProgress.Instance?.Trophy();               
+        AchievementsManager.ReportTrophyPickupForCurrentLevel();
         SoundManager.Instance.PlaySound(26);
         Destroy(gameObject);
     }

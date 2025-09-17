@@ -145,9 +145,216 @@ public class Slot1Manager : MonoBehaviour
             PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Rank_ReyLibre}");
             PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Rank_ReyCoronado}");
 
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.FirstTrophy}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.SecondTrophy}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.ThirdTrophy}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.FourthTrophy}");
+
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Trophy1}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Trophy2}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Trophy3}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Trophy4}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Diamonds10}");
+            // 🔹 Achievements de DIAMANTES (acumulados)
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Diamonds25}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Diamonds50}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Diamonds100}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Diamonds200}");
+
+            // (Opcional) Si usas dismiss persistente para estos paneles en Notificaciones:
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.Diamonds10}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.Diamonds25}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.Diamonds50}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.Diamonds100}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.Diamonds200}_dismissed");
+
+            // 🔹 Achievements de MONEDA REAL (acumulados)
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RealCoin10}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RealCoin100}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RealCoin250}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RealCoin500}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RealCoin1000}");
+
+            // (Opcional) flags de dismiss en Notificaciones
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RealCoin10}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RealCoin100}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RealCoin250}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RealCoin500}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RealCoin1000}_dismissed");
+
+            // 🔹 Achievements de BOLSA (acumulados)
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Bag10}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Bag50}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Bag100}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Bag200}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Bag300}");
+
+            // (Opcional) flags de dismiss en Notificaciones
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.Bag10}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.Bag50}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.Bag100}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.Bag200}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.Bag300}_dismissed");
+            // 🔹 Achievements de COFRE (acumulados)
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Chest10}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Chest25}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Chest50}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Chest75}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Chest100}");
+
+            // (Opcional) flags de dismiss en Notificaciones
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.Chest10}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.Chest25}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.Chest50}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.Chest75}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.Chest100}_dismissed");
+
+            // 🔹 Achievements de CORONA (acumulados)
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Crown10}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Crown20}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Crown30}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Crown40}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.Crown50}");
+
+            // (Opcional) flags de dismiss en Notificaciones
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.Crown10}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.Crown20}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.Crown30}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.Crown40}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.Crown50}_dismissed");
+
+            // 🔹 Achievements de KILLS Peón Rojo (acumulados)
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedPawn1}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedPawn25}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedPawn50}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedPawn75}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedPawn100}");
+
+            // (Opcional) flags de dismiss en Notificaciones
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedPawn1}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedPawn25}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedPawn50}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedPawn75}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedPawn100}_dismissed");
+
+            // 🔹 Achievements de KILLS Caballo Rojo (acumulados)
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedKnight1}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedKnight5}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedKnight15}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedKnight20}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedKnight30}");
+
+            // (Opcional) flags de dismiss en Notificaciones
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedKnight1}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedKnight5}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedKnight15}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedKnight20}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedKnight30}_dismissed");
+
+            // 🔹 Achievements de KILLS Alfil Rojo (acumulados)
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedBishop1}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedBishop5}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedBishop15}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedBishop20}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedBishop30}");
+
+            // (Opcional) flags de dismiss en Notificaciones
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedBishop1}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedBishop5}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedBishop15}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedBishop20}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedBishop30}_dismissed");
+
+            // 🔹 Achievements de KILLS Torre Roja
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedRook1}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedRook10}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedRook20}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedRook30}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedRook50}");
+
+            // (Opcional) dismiss
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedRook1}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedRook10}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedRook20}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedRook30}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedRook50}_dismissed");
+
+            // 🔹 Achievements de KILLS Reina Roja
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedQueen1}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedQueen15}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedQueen30}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedQueen40}");
+            PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.RedQueen50}");
+
+            // (Opcional) dismiss
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedQueen1}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedQueen15}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedQueen30}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedQueen40}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.RedQueen50}_dismissed");
 
 
-            
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.FirstTrophy}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.SecondTrophy}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.ThirdTrophy}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.FourthTrophy}_dismissed");
+
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.Trophy1}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.Trophy2}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.Trophy3}_dismissed");
+            PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.Trophy4}_dismissed");
+
+// 🔹 Achievements de KILLS Negras (Torre/Alfil/Caballo/Reina) — 1,3,5,7,10
+PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.BlackRook1}");
+PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.BlackRook3}");
+PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.BlackRook5}");
+PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.BlackRook7}");
+PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.BlackRook10}");
+
+PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.BlackBishop1}");
+PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.BlackBishop3}");
+PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.BlackBishop5}");
+PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.BlackBishop7}");
+PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.BlackBishop10}");
+
+PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.BlackKnight1}");
+PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.BlackKnight3}");
+PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.BlackKnight5}");
+PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.BlackKnight7}");
+PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.BlackKnight10}");
+
+PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.BlackQueen1}");
+PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.BlackQueen3}");
+PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.BlackQueen5}");
+PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.BlackQueen7}");
+PlayerPrefs.DeleteKey($"{slotId}_ach_{AchievementId.BlackQueen10}");
+
+// (Opcional) flags de dismiss en Notificaciones
+PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.BlackRook1}_dismissed");
+PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.BlackRook3}_dismissed");
+PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.BlackRook5}_dismissed");
+PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.BlackRook7}_dismissed");
+PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.BlackRook10}_dismissed");
+
+PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.BlackBishop1}_dismissed");
+PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.BlackBishop3}_dismissed");
+PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.BlackBishop5}_dismissed");
+PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.BlackBishop7}_dismissed");
+PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.BlackBishop10}_dismissed");
+
+PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.BlackKnight1}_dismissed");
+PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.BlackKnight3}_dismissed");
+PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.BlackKnight5}_dismissed");
+PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.BlackKnight7}_dismissed");
+PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.BlackKnight10}_dismissed");
+
+PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.BlackQueen1}_dismissed");
+PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.BlackQueen3}_dismissed");
+PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.BlackQueen5}_dismissed");
+PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.BlackQueen7}_dismissed");
+PlayerPrefs.DeleteKey($"{slotId}_notif_{AchievementId.BlackQueen10}_dismissed");
+
+
 
 
 

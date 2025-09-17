@@ -117,9 +117,40 @@ public class ProgressSaver : MonoBehaviour
 
         // Stadistics objetos de score (Δ)
         if (deltaBags > 0) Stadistics.RegistrarObjeto(slotId, TipoObjetoScore.Bag, deltaBags);
+        if (deltaBags > 0)
+        {
+            int totalBags = Stadistics.ObtenerConteo(slotId, TipoObjetoScore.Bag);
+            AchievementsManager.ReportBagsProgress(totalBags);
+        }
+
         if (deltaChests > 0) Stadistics.RegistrarObjeto(slotId, TipoObjetoScore.Chest, deltaChests);
+        if (deltaChests > 0)
+        {
+            Stadistics.RegistrarObjeto(slotId, TipoObjetoScore.Chest, deltaChests);
+
+            // 🔫 Pistola de cuerda para Cofre
+            int totalChests = Stadistics.ObtenerConteo(slotId, TipoObjetoScore.Chest);
+            AchievementsManager.ReportChestsProgress(totalChests);
+        }
+
         if (deltaCrowns > 0) Stadistics.RegistrarObjeto(slotId, TipoObjetoScore.Crown, deltaCrowns);
+        if (deltaCrowns > 0)
+        {
+            Stadistics.RegistrarObjeto(slotId, TipoObjetoScore.Crown, deltaCrowns);
+
+            // 🔫 Pistola de cuerda para Corona
+            int totalCrowns = Stadistics.ObtenerConteo(slotId, TipoObjetoScore.Crown);
+            AchievementsManager.ReportCrownsProgress(totalCrowns);
+        }
+
+
+
         if (deltaCoins > 0) Stadistics.RegistrarObjeto(slotId, TipoObjetoScore.RealCoin, deltaCoins);
+        if (deltaCoins > 0)
+        {
+        int totalRealCoins = Stadistics.ObtenerConteo(slotId, TipoObjetoScore.RealCoin);
+        AchievementsManager.ReportRealCoinProgress(totalRealCoins);
+        }
 
         // 👇 NUEVO: estadística global de kills de peón (Δ) — sin depender de Stadistics
         /*if (deltaPawnKills > 0)
@@ -148,13 +179,16 @@ public class ProgressSaver : MonoBehaviour
 
             // 👇 Pistola de cuerda: dispara todos los hitos con el total actualizado
             AchievementsManager.ReportKeysProgress(totalKeys);
+            
 
         }
 
         if (diamondsToAdd > 0)
         {
-            int totalDiamonds = PlayerPrefs.GetInt($"{slotId}_diamondsTotal", 0) + diamondsToAdd;
-            PlayerPrefs.SetInt($"{slotId}_diamondsTotal", totalDiamonds);
+           int totalDiamonds = PlayerPrefs.GetInt($"{slotId}_diamondsTotal", 0) + diamondsToAdd;
+        PlayerPrefs.SetInt($"{slotId}_diamondsTotal", totalDiamonds);
+        AchievementsManager.ReportDiamondsProgress(totalDiamonds);
+            
         }
 
         if (parchment)
