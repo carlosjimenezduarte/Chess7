@@ -27,6 +27,11 @@ public class Slot1Manager : MonoBehaviour
         panelPlayFirst.SetActive(state == "empty");
         panelPlay.SetActive(state == "active");
         panelReset.SetActive(state == "reset_pending");
+
+        int totalScore = PlayerPrefs.GetInt($"{slotKey}_scoreTotal", 0);
+        // 🔹 Reportar progreso de Score a los logros
+        AchievementsManager.ReportScoreProgress(totalScore);
+
     }
 
     public void OnPlay()

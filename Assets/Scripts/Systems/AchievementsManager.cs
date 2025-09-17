@@ -356,14 +356,13 @@ public static class AchievementsManager
 
     // ----- Hitos de Cofre (Chest) -----
     static readonly (AchievementId id, int threshold, int reward, string title, string body)[] CHEST_MILESTONES =
-    {
+{
     (AchievementId.Chest10,   10,   0, "Logro desbloqueado: 10 Cofres",   "+0 puntos por alcanzar 10 cofres."),
+    (AchievementId.Chest25,   25,   0, "Logro desbloqueado: 25 Cofres",   "+0 puntos por alcanzar 25 cofres."),
     (AchievementId.Chest50,   50,   0, "Logro desbloqueado: 50 Cofres",   "+0 puntos por alcanzar 50 cofres."),
-    (AchievementId.Chest100,  100,  0, "Logro desbloqueado: 100 Cofres",  "+0 puntos por alcanzar 100 cofres."),
-    (AchievementId.Chest75,  75,  0, "Logro desbloqueado: 200 Cofres",  "+0 puntos por alcanzar 200 cofres."),
-    (AchievementId.Chest100,  100,  0, "Logro desbloqueado: 300 Cofres",  "+0 puntos por alcanzar 300 cofres."),
+    (AchievementId.Chest75,   75,   0, "Logro desbloqueado: 75 Cofres",   "+0 puntos por alcanzar 75 cofres."),
+    (AchievementId.Chest100, 100,   0, "Logro desbloqueado: 100 Cofres",  "+0 puntos por alcanzar 100 cofres."),
 };
-
     // ----- Verificador único: pásale el total global de Cofres -----
     public static void ReportChestsProgress(int totalChests)
     {
@@ -424,9 +423,9 @@ public static class AchievementsManager
     {
         (AchievementId.RedKnight1,   1,   0, "Logro: 1 Caballo Rojo eliminado",    "+0 puntos por 1 kill."),
         (AchievementId.RedKnight5,   5,   0, "Logro: 5 Caballos Rojos eliminados", "+0 puntos por 5 kills."),
-        (AchievementId.RedKnight15, 10,   0, "Logro: 10 Caballos Rojos eliminados","+0 puntos por 10 kills."),
-        (AchievementId.RedKnight20, 15,   0, "Logro: 15 Caballos Rojos eliminados","+0 puntos por 15 kills."),
-        (AchievementId.RedKnight30, 30,   0, "Logro: 20 Caballos Rojos eliminados","+0 puntos por 20 kills."),
+        (AchievementId.RedKnight15, 15,   0, "Logro: 15 Caballos Rojos eliminados","+0 puntos por 15 kills."),
+        (AchievementId.RedKnight20, 20,   0, "Logro: 20 Caballos Rojos eliminados","+0 puntos por 20 kills."),
+        (AchievementId.RedKnight30, 30,   0, "Logro: 30 Caballos Rojos eliminados","+0 puntos por 30 kills."),
     };
 
     // ----- Verificador único: pásale el total global de kills de Caballo Rojo -----
@@ -466,7 +465,7 @@ public static class AchievementsManager
     (AchievementId.RedRook10, 10,   0, "Logro: 10 Torres Rojas eliminadas","+0 puntos por 10 kills."),
     (AchievementId.RedRook20, 20,   0, "Logro: 20 Torres Rojas eliminadas","+0 puntos por 20 kills."),
     (AchievementId.RedRook30, 30,   0, "Logro: 30 Torres Rojas eliminadas","+0 puntos por 30 kills."),
-    (AchievementId.RedRook50, 50,   0, "Logro: 40 Torres Rojas eliminadas","+0 puntos por 40 kills."),
+    (AchievementId.RedRook50, 50,   0, "Logro: 50 Torres Rojas eliminadas","+0 puntos por 50 kills."),
 };
 
 
@@ -496,74 +495,107 @@ public static class AchievementsManager
                 TryUnlock(slotId, m.id, m.reward, m.title, m.body);
     }
 
-// ===== KILLS NEGROS: TORRE =====
-static readonly (AchievementId id, int threshold, int reward, string title, string body)[] BLACK_ROOK_MILESTONES =
-{
+    // ===== KILLS NEGROS: TORRE =====
+    static readonly (AchievementId id, int threshold, int reward, string title, string body)[] BLACK_ROOK_MILESTONES =
+    {
     (AchievementId.BlackRook1,  1, 0, "Logro: 1 Torre Negra eliminada",   "+0 puntos por 1 kill."),
     (AchievementId.BlackRook3,  3, 0, "Logro: 3 Torres Negras eliminadas","+0 puntos por 3 kills."),
     (AchievementId.BlackRook5,  5, 0, "Logro: 5 Torres Negras eliminadas","+0 puntos por 5 kills."),
     (AchievementId.BlackRook7,  7, 0, "Logro: 7 Torres Negras eliminadas","+0 puntos por 7 kills."),
     (AchievementId.BlackRook10,10, 0, "Logro: 10 Torres Negras eliminadas","+0 puntos por 10 kills."),
 };
-public static void ReportBlackRookKillsProgress(int total)
-{
-    string slotId = PlayerPrefs.GetString("slotActivo", "slot1");
-    foreach (var m in BLACK_ROOK_MILESTONES)
-        if (total >= m.threshold && !IsUnlocked(slotId, m.id))
-            TryUnlock(slotId, m.id, m.reward, m.title, m.body);
-}
+    public static void ReportBlackRookKillsProgress(int total)
+    {
+        string slotId = PlayerPrefs.GetString("slotActivo", "slot1");
+        foreach (var m in BLACK_ROOK_MILESTONES)
+            if (total >= m.threshold && !IsUnlocked(slotId, m.id))
+                TryUnlock(slotId, m.id, m.reward, m.title, m.body);
+    }
 
-// ===== KILLS NEGROS: ALFIL =====
-static readonly (AchievementId id, int threshold, int reward, string title, string body)[] BLACK_BISHOP_MILESTONES =
-{
+    // ===== KILLS NEGROS: ALFIL =====
+    static readonly (AchievementId id, int threshold, int reward, string title, string body)[] BLACK_BISHOP_MILESTONES =
+    {
     (AchievementId.BlackBishop1,  1, 0, "Logro: 1 Alfil Negro eliminado",   "+0 puntos por 1 kill."),
     (AchievementId.BlackBishop3,  3, 0, "Logro: 3 Alfiles Negros eliminados","+0 puntos por 3 kills."),
     (AchievementId.BlackBishop5,  5, 0, "Logro: 5 Alfiles Negros eliminados","+0 puntos por 5 kills."),
     (AchievementId.BlackBishop7,  7, 0, "Logro: 7 Alfiles Negros eliminados","+0 puntos por 7 kills."),
     (AchievementId.BlackBishop10,10,0, "Logro: 10 Alfiles Negros eliminados","+0 puntos por 10 kills."),
 };
-public static void ReportBlackBishopKillsProgress(int total)
-{
-    string slotId = PlayerPrefs.GetString("slotActivo", "slot1");
-    foreach (var m in BLACK_BISHOP_MILESTONES)
-        if (total >= m.threshold && !IsUnlocked(slotId, m.id))
-            TryUnlock(slotId, m.id, m.reward, m.title, m.body);
-}
+    public static void ReportBlackBishopKillsProgress(int total)
+    {
+        string slotId = PlayerPrefs.GetString("slotActivo", "slot1");
+        foreach (var m in BLACK_BISHOP_MILESTONES)
+            if (total >= m.threshold && !IsUnlocked(slotId, m.id))
+                TryUnlock(slotId, m.id, m.reward, m.title, m.body);
+    }
 
-// ===== KILLS NEGROS: CABALLO =====
-static readonly (AchievementId id, int threshold, int reward, string title, string body)[] BLACK_KNIGHT_MILESTONES =
-{
+    // ===== KILLS NEGROS: CABALLO =====
+    static readonly (AchievementId id, int threshold, int reward, string title, string body)[] BLACK_KNIGHT_MILESTONES =
+    {
     (AchievementId.BlackKnight1,  1, 0, "Logro: 1 Caballo Negro eliminado",   "+0 puntos por 1 kill."),
     (AchievementId.BlackKnight3,  3, 0, "Logro: 3 Caballos Negros eliminados","+0 puntos por 3 kills."),
     (AchievementId.BlackKnight5,  5, 0, "Logro: 5 Caballos Negros eliminados","+0 puntos por 5 kills."),
     (AchievementId.BlackKnight7,  7, 0, "Logro: 7 Caballos Negros eliminados","+0 puntos por 7 kills."),
     (AchievementId.BlackKnight10,10,0, "Logro: 10 Caballos Negros eliminados","+0 puntos por 10 kills."),
 };
-public static void ReportBlackKnightKillsProgress(int total)
-{
-    string slotId = PlayerPrefs.GetString("slotActivo", "slot1");
-    foreach (var m in BLACK_KNIGHT_MILESTONES)
-        if (total >= m.threshold && !IsUnlocked(slotId, m.id))
-            TryUnlock(slotId, m.id, m.reward, m.title, m.body);
-}
+    public static void ReportBlackKnightKillsProgress(int total)
+    {
+        string slotId = PlayerPrefs.GetString("slotActivo", "slot1");
+        foreach (var m in BLACK_KNIGHT_MILESTONES)
+            if (total >= m.threshold && !IsUnlocked(slotId, m.id))
+                TryUnlock(slotId, m.id, m.reward, m.title, m.body);
+    }
 
-// ===== KILLS NEGROS: REINA =====
-static readonly (AchievementId id, int threshold, int reward, string title, string body)[] BLACK_QUEEN_MILESTONES =
-{
+    // ===== KILLS NEGROS: REINA =====
+    static readonly (AchievementId id, int threshold, int reward, string title, string body)[] BLACK_QUEEN_MILESTONES =
+    {
     (AchievementId.BlackQueen1,  1, 0, "Logro: 1 Reina Negra eliminada",   "+0 puntos por 1 kill."),
     (AchievementId.BlackQueen3,  3, 0, "Logro: 3 Reinas Negras eliminadas","+0 puntos por 3 kills."),
     (AchievementId.BlackQueen5,  5, 0, "Logro: 5 Reinas Negras eliminadas","+0 puntos por 5 kills."),
     (AchievementId.BlackQueen7,  7, 0, "Logro: 7 Reinas Negras eliminadas","+0 puntos por 7 kills."),
     (AchievementId.BlackQueen10,10,0, "Logro: 10 Reinas Negras eliminadas","+0 puntos por 10 kills."),
 };
-public static void ReportBlackQueenKillsProgress(int total)
+    public static void ReportBlackQueenKillsProgress(int total)
+    {
+        string slotId = PlayerPrefs.GetString("slotActivo", "slot1");
+        foreach (var m in BLACK_QUEEN_MILESTONES)
+            if (total >= m.threshold && !IsUnlocked(slotId, m.id))
+                TryUnlock(slotId, m.id, m.reward, m.title, m.body);
+
+    }
+
+    // ----- Hitos de Score -----
+    static readonly (AchievementId id, int threshold, string title, string body)[] SCORE_MILESTONES =
+    {
+    (AchievementId.Score16,   5000,   "Logro desbloqueado: 5.000 puntos de Score",   "Has alcanzado 5.000 puntos de Score."),
+    (AchievementId.Score1,   10000,   "Logro desbloqueado: 10.000 puntos de Score",  "Has alcanzado 10.000 puntos de Score."),
+    (AchievementId.Score2,   20000,   "Logro desbloqueado: 20.000 puntos de Score",  "Has alcanzado 20.000 puntos de Score."),
+    (AchievementId.Score3,   30000,   "Logro desbloqueado: 30.000 puntos de Score",  "Has alcanzado 30.000 puntos de Score."),
+    (AchievementId.Score4,   40000,   "Logro desbloqueado: 40.000 puntos de Score",  "Has alcanzado 40.000 puntos de Score."),
+    (AchievementId.Score5,   50000,   "Logro desbloqueado: 50.000 puntos de Score",  "Has alcanzado 50.000 puntos de Score."),
+    (AchievementId.Score6,   60000,   "Logro desbloqueado: 60.000 puntos de Score",  "Has alcanzado 60.000 puntos de Score."),
+    (AchievementId.Score7,   70000,   "Logro desbloqueado: 70.000 puntos de Score",  "Has alcanzado 70.000 puntos de Score."),
+    (AchievementId.Score8,   80000,   "Logro desbloqueado: 80.000 puntos de Score",  "Has alcanzado 80.000 puntos de Score."),
+    (AchievementId.Score9,   90000,   "Logro desbloqueado: 90.000 puntos de Score",  "Has alcanzado 90.000 puntos de Score."),
+    (AchievementId.Score10, 100000,   "Logro desbloqueado: 100.000 puntos de Score", "Has alcanzado 100.000 puntos de Score."),
+    (AchievementId.Score11, 120000,   "Logro desbloqueado: 120.000 puntos de Score", "Has alcanzado 120.000 puntos de Score."),
+    (AchievementId.Score12, 140000,   "Logro desbloqueado: 140.000 puntos de Score", "Has alcanzado 140.000 puntos de Score."),
+    (AchievementId.Score13, 160000,   "Logro desbloqueado: 160.000 puntos de Score", "Has alcanzado 160.000 puntos de Score."),
+    (AchievementId.Score14, 180000,   "Logro desbloqueado: 180.000 puntos de Score", "Has alcanzado 180.000 puntos de Score."),
+    (AchievementId.Score15, 200000,   "Logro desbloqueado: 200.000 puntos de Score", "Has alcanzado 200.000 puntos de Score."),
+};
+
+public static void ReportScoreProgress(int totalScore)
 {
     string slotId = PlayerPrefs.GetString("slotActivo", "slot1");
-    foreach (var m in BLACK_QUEEN_MILESTONES)
-        if (total >= m.threshold && !IsUnlocked(slotId, m.id))
-            TryUnlock(slotId, m.id, m.reward, m.title, m.body);
+    foreach (var m in SCORE_MILESTONES)
+    {
+        if (totalScore >= m.threshold && !IsUnlocked(slotId, m.id))
+        {
+            TryUnlock(slotId, m.id, 0, m.title, m.body);
+        }
+    }
 }
-
 
 
 
