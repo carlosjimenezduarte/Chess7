@@ -18342,7 +18342,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8867357768293156711, guid: ffb97260de46f744989fd771f6598350, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -23236,7 +23236,7 @@ MonoBehaviour:
   esNivelMasterKey: 0
   esNivelPergamino: 0
   esNivelTrofeo: 0
-  esNivelMedalla: 0
+  esNivelMedalla: 1
   bagsCollected: 0
   crownsCollected: 0
   chestsCollected: 0
@@ -27378,7 +27378,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3570022135670149528, guid: 90a287c4b11d89f43a1ddab007024038, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8099485512236999862, guid: 90a287c4b11d89f43a1ddab007024038, type: 3}
       propertyPath: tileCoords.x
@@ -28098,7 +28098,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7529059816509984890, guid: 82187207baeecdc479d8fe2ec8465518, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -29074,7 +29074,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8862064234673966380, guid: c7f4c38436e5e49418f7fa9f9e30a2db, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -29573,7 +29573,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 353429981144274507, guid: 9cf477e2ccff83043a9598cb642321ad, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5807565142770924565, guid: 9cf477e2ccff83043a9598cb642321ad, type: 3}
       propertyPath: m_Pivot.x
@@ -29637,11 +29637,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5807565142770924565, guid: 9cf477e2ccff83043a9598cb642321ad, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -67.5
+      value: 337.5
       objectReference: {fileID: 0}
     - target: {fileID: 5807565142770924565, guid: 9cf477e2ccff83043a9598cb642321ad, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -202.5
+      value: 337.5
       objectReference: {fileID: 0}
     - target: {fileID: 5807565142770924565, guid: 9cf477e2ccff83043a9598cb642321ad, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -29657,15 +29657,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6466244939215043741, guid: 9cf477e2ccff83043a9598cb642321ad, type: 3}
       propertyPath: tileCoords.x
-      value: 3
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6466244939215043741, guid: 9cf477e2ccff83043a9598cb642321ad, type: 3}
+      propertyPath: tileCoords.y
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7750552019055970720, guid: 9cf477e2ccff83043a9598cb642321ad, type: 3}
       propertyPath: tileCoords.x
-      value: 3
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7750552019055970720, guid: 9cf477e2ccff83043a9598cb642321ad, type: 3}
+      propertyPath: tileCoords.y
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8515327790081137600, guid: 9cf477e2ccff83043a9598cb642321ad, type: 3}
       propertyPath: tileCoords.x
-      value: 3
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8515327790081137600, guid: 9cf477e2ccff83043a9598cb642321ad, type: 3}
+      propertyPath: tileCoords.y
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -30800,7 +30812,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4835523224384612845, guid: 80b3d457f5aed824a9006c4d74a8b2ab, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -31083,7 +31095,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8796652828498097787, guid: bdb6ab9e08bd1094fad2a5a0c80fdf22, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -31359,7 +31371,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2270935310159905276, guid: f750a1d3d00a92345b8d3f40ed28c565, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3591504951537369909, guid: f750a1d3d00a92345b8d3f40ed28c565, type: 3}
       propertyPath: tileCoords.x
@@ -31748,7 +31760,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5063045070520871796, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5666605346156485819, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: m_Pivot.x
@@ -32515,7 +32527,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 316880704654483217, guid: 023b0aa9280eb1243b63f2b829e42b1e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1003977953038366430, guid: 023b0aa9280eb1243b63f2b829e42b1e, type: 3}
       propertyPath: tileCoords.x
@@ -32873,7 +32885,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8867357768293156711, guid: ffb97260de46f744989fd771f6598350, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

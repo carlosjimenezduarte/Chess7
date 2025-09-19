@@ -7418,7 +7418,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5063045070520871796, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5666605346156485819, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: m_Pivot.x
@@ -17700,7 +17700,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8867357768293156711, guid: ffb97260de46f744989fd771f6598350, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -22928,7 +22928,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelIdInspector: -1
-  esNivelMasterKey: 0
+  esNivelMasterKey: 1
   esNivelPergamino: 0
   esNivelTrofeo: 0
   esNivelMedalla: 0
@@ -32046,11 +32046,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -1620671147383346693, guid: c70e4da1be17fe24bb0802a4af747661, type: 3}
       propertyPath: tileCoords.x
-      value: 1
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: -1620671147383346693, guid: c70e4da1be17fe24bb0802a4af747661, type: 3}
       propertyPath: tileCoords.y
-      value: 0
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2320010841274206018, guid: c70e4da1be17fe24bb0802a4af747661, type: 3}
       propertyPath: m_Name
@@ -32058,23 +32058,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2320010841274206018, guid: c70e4da1be17fe24bb0802a4af747661, type: 3}
       propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2662498137879096800, guid: c70e4da1be17fe24bb0802a4af747661, type: 3}
-      propertyPath: tileCoords.x
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2662498137879096800, guid: c70e4da1be17fe24bb0802a4af747661, type: 3}
+      propertyPath: tileCoords.x
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2662498137879096800, guid: c70e4da1be17fe24bb0802a4af747661, type: 3}
       propertyPath: tileCoords.y
-      value: 0
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6263049303167728663, guid: c70e4da1be17fe24bb0802a4af747661, type: 3}
       propertyPath: tileCoords.x
-      value: 1
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6263049303167728663, guid: c70e4da1be17fe24bb0802a4af747661, type: 3}
       propertyPath: tileCoords.y
-      value: 0
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6962516032778868109, guid: c70e4da1be17fe24bb0802a4af747661, type: 3}
       propertyPath: m_Pivot.x
@@ -32146,11 +32146,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6962516032778868109, guid: c70e4da1be17fe24bb0802a4af747661, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -337.5
+      value: 472.5
       objectReference: {fileID: 0}
     - target: {fileID: 6962516032778868109, guid: c70e4da1be17fe24bb0802a4af747661, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -472.5
+      value: 67.5
       objectReference: {fileID: 0}
     - target: {fileID: 6962516032778868109, guid: c70e4da1be17fe24bb0802a4af747661, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -32541,7 +32541,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8867357768293156711, guid: ffb97260de46f744989fd771f6598350, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

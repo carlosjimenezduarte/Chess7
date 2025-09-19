@@ -2,6 +2,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
 using System.Collections.Generic;
+public enum MasterKeyId
+    {
+        CrownOfTheKey = 1,
+        SoulColumn = 2,
+        ToothOfTheKingdom = 3
+    }
 
 public enum AchievementId
 {
@@ -23,15 +29,13 @@ public enum AchievementId
     RedKnight1, RedKnight5,RedKnight15, RedKnight20, RedKnight30,
     RedPawn1, RedPawn25, RedPawn50, RedPawn75, RedPawn100,
     FirstTrophy, SecondTrophy, ThirdTrophy, FourthTrophy,
-    All100,
-
-    LegendaryChest,    
+    MasterKey1, MasterKey2, MasterKey3,
     
     Trophy1, Trophy2, Trophy3, Trophy4,
     Score1, Score2, Score3, Score4, Score5,
     Score6, Score7, Score8, Score9, Score10,
     Score11, Score12, Score13, Score14, Score15,
-    Score16,
+    
   
 
    
@@ -567,7 +571,7 @@ public static class AchievementsManager
     // ----- Hitos de Score -----
     static readonly (AchievementId id, int threshold, string title, string body)[] SCORE_MILESTONES =
     {
-    (AchievementId.Score16,   5000,   "Logro desbloqueado: 5.000 puntos de Score",   "Has alcanzado 5.000 puntos de Score."),
+
     (AchievementId.Score1,   10000,   "Logro desbloqueado: 10.000 puntos de Score",  "Has alcanzado 10.000 puntos de Score."),
     (AchievementId.Score2,   20000,   "Logro desbloqueado: 20.000 puntos de Score",  "Has alcanzado 20.000 puntos de Score."),
     (AchievementId.Score3,   30000,   "Logro desbloqueado: 30.000 puntos de Score",  "Has alcanzado 30.000 puntos de Score."),
@@ -585,17 +589,57 @@ public static class AchievementsManager
     (AchievementId.Score15, 200000,   "Logro desbloqueado: 200.000 puntos de Score", "Has alcanzado 200.000 puntos de Score."),
 };
 
-public static void ReportScoreProgress(int totalScore)
-{
-    string slotId = PlayerPrefs.GetString("slotActivo", "slot1");
-    foreach (var m in SCORE_MILESTONES)
+    public static void ReportScoreProgress(int totalScore)
     {
-        if (totalScore >= m.threshold && !IsUnlocked(slotId, m.id))
+        string slotId = PlayerPrefs.GetString("slotActivo", "slot1");
+        foreach (var m in SCORE_MILESTONES)
         {
-            TryUnlock(slotId, m.id, 0, m.title, m.body);
+            if (totalScore >= m.threshold && !IsUnlocked(slotId, m.id))
+            {
+                TryUnlock(slotId, m.id, 0, m.title, m.body);
+            }
         }
     }
-}
+    
+    public static void ReportMasterKey(MasterKeyId which)
+    {
+        string slotId = PlayerPrefs.GetString("slotActivo", "slot1");
+
+        switch (which)
+        {
+            case MasterKeyId.CrownOfTheKey:
+                TryUnlock(
+                    slotId,
+                    AchievementId.MasterKey1,
+                    0,
+                    "Logro desbloqueado: MasterKey I",
+                    "Has obtenido la Corona de la Llave."
+                );
+                break;
+
+            case MasterKeyId.SoulColumn:
+                TryUnlock(
+                    slotId,
+                    AchievementId.MasterKey2,
+                    0,
+                    "Logro desbloqueado: MasterKey II",
+                    "Has obtenido la Columna del Alma."
+                );
+                break;
+
+            case MasterKeyId.ToothOfTheKingdom:
+                TryUnlock(
+                    slotId,
+                    AchievementId.MasterKey3,
+                    0,
+                    "Logro desbloqueado: MasterKey III",
+                    "Has obtenido el Diente del Reino."
+                );
+                break;
+        }
+    }
+
+
 
 
 

@@ -46,7 +46,7 @@ public class CrownoftheKey : MonoBehaviour, ITileEffect, IObjetoRecoleccionable,
 
         // Recolectar y destruir
         SoundManager.Instance.PlaySound(30);
-        LevelProgress.Instance?.MasterKey();
+        LevelProgress.Instance?.MasterKey(MasterKeyId.CrownOfTheKey);
         Destroy(gameObject);
     }
 

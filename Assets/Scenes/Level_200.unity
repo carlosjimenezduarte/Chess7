@@ -7418,7 +7418,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5063045070520871796, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5666605346156485819, guid: 158e86cf7c607604bbaf27155b6db95b, type: 3}
       propertyPath: m_Pivot.x
@@ -17700,7 +17700,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8867357768293156711, guid: ffb97260de46f744989fd771f6598350, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -22931,7 +22931,7 @@ MonoBehaviour:
   esNivelMasterKey: 0
   esNivelPergamino: 0
   esNivelTrofeo: 0
-  esNivelMedalla: 0
+  esNivelMedalla: 1
   bagsCollected: 0
   crownsCollected: 0
   chestsCollected: 0
@@ -22945,8 +22945,8 @@ MonoBehaviour:
   enemyQueensBlackKilled: 0
   enemyBishopsBlackKilled: 0
   enemyKnightsBlackKilled: 0
-  maxKeys: 1
-  maxDiamonds: 2
+  maxKeys: 0
+  maxDiamonds: 0
   keysCollected: 0
   diamondsCollected: 0
   hasParchment: 0
@@ -29091,7 +29091,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4396372264785346273, guid: be67dd7316a45b8458afec63e7236dc9, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4988382352381567473, guid: be67dd7316a45b8458afec63e7236dc9, type: 3}
       propertyPath: tileCoords.x
@@ -32541,7 +32541,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8867357768293156711, guid: ffb97260de46f744989fd771f6598350, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

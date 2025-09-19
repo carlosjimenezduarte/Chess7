@@ -46,7 +46,7 @@ public class ToothoftheKingdom : MonoBehaviour, ITileEffect, IObjetoRecolecciona
 
         // Recolectar y destruir
         SoundManager.Instance.PlaySound(30);
-        LevelProgress.Instance?.MasterKey();
+        LevelProgress.Instance?.MasterKey(MasterKeyId.ToothOfTheKingdom);
         Destroy(gameObject);
     }
 

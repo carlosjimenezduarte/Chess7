@@ -46,7 +46,7 @@ public class SoulColumn : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IO
 
         // Recolectar y destruir
         SoundManager.Instance.PlaySound(30);
-        LevelProgress.Instance?.MasterKey();        
+        LevelProgress.Instance?.MasterKey(MasterKeyId.SoulColumn);      
         Destroy(gameObject);
     }
 

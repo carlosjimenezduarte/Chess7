@@ -36,14 +36,28 @@ public class MapNavigator : MonoBehaviour
 
     private void MostrarMapa(int index)
     {
-        // Apagar todos
         for (int i = 0; i < mapas.Length; i++)
-        {
             mapas[i].SetActive(i == index);
-        }
 
-        // Actualizar botones según posición
         if (botonPrevious) botonPrevious.SetActive(index > 0);
         if (botonNext) botonNext.SetActive(index < mapas.Length - 1);
+
+        // 🔄 Refresca visual de los tiles del mapa que acaban de activarse
+        var ghm = FindFirstObjectByType<GameHomeManager>();
+        ghm?.RefrescarTilesActuales();
+
+        // (opcional) si este mapa tiene puerta final, refresca solo sus iconos
+        foreach (var door in mapas[index].GetComponentsInChildren<FinalDoorTile>(true))
+            door.RefreshVisual(); // esto NO toca LevelTile (ver punto 2)
     }
+
+
+    public void IrAlMapa(int index)
+    {
+        if (index < 0 || index >= mapas.Length) return;
+        currentIndex = index;
+        MostrarMapa(currentIndex);
+    }
+    
+
 }

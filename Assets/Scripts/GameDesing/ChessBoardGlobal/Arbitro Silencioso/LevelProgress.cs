@@ -397,8 +397,19 @@ public class LevelProgress : MonoBehaviour
 
 
 
+public void MasterKey(MasterKeyId which)
+{
+    // Flag opcional en memoria local (si quieres reflejar algo en UI del nivel)
+    hasMasterKey3 = true; // o crea flags por cada MK si lo necesitas
 
+    // Marca persistente opcional (útil si luego quieres leerlo en menús)
+    string slotId = PlayerPrefs.GetString("slotActivo", "slot1");
+    PlayerPrefs.SetInt($"{slotId}_mk{(int)which}_collected", 1);
+    PlayerPrefs.Save();
 
+    // Dispara el logro correspondiente
+    AchievementsManager.ReportMasterKey(which);
+}
 
 
 }
