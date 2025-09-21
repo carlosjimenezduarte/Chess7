@@ -7034,6 +7034,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98b1f25801b541f49af7cc4570e9171f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  guestBackSceneIndex: 10
+  registeredBackSceneIndex: 3
 --- !u!224 &475778750 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7189396139639835667, guid: 36946221a39e0e84e84ec4e6dd1408e7, type: 3}
@@ -8892,7 +8894,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1080, y: 1920}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0.5
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -30669,7 +30671,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4835523224384612845, guid: 80b3d457f5aed824a9006c4d74a8b2ab, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -30952,7 +30954,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8796652828498097787, guid: bdb6ab9e08bd1094fad2a5a0c80fdf22, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -32396,7 +32398,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 316880704654483217, guid: 023b0aa9280eb1243b63f2b829e42b1e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1003977953038366430, guid: 023b0aa9280eb1243b63f2b829e42b1e, type: 3}
       propertyPath: tileCoords.x

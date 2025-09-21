@@ -4926,7 +4926,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 7f1afd6326507454fb1c03cc90ef2c4e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1925b69577bfb12478e19c7b663d0f06, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5433,7 +5433,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 7f1afd6326507454fb1c03cc90ef2c4e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1925b69577bfb12478e19c7b663d0f06, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7034,6 +7034,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98b1f25801b541f49af7cc4570e9171f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  guestBackSceneIndex: 10
+  registeredBackSceneIndex: 3
 --- !u!224 &475778750 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7189396139639835667, guid: 36946221a39e0e84e84ec4e6dd1408e7, type: 3}
@@ -8892,7 +8894,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1080, y: 1920}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0.5
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -20392,7 +20394,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1604262526
 RectTransform:
   m_ObjectHideFlags: 0
@@ -25079,7 +25081,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2040516625
 RectTransform:
   m_ObjectHideFlags: 0
