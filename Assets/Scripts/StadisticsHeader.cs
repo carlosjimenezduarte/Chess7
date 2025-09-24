@@ -10,6 +10,9 @@ public class StadisticsHeader : MonoBehaviour
     public TMP_Text usernameText;
     public Image avatarImage;
 
+    [Header("Avatar por defecto para invitados")]
+    public Sprite guestDefaultAvatar;
+
     [Header("Avatares")]
     public AvatarCatalog avatarCatalog;
 
@@ -58,9 +61,18 @@ public class StadisticsHeader : MonoBehaviour
 
         // --- Avatar ---
         string avatarId = PlayerPrefs.GetString("avatarId", "");
-        if (!isSignedInLike) avatarId = ""; // invitado: usa default
-        if (avatarImage != null && avatarCatalog != null)
-            avatarImage.sprite = avatarCatalog.Get(avatarId);
+        if (!isSignedInLike)
+        {
+            // Invitado → usar imagen fija
+            if (avatarImage != null && guestDefaultAvatar != null)
+                avatarImage.sprite = guestDefaultAvatar;
+        }
+        else
+        {
+            if (avatarImage != null && avatarCatalog != null)
+                avatarImage.sprite = avatarCatalog.Get(avatarId);
+        }
+
     }
 
     string LocalizedGuest(string lang)
