@@ -2917,6 +2917,64 @@ MonoBehaviour:
   references:
     version: 2
     RefIds: []
+--- !u!1 &363444757
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 363444759}
+  - component: {fileID: 363444758}
+  m_Layer: 0
+  m_Name: 'StadisticsHeader '
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &363444758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 363444757}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcba202478b684d4aa1ac72fe503459c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  usernameText: {fileID: 1201433508}
+  avatarImage: {fileID: 539780386}
+  avatarCatalog: {fileID: 11400000, guid: 430827469a36de146b32e89a473006d3, type: 2}
+  forcedLangOverride: 
+  guest_es: Invitado
+  guest_en: Guest
+  guest_pt: Convidado
+  guest_fr: "Invit\xE9"
+  guest_it: Ospite
+  guest_de: Gast
+  guest_ru: "\u0413\u043E\u0441\u0442\u044C"
+  guest_ja: "\u30B2\u30B9\u30C8"
+  guest_ko: "\uAC8C\uC2A4\uD2B8"
+  guest_zh: "\u8BBF\u5BA2"
+--- !u!4 &363444759
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 363444757}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &374627530
 GameObject:
   m_ObjectHideFlags: 0
@@ -3812,7 +3870,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: c47617535c06ec44ab8b8d9e3bd11756, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6688,7 +6746,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Willow
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
   m_sharedMaterial: {fileID: 532615492540030504, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
@@ -6715,7 +6773,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 72
+  m_fontSize: 36
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -8680,6 +8738,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98b1f25801b541f49af7cc4570e9171f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  guestBackSceneIndex: 10
+  registeredBackSceneIndex: 3
 --- !u!1 &1608045763
 GameObject:
   m_ObjectHideFlags: 0
@@ -10845,3 +10905,4 @@ SceneRoots:
   - {fileID: 1975798981}
   - {fileID: 745849556}
   - {fileID: 1286408718}
+  - {fileID: 363444759}

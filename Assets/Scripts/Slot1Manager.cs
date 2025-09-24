@@ -64,6 +64,8 @@ public class Slot1Manager : MonoBehaviour
         if (levelsProgressText != null)
             levelsProgressText.text = $"0/{TOTAL_NIVELES_VISIBLES}";
 
+        RankSystem.Instance?.RefreshUI();
+        
         UpdateUI();
         Debug.Log("🧹 Slot1 completamente reiniciado (oficial).");
     }
@@ -129,6 +131,7 @@ public class Slot1Manager : MonoBehaviour
         Del($"{slotId}_masterKeysTotal");
         Del($"{slotId}_scoreFromAchievements");
         Del($"{slotId}_lastRunDebt");
+        Del($"{slotId}_rankMaxIndex");
 
         // Flags persistentes de MasterKeys (si los grabaste al recoger en LevelProgress.MasterKey)
         for (int mk = 1; mk <= 3; mk++)

@@ -28,7 +28,16 @@ public class SceneLoader : MonoBehaviour
 
     private IEnumerator LoadSceneDelay(int sceneIndex, float delay)
     {
+        Debug.Log($"[SceneLoader] Voy a cargar la escena {sceneIndex} (llamado desde {new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().DeclaringType})");
+
         yield return new WaitForSecondsRealtime(delay);
         SceneManager.LoadScene(sceneIndex);
     }
+
+    public void BackGuestToHome()
+    {
+        Debug.Log("🔙 Invitado → HomeGuest (13)");
+        StartCoroutine(LoadSceneDelay(13, 0.5f));
+    }
+
 }

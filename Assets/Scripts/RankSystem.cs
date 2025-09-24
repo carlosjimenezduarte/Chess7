@@ -131,31 +131,37 @@ public class RankSystem : MonoBehaviour
 
     // ========= UI: enciende SOLO el panel del rango mayor =========
     public void RefreshUI()
-    {
-        string slot = PlayerPrefs.GetString("slotActivo", "slot1");
-        int maxIdx = PlayerPrefs.GetInt($"{slot}_rankMaxIndex", ComputeMaxFromAchievements(slot));
-        ShowOnly(maxIdx);
-    }
+{
+    string slot = PlayerPrefs.GetString("slotActivo", "slot1");
+
+    int maxIdx;
+    if (PlayerPrefs.HasKey($"{slot}_rankMaxIndex"))
+        maxIdx = PlayerPrefs.GetInt($"{slot}_rankMaxIndex");
+    else
+        maxIdx = ComputeMaxFromAchievements(slot); // devuelve -1 si no hay ninguno
+
+    ShowOnly(maxIdx);
+}
 
     private void ShowOnly(int idx)
-    {
-        // Apagar todos primero
-        if (rankPanels != null)
-        {
-            for (int i = 0; i < rankPanels.Length; i++)
-                if (rankPanels[i] != null) rankPanels[i].SetActive(false);
-        }
+{
+    // Apaga todos
+    if (rankPanels != null)
+        for (int i = 0; i < rankPanels.Length; i++)
+            if (rankPanels[i] != null) rankPanels[i].SetActive(false);
 
-        if (idx >= 0 && idx < rankPanels.Length && rankPanels[idx] != null)
-        {
-            rankPanels[idx].SetActive(true);
-            if (noRankPanel != null) noRankPanel.SetActive(false);
-        }
-        else
-        {
-            if (noRankPanel != null) noRankPanel.SetActive(true);
-        }
+    // Clamp defensivo
+    if (idx < 0 || idx >= rankPanels.Length)
+    {
+        if (noRankPanel != null) noRankPanel.SetActive(true);
+        return;
     }
+
+    // Enciende solo el panel del rango
+    if (rankPanels[idx] != null) rankPanels[idx].SetActive(true);
+    if (noRankPanel != null) noRankPanel.SetActive(false);
+}
+    
 
     // Si no existe rankMaxIndex (caso legacy), derivarlo de los achievements ya desbloqueados
     private int ComputeMaxFromAchievements(string slot)

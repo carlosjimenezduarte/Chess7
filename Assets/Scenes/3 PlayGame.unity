@@ -10021,6 +10021,138 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!1 &2045165078
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2045165080}
+  - component: {fileID: 2045165079}
+  m_Layer: 0
+  m_Name: RankSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2045165079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2045165078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 800f16b42cddfdd49a3bd1cc1e18675e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rules:
+  - nivelLogico: 10
+    trigger: 0
+    rank: 0
+    achievement: 7
+  - nivelLogico: 20
+    trigger: 0
+    rank: 1
+    achievement: 8
+  - nivelLogico: 40
+    trigger: 1
+    rank: 2
+    achievement: 9
+  - nivelLogico: 50
+    trigger: 0
+    rank: 3
+    achievement: 10
+  - nivelLogico: 60
+    trigger: 1
+    rank: 4
+    achievement: 11
+  - nivelLogico: 70
+    trigger: 0
+    rank: 5
+    achievement: 12
+  - nivelLogico: 80
+    trigger: 0
+    rank: 6
+    achievement: 13
+  - nivelLogico: 100
+    trigger: 1
+    rank: 7
+    achievement: 14
+  - nivelLogico: 110
+    trigger: 0
+    rank: 8
+    achievement: 15
+  - nivelLogico: 120
+    trigger: 0
+    rank: 9
+    achievement: 16
+  - nivelLogico: 130
+    trigger: 1
+    rank: 10
+    achievement: 17
+  - nivelLogico: 150
+    trigger: 0
+    rank: 11
+    achievement: 18
+  - nivelLogico: 160
+    trigger: 0
+    rank: 12
+    achievement: 19
+  - nivelLogico: 170
+    trigger: 1
+    rank: 13
+    achievement: 20
+  - nivelLogico: 180
+    trigger: 0
+    rank: 14
+    achievement: 21
+  - nivelLogico: 200
+    trigger: 1
+    rank: 15
+    achievement: 22
+  - nivelLogico: 204
+    trigger: 2
+    rank: 16
+    achievement: 23
+  rankPanels:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  noRankPanel: {fileID: 0}
+--- !u!4 &2045165080
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2045165078}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2099677771
 GameObject:
   m_ObjectHideFlags: 0
@@ -10388,3 +10520,4 @@ SceneRoots:
   - {fileID: 985839432}
   - {fileID: 1172427943}
   - {fileID: 556140931}
+  - {fileID: 2045165080}
