@@ -142,77 +142,7 @@ public class GameHomeManager : MonoBehaviour
 
 
 
-    /*public void CargarProgreso()
-    {
-        string slotActivo = PlayerPrefs.GetString("slotActivo", "slot1");
-        int nivelMax = PlayerPrefs.GetInt(slotActivo + "_nivelMax", 1);
-
-        int totalScore = PlayerPrefs.GetInt(slotActivo + "_scoreTotal", 0);
-        int totalKeys = PlayerPrefs.GetInt(slotActivo + "_keysTotal", 0);
-        int totalDiamonds = PlayerPrefs.GetInt(slotActivo + "_diamondsTotal", 0);
-
-        // 👇 NUEVO: leer deuda del último intento
-        int lastRunDebt = PlayerPrefs.GetInt($"{slotActivo}_lastRunDebt", 0);
-
-        if (scoreText != null)
-        {
-            // Si hay deuda (<0), muéstrala a la derecha en rojo
-            if (lastRunDebt < 0)
-                scoreText.text = $"{totalScore}  <color=#FF5555>({lastRunDebt})</color>";
-            else
-                scoreText.text = totalScore.ToString();
-
-        }
-
-        if (keysText != null) keysText.text = totalKeys.ToString();
-        if (diamondsText != null) diamondsText.text = totalDiamonds.ToString();
-
-        int nivelesCompletados = 0;
-
-        for (int i = 0; i < tiles.Count; i++)
-        {
-            var handler = tiles[i].GetComponent<TileClickHandlerGameHome>();
-            if (handler == null) continue;
-
-            int completed = PlayerPrefs.GetInt(slotActivo + "_level_" + handler.nivelLogico + "_completed", 0);
-            int keys = PlayerPrefs.GetInt(slotActivo + "_level_" + handler.nivelLogico + "_keys", 0);
-            int diamondsCollected = PlayerPrefs.GetInt(slotActivo + "_level_" + handler.nivelLogico + "_diamonds", 0);
-
-            // 👇 Leer configuración de ese nivel, guardada en PlayerPrefs
-            int maxKeys = PlayerPrefs.GetInt(slotActivo + "_level_" + handler.nivelLogico + "_maxKeys", 3);
-            int maxDiamonds = PlayerPrefs.GetInt(slotActivo + "_level_" + handler.nivelLogico + "_maxDiamonds", 1);
-
-            bool parchment = PlayerPrefs.GetInt(slotActivo + "_level_" + handler.nivelLogico + "_parchment", 0) == 1;
-            bool trophy = PlayerPrefs.GetInt(slotActivo + "_level_" + handler.nivelLogico + "_trophy", 0) == 1;
-            bool medal = PlayerPrefs.GetInt(slotActivo + "_level_" + handler.nivelLogico + "_medal", 0) == 1;
-            bool masterKey = PlayerPrefs.GetInt(slotActivo + "_level_" + handler.nivelLogico + "_masterKey", 0) == 1;
-
-            bool obtuvoObjetoClave = EsNivelCompletadoConObjetoClave(
-                keys, diamondsCollected, maxKeys, maxDiamonds,
-                parchment, trophy, medal, masterKey
-            );
-
-            if (completed == 1)
-            {
-                tiles[i].SetState(LevelTile.TileState.Completed, obtuvoObjetoClave);
-                nivelesCompletados++;
-            }
-            else if (handler.nivelLogico == nivelMax)
-            {
-                tiles[i].SetState(LevelTile.TileState.Unlocked);
-            }
-            else
-            {
-                tiles[i].SetState(LevelTile.TileState.Locked);
-            }
-
-            Debug.Log($"   • Tile[{i}] -> nivelLogico={handler.nivelLogico}, completed={completed}, keys={keys}, " +
-                      $"diamondsCollected={diamondsCollected}, maxKeys={maxKeys}, maxDiamonds={maxDiamonds}, objetoClave={obtuvoObjetoClave}");
-        }
-
-        if (levelsProgressText != null)
-            levelsProgressText.text = $"{nivelesCompletados}/{TOTAL_NIVELES}";
-    }*/
+    
 
     public void MarcarNivelCompletado(int nivelLogico, bool obtuvoObjetoClave)
     {

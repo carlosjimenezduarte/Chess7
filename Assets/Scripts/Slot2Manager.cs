@@ -64,9 +64,12 @@ public class Slot2Manager : MonoBehaviour
         if (levelsProgressText != null)
             levelsProgressText.text = $"0/{TOTAL_NIVELES_VISIBLES}";
 
+        RankSystem.Instance?.RefreshUI();  // 👈 añadido
+
         UpdateUI();
         Debug.Log("🧹 Slot2 completamente reiniciado (oficial).");
     }
+
 
     public void OnConfirmNo()
     {
@@ -125,7 +128,8 @@ public class Slot2Manager : MonoBehaviour
         Del($"{slotId}_masterKeysTotal");
         Del($"{slotId}_scoreFromAchievements");
         Del($"{slotId}_lastRunDebt");
-
+        Del($"{slotId}_rankMaxIndex");   // 👈 añadido
+        
         // Flags de master keys recogidas
         for (int mk = 1; mk <= 3; mk++)
             Del($"{slotId}_mk{mk}_collected");
