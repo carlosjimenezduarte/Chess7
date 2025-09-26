@@ -29,7 +29,7 @@ public class Medal : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjeto
         if (movable != null) movable.activoEnTablero = true;
 
         BoardManagerGlobal.Instance?.RegistrarMovimiento(this, tileCoords);
-        BoardManagerGlobal.Instance?.AgregarMensajeInterno($"🏆 Trofeo posicionado en {tileCoords}.");
+        BoardManagerGlobal.Instance?.AgregarMensajeInterno($"🎖️ Condecoración posicionado en {tileCoords}.");
     }
 
     public void RevisarSiFichaAliadaLlegó(Vector2Int posicion, IFichaAliada ficha)
@@ -42,15 +42,20 @@ public class Medal : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IObjeto
         // Puntaje
         var score = FindFirstObjectByType<PlayerScore>();
         if (score != null)
-            score.AgregarPuntaje(ObtenerValorPuntaje(), TipoObjetoScore.None); 
+            score.AgregarPuntaje(ObtenerValorPuntaje(), TipoObjetoScore.None);
 
-        // Recolectar y destruir
+        /*// Recolectar y destruir
         SoundManager.Instance.PlaySound(27);
         LevelProgress.Instance?.Medal();
-        RankSystem.Instance?.ReportMedal();
+        RankSystem.Instance?.ReportMedal();*/
+        SoundManager.Instance.PlaySound(27);
+        LevelProgress.Instance?.Medal();
+        if (RankSystem.Instance != null) RankSystem.Instance.ReportMedal();
+        else RankSystemUtil.TriggerHeadless(RankSystem.TriggerType.Medal);
+
 
         // ✅ Registrar especial por nivel + refresco Stadistics
-       
+
 
         Destroy(gameObject);
     }

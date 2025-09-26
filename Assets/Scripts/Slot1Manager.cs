@@ -30,8 +30,8 @@ public class Slot1Manager : MonoBehaviour
         string state = PlayerPrefs.GetString(SLOT_STATE_KEY, "empty");
 
         if (panelPlayFirst) panelPlayFirst.SetActive(state == "empty");
-        if (panelPlay)      panelPlay.SetActive(state == "active");
-        if (panelReset)     panelReset.SetActive(state == "reset_pending");
+        if (panelPlay) panelPlay.SetActive(state == "active");
+        if (panelReset) panelReset.SetActive(state == "reset_pending");
 
         // (Opcional) reportar score a milestones (con 0 no desbloquea nada)
         int totalScore = PlayerPrefs.GetInt($"{SLOT_ID}_scoreTotal", 0);
@@ -65,7 +65,7 @@ public class Slot1Manager : MonoBehaviour
             levelsProgressText.text = $"0/{TOTAL_NIVELES_VISIBLES}";
 
         RankSystem.Instance?.RefreshUI();
-        
+
         UpdateUI();
         Debug.Log("🧹 Slot1 completamente reiniciado (oficial).");
     }
@@ -167,4 +167,6 @@ public class Slot1Manager : MonoBehaviour
     {
         PlayerPrefs.DeleteKey(key);
     }
+
+    
 }

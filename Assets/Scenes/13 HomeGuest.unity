@@ -215,6 +215,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98b1f25801b541f49af7cc4570e9171f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  guestBackSceneIndex: 10
+  registeredBackSceneIndex: 3
 --- !u!1 &471337877
 GameObject:
   m_ObjectHideFlags: 0
@@ -1865,7 +1867,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 213364f4f4c46d441ad7a4474a713e1c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: dfd7bffdea76b9d42a851eec03ef88d3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2735,7 +2737,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: f3843e136bdc7c34db7c2ecd2e0f5c56, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 213364f4f4c46d441ad7a4474a713e1c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

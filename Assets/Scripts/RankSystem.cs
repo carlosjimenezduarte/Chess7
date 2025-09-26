@@ -99,25 +99,42 @@ public class RankSystem : MonoBehaviour
 
     // ========= Eventos de recolección (llamados desde Parchment/Medal/LegendKey) =========
     public void ReportParchment() => HandleTrigger(TriggerType.Parchment);
-    public void ReportMedal()     => HandleTrigger(TriggerType.Medal);
+    public void ReportMedal() => HandleTrigger(TriggerType.Medal);
     public void ReportLegendKey() => HandleTrigger(TriggerType.LegendKey);
 
     private void HandleTrigger(TriggerType t)
     {
-        // nivelActivo lo guarda TileClickHandlerGameHome al entrar
-        int nivelLogico = PlayerPrefs.GetInt("nivelActivo",
-            SceneManager.GetActiveScene().buildIndex - BUILD_OFFSET);
+        int buildIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
 
-        // Busca la regla que corresponde a este nivel + trigger
-        int idx = Array.FindIndex(rules, r => r.nivelLogico == nivelLogico && r.trigger == t);
-        if (idx < 0) return;
+        // 1) Intentar LevelIdentity (origen de verdad)
+        int nivelLogico = LevelIdentity.HasNivelLogico
+            ? LevelIdentity.NivelLogico
+            : (buildIndex - BUILD_OFFSET); // fallback defensivo
+
+        // 2) (Opcional) mantener PlayerPrefs coherente
+        if (PlayerPrefs.GetInt("nivelActivo", -9999) != nivelLogico)
+        {
+            PlayerPrefs.SetInt("nivelActivo", nivelLogico);
+            PlayerPrefs.Save();
+        }
+
+        // 3) Buscar la regla
+        int idx = System.Array.FindIndex(rules, r => r.nivelLogico == nivelLogico && r.trigger == t);
+        if (idx < 0)
+        {
+            Debug.LogWarning($"[RankSystem] No hay regla para trigger={t} en nivelLogico={nivelLogico} (build={buildIndex}).");
+            return;
+        }
 
         string slot = PlayerPrefs.GetString("slotActivo", "slot1");
 
-        // 1) Logro (para Honores + Notificaciones). No pasamos texto para UI dinámica.
-        AchievementsManager.TryUnlock(slot, rules[idx].achievement, 0, null, null);
+        // 4) Desbloqueo (idempotente)
+        /*AchievementsManager.TryUnlock(slot, rules[idx].achievement, 0, null, null);*/
+        var titulo = "Ascenso de Rango";
+        var cuerpo = $"Has alcanzado: {rules[idx].rank}";
+        AchievementsManager.TryUnlock(slot, rules[idx].achievement, 0, titulo, cuerpo);
 
-        // 2) Mayor índice alcanzado (no baja)
+        // 5) Guardar máximo rango alcanzado
         int maxIdx = PlayerPrefs.GetInt($"{slot}_rankMaxIndex", -1);
         if (idx > maxIdx)
         {
@@ -125,43 +142,47 @@ public class RankSystem : MonoBehaviour
             PlayerPrefs.Save();
         }
 
-        // 3) Actualiza UI
+        // 6) Refrescar UI
         RefreshUI();
+
+        Debug.Log($"[RankSystem] ✅ Trigger {t} aplicado en nivelLogico={nivelLogico} → regla[{idx}]={rules[idx].rank}");
     }
+
+
 
     // ========= UI: enciende SOLO el panel del rango mayor =========
     public void RefreshUI()
-{
-    string slot = PlayerPrefs.GetString("slotActivo", "slot1");
-
-    int maxIdx;
-    if (PlayerPrefs.HasKey($"{slot}_rankMaxIndex"))
-        maxIdx = PlayerPrefs.GetInt($"{slot}_rankMaxIndex");
-    else
-        maxIdx = ComputeMaxFromAchievements(slot); // devuelve -1 si no hay ninguno
-
-    ShowOnly(maxIdx);
-}
-
-    private void ShowOnly(int idx)
-{
-    // Apaga todos
-    if (rankPanels != null)
-        for (int i = 0; i < rankPanels.Length; i++)
-            if (rankPanels[i] != null) rankPanels[i].SetActive(false);
-
-    // Clamp defensivo
-    if (idx < 0 || idx >= rankPanels.Length)
     {
-        if (noRankPanel != null) noRankPanel.SetActive(true);
-        return;
+        string slot = PlayerPrefs.GetString("slotActivo", "slot1");
+
+        int maxIdx;
+        if (PlayerPrefs.HasKey($"{slot}_rankMaxIndex"))
+            maxIdx = PlayerPrefs.GetInt($"{slot}_rankMaxIndex");
+        else
+            maxIdx = ComputeMaxFromAchievements(slot); // devuelve -1 si no hay ninguno
+
+        ShowOnly(maxIdx);
     }
 
-    // Enciende solo el panel del rango
-    if (rankPanels[idx] != null) rankPanels[idx].SetActive(true);
-    if (noRankPanel != null) noRankPanel.SetActive(false);
-}
-    
+    private void ShowOnly(int idx)
+    {
+        // Apaga todos
+        if (rankPanels != null)
+            for (int i = 0; i < rankPanels.Length; i++)
+                if (rankPanels[i] != null) rankPanels[i].SetActive(false);
+
+        // Clamp defensivo
+        if (idx < 0 || idx >= rankPanels.Length)
+        {
+            if (noRankPanel != null) noRankPanel.SetActive(true);
+            return;
+        }
+
+        // Enciende solo el panel del rango
+        if (rankPanels[idx] != null) rankPanels[idx].SetActive(true);
+        if (noRankPanel != null) noRankPanel.SetActive(false);
+    }
+
 
     // Si no existe rankMaxIndex (caso legacy), derivarlo de los achievements ya desbloqueados
     private int ComputeMaxFromAchievements(string slot)
@@ -175,4 +196,22 @@ public class RankSystem : MonoBehaviour
         if (max >= 0) PlayerPrefs.SetInt($"{slot}_rankMaxIndex", max);
         return max;
     }
+
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+
+    private void OnSceneLoaded(Scene s, LoadSceneMode m)
+    {
+        RefreshUI(); // vuelve a prender SOLO el panel del rango máximo
+    }
+
 }

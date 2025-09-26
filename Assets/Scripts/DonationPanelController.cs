@@ -63,14 +63,16 @@ public class DonationPanelController : MonoBehaviour
 
         gameObject.SetActive(false);
 
-        if (nextSceneIndex >= 0)
-        {
-            SceneManager.LoadScene(nextSceneIndex);
-        }
-        else
-        {
-            int current = SceneManager.GetActiveScene().buildIndex;
-            SceneManager.LoadScene(current + 1);
-        }
+        int nextBuildIndex = (nextSceneIndex >= 0)
+            ? nextSceneIndex
+            : SceneManager.GetActiveScene().buildIndex + 1;
+
+        // No escribimos nivelActivo aquí.
+        // Al cargar la escena, LevelIdentity (DefaultExecutionOrder -500)
+        // seteará nivelActivo y LevelIdentity.NivelLogico correctamente.
+        SceneManager.LoadScene(nextBuildIndex);
     }
+
+
+
 }

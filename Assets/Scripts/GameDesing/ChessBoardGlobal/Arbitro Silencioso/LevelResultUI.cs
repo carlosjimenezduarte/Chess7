@@ -166,8 +166,8 @@ public class LevelResultUI : MonoBehaviour
 
         // ✅ Persistir desbloqueo
         int nivelMaxAntes = PlayerPrefs.GetInt(slotActivo + "_nivelMax", 1);
-        if (obtuvoObjetoClave)
-            PlayerPrefs.SetInt(slotActivo + "_level_" + nivelLogico + "_diamond", 1);
+        /*if (obtuvoObjetoClave)
+            PlayerPrefs.SetInt(slotActivo + "_level_" + nivelLogico + "_diamond", 1);*/
         if (nivelLogico + 1 > nivelMaxAntes)
             PlayerPrefs.SetInt(slotActivo + "_nivelMax", nivelLogico + 1);
         PlayerPrefs.Save();

@@ -64,7 +64,7 @@ public static class AchievementsManager
     private const int SCORE_PAWN_IS_GOLD = 1000;
 
     private const int SCORE_LIBERADOR = 5000;
-    private const int OFFSET_NIVELES = 8;
+    private const int OFFSET_NIVELES = 14;
     public static int Liberador_LevelGate = -1;
 
     // Si quieres limitar el logro a un nivel lógico concreto, pon su id aquí.

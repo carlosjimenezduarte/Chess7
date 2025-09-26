@@ -43,14 +43,17 @@ public class Parchment : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IOb
         // Puntaje
         var score = FindFirstObjectByType<PlayerScore>();
         if (score != null)
-            score.AgregarPuntaje(ObtenerValorPuntaje(), TipoObjetoScore.None); 
+            score.AgregarPuntaje(ObtenerValorPuntaje(), TipoObjetoScore.None);
 
-        // Recolectar y destruir
+        /*// Recolectar y destruir
         LevelProgress.Instance?.Parchment();
-        RankSystem.Instance?.ReportParchment();
+        RankSystem.Instance?.ReportParchment();*/
+        LevelProgress.Instance?.Parchment();
+        if (RankSystem.Instance != null) RankSystem.Instance.ReportParchment();
+        else RankSystemUtil.TriggerHeadless(RankSystem.TriggerType.Parchment);
 
          // ✅ Registrar en ProgressSaver (anti-farmeo por nivel + Stadistics en caliente)
-       
+
         SoundManager.Instance.PlaySound(25);
         Destroy(gameObject);
     }
