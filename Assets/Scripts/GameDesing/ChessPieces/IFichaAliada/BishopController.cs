@@ -59,6 +59,36 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
 
     public Vector2Int GetPosicionActual() => posicionActual;
 
+    // 🧱 True si hay un Wall entre origen y destino (o en destino) recorriendo DIAGONAL a pasos de 1.
+    private bool HayMuroEntreDiagonal(Vector2Int origen, Vector2Int destino)
+    {
+        // Debe ser diagonal perfecta
+        if (Mathf.Abs(destino.x - origen.x) != Mathf.Abs(destino.y - origen.y)) return false;
+
+        int stepx = destino.x > origen.x ? 1 : -1;
+        int stepy = destino.y > origen.y ? 1 : -1;
+
+        Vector2Int paso = origen;
+        while (true)
+        {
+            paso = new Vector2Int(paso.x + stepx, paso.y + stepy);
+            if (paso == destino) break;
+
+            var objsInter = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
+            if (objsInter.OfType<Wall>().Any())
+                return true;
+        }
+
+        // también si el destino es un Wall
+        var objsDestino = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino);
+        if (objsDestino.OfType<Wall>().Any())
+            return true;
+
+        return false;
+    }
+
+
+
     public void ActivarJuego()
     {
         juegoActivo = true;
@@ -106,6 +136,13 @@ public class BishopController : MonoBehaviour, IPointerClickHandler, IPieceWithP
                 // ⛔ corta si hay obstáculo (aliado, inmóvil o recoleccionable) antes de destino
                 if (BoardManagerGlobal.Instance.HayObstaculoEntreAliado(posicionActual, destino, this))
                     break;
+
+                if (HayMuroEntreDiagonal(posicionActual, destino))
+                {
+                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧱 Muro corta visual hacia {destino}.");
+                    break;
+                }
+
 
                 if (!BoardManagerGlobal.Instance.EsCasillaAccesiblePorAliado(destino))
                 {

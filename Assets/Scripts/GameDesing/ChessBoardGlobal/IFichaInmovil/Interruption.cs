@@ -91,7 +91,7 @@ public class Interruption : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, I
         }
 
         // Cancelar ataques de enemigos
-        /*var fichasEnemigas = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<IFichaEnemiga>();
+        var fichasEnemigas = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<IFichaEnemiga>();
 
         foreach (var enemigo in fichasEnemigas)
         {
@@ -99,7 +99,7 @@ public class Interruption : MonoBehaviour, ITileEffect, IFicha, IFichaInmovil, I
             enemigo.rangoKillZone = 0;
             enemigo.rangoRangeZone = 0;
             BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧊 Ataque bloqueado para enemiga {((MonoBehaviour)enemigo).name}");
-        }*/
+        }
 
 
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();

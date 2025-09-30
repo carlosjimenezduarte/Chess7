@@ -67,6 +67,39 @@ public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
 
+    // 🧱 True si hay un Wall entre origen y destino (o en el destino).
+    // La Torre solo se mueve ortogonal, así que recorremos en línea recta.
+    private bool HayMuroEntreOrtogonal(Vector2Int origen, Vector2Int destino)
+    {
+        // Si no es ortogonal, no aplica (la Torre no debería llamarlo en diagonal).
+        if (origen.x != destino.x && origen.y != destino.y) return false;
+
+        int stepx = origen.x == destino.x ? 0 : (destino.x > origen.x ? 1 : -1);
+        int stepy = origen.y == destino.y ? 0 : (destino.y > origen.y ? 1 : -1);
+
+        Vector2Int paso = origen;
+
+        // casillas intermedias
+        while (true)
+        {
+            paso = new Vector2Int(paso.x + stepx, paso.y + stepy);
+            if (paso == destino) break;
+
+            var objsInter = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
+            if (objsInter.OfType<Wall>().Any())
+                return true;
+        }
+
+        // también si el destino es un Wall
+        var objsDestino = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino);
+        if (objsDestino.OfType<Wall>().Any())
+            return true;
+
+        return false;
+    }
+
+
+
     public void MostrarMovimientoPosible()
     {
         if (!juegoActivo) return;
@@ -104,6 +137,13 @@ public class RookController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
                 if (BoardManagerGlobal.Instance.HayObstaculoEntreAliado(posicionActual, destino, this))
                     break;
+
+                if (HayMuroEntreOrtogonal(posicionActual, destino))
+                {
+                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧱 Muro corta visual hacia {destino}.");
+                    break;
+                }
+
 
                 if (!BoardManagerGlobal.Instance.EsCasillaAccesiblePorAliado(destino))
                 {

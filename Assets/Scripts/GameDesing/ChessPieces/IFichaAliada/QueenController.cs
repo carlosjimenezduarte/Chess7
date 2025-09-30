@@ -57,6 +57,38 @@ public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPo
 
     public Vector2Int GetPosicionActual() => posicionActual;
 
+    // 🧱 Devuelve true si hay al menos un Wall entre origen y destino (intermedio o en destino).
+    private bool HayMuroEntre(Vector2Int origen, Vector2Int destino)
+    {
+        Vector2Int paso = origen;
+        int dx = destino.x - origen.x;
+        int dy = destino.y - origen.y;
+
+        // Normaliza dirección (ortogonal o diagonal) a pasos de 1 casilla
+        int stepx = dx == 0 ? 0 : (dx > 0 ? 1 : -1);
+        int stepy = dy == 0 ? 0 : (dy > 0 ? 1 : -1);
+
+        // Recorremos casillas intermedias
+        while (true)
+        {
+            paso = new Vector2Int(paso.x + stepx, paso.y + stepy);
+            if (paso == destino) break;
+
+            var objsInter = BoardManagerGlobal.Instance.ObtenerObjetosEn(paso);
+            if (objsInter.OfType<Wall>().Any())
+                return true;
+        }
+
+        // Valida también si el destino es un Wall (no debería poder caer sobre él)
+        var objsDestino = BoardManagerGlobal.Instance.ObtenerObjetosEn(destino);
+        if (objsDestino.OfType<Wall>().Any())
+            return true;
+
+        return false;
+    }
+
+
+
     public void ActivarJuego()
     {
         juegoActivo = true;
@@ -103,11 +135,18 @@ public class QueenController : MonoBehaviour, IPointerClickHandler, IPieceWithPo
             if (BoardManagerGlobal.Instance.HayObstaculoEntreAliado(posicionActual, destino, this))
                 break;
 
+                if (HayMuroEntre(posicionActual, destino))
+                {
+                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧱 Muro bloquea visual hacia {destino}.");
+                    break;
+                }
+
+
             if (!BoardManagerGlobal.Instance.EsCasillaAccesiblePorAliado(destino))
-            {
-                BoardManagerGlobal.Instance.AgregarMensajeInterno($"⛔ Casilla {destino} no accesible.");
-                break;
-            }
+                {
+                    BoardManagerGlobal.Instance.AgregarMensajeInterno($"⛔ Casilla {destino} no accesible.");
+                    break;
+                }
 
             var tile = BoardManagerGlobal.Instance.GetTileAt(destino);
             if (tile == null) break;

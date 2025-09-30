@@ -92,6 +92,60 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         return posicionActual;
     }
 
+    // True si desde origen hasta destino (avanzando 1 casilla por paso, sin diagonales compuestas)
+    // NO hay un Wall en casillas intermedias. Solo permite recolectable si es la casilla final.
+    private bool CaminoLibreSoloWall(Vector2Int origen, Vector2Int destino)
+    {
+        if (origen == destino) return true;
+
+        Vector2Int paso = origen;
+
+        while (paso != destino)
+        {
+            Vector2Int siguiente = paso;
+
+            int dx = destino.x - paso.x;
+            int dy = destino.y - paso.y;
+
+            // Mismo criterio que usas en MoverA (prioriza eje de mayor |d|)
+            if (Mathf.Abs(dx) >= Mathf.Abs(dy))
+            {
+                if (dx != 0) siguiente.x += dx > 0 ? 1 : -1;
+                else if (dy != 0) siguiente.y += dy > 0 ? 1 : -1;
+            }
+            else
+            {
+                if (dy != 0) siguiente.y += dy > 0 ? 1 : -1;
+                else if (dx != 0) siguiente.x += dx > 0 ? 1 : -1;
+            }
+
+            var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(siguiente);
+
+            // 🧱 Si hay Wall en cualquier casilla intermedia, corta visión
+            if (objetos.OfType<Wall>().Any())
+                return false;
+
+            // Recolectables solo se permiten si es la casilla final
+            bool esUltimoPaso = (siguiente == destino);
+            if (!esUltimoPaso && objetos.Any(o => o is IObjetoRecoleccionable))
+                return false;
+
+            // Aliado/enemigo intermedio también corta (opcional, suele ser deseable)
+            if (objetos.Any(o => o is IFichaAliada)) return false;
+            if (objetos.Any(o => o is IFichaEnemiga)) return false;
+
+            paso = siguiente;
+        }
+
+        // Si el destino es un Wall, tampoco se pinta
+        if (BoardManagerGlobal.Instance.ObtenerObjetosEn(destino).OfType<Wall>().Any())
+            return false;
+
+        return true;
+    }
+
+
+
     public void ActivarJuego()
     {
         juegoActivo = true;
@@ -112,7 +166,7 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
         foreach (Tile tile in BoardManagerGlobal.Instance.tiles)
         {
-            int distancia = Mathf.Abs(tile.tileCoords.x - posicionActual.x) + Mathf.Abs(tile.tileCoords.y - posicionActual.y);
+            /*int distancia = Mathf.Abs(tile.tileCoords.x - posicionActual.x) + Mathf.Abs(tile.tileCoords.y - posicionActual.y);
 
             // ✅ Solo pinta si está dentro de PM y la casilla NO está ocupada por aliada/inmóvil
             bool puedeMover = distancia <= puntosMovimientoActual
@@ -121,6 +175,21 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
             if (puedeMover && tieneEscudo)
                 tile.Shield(true); // 🔹 marcar dorado si el Rey tiene escudo
+
+            tile.HighlightMove(puedeMover);*/
+            int distancia = Mathf.Abs(tile.tileCoords.x - posicionActual.x) + Mathf.Abs(tile.tileCoords.y - posicionActual.y);
+
+            bool dentroPM = distancia <= puntosMovimientoActual;
+            bool destinoAccesible = (tile.tileCoords == posicionActual)
+                || BoardManagerGlobal.Instance.EsCasillaAccesiblePorAliado(tile.tileCoords);
+
+            // 🧭 Nuevo: el camino debe estar libre de Wall (y de otros bloqueadores intermedios)
+            bool caminoOk = CaminoLibreSoloWall(posicionActual, tile.tileCoords);
+
+            bool puedeMover = dentroPM && destinoAccesible && caminoOk;
+
+            if (puedeMover && tieneEscudo)
+                tile.Shield(true);
 
             tile.HighlightMove(puedeMover);
         }
@@ -244,6 +313,12 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
             // Obstáculos
             var objetos = BoardManagerGlobal.Instance.ObtenerObjetosEn(siguiente);
+            if (objetos.OfType<Wall>().Any())
+            {
+                BoardManagerGlobal.Instance.AgregarMensajeInterno($"🧱 Movimiento bloqueado por muro en {siguiente}.");
+                return;
+            }
+
             if (objetos.Any(o => o is IFichaAliada))
             {
                 BoardManagerGlobal.Instance.AgregarMensajeInterno($"🛑 Movimiento bloqueado por aliado/obstáculo en {siguiente}.");
