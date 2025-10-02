@@ -140,6 +140,7 @@ public class KingFree : MonoBehaviour, IPointerClickHandler, IPieceWithPosition,
                 }
             }
         }
+        SoundManager.Instance.PlaySound(0);
     }
 
     public void OcultarMovimientos()
