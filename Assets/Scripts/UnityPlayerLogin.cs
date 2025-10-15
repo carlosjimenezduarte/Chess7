@@ -19,10 +19,10 @@ public class UnityPlayerLogin : MonoBehaviour
     {
         try
         {
-            var opts = new InitializationOptions()
-            .SetEnvironmentName("production")            
-            .SetProfile("webgl-" + SystemInfo.deviceUniqueIdentifier); // evita sesiones “raras”
-            await UnityServices.InitializeAsync(opts);
+            //var opts = new InitializationOptions()
+            //.SetEnvironmentName("production")            
+            //.SetProfile("webgl-" + SystemInfo.deviceUniqueIdentifier); // evita sesiones “raras”
+            //await UnityServices.InitializeAsync(opts);
 
             await UnityServices.InitializeAsync();
             servicesInitialized = true;

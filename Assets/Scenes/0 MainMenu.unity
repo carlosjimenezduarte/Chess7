@@ -1031,9 +1031,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2cfd3700baac2fc4e8e0fac01b2c3d84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panelLogin: {fileID: 694164715}
-  loginButton: {fileID: 0}
-  guestButton: {fileID: 0}
   escenaDespuesDeLogin: 1
 --- !u!4 &900098789
 Transform:
@@ -1343,6 +1340,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 5d96319075a72954899f16e478e094d5, type: 3}
   - {fileID: 8300000, guid: b4fd37b1128227f45b45cafbc228a87a, type: 3}
   - {fileID: 8300000, guid: 56d84320eb25acf4f9b60954c8f805b9, type: 3}
+  - {fileID: 8300000, guid: 56d84320eb25acf4f9b60954c8f805b9, type: 3}
+  - {fileID: 8300000, guid: 7dca03e2a6f5a374cbe6b75053ff5c09, type: 3}
 --- !u!224 &1032189707
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1608,7 +1607,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Iniciar sesi\xF3n con Unity"
+  m_text: Under Maintenance
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
   m_sharedMaterial: {fileID: 532615492540030504, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
@@ -1701,9 +1700,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_StringReference:
     m_TableReference:
-      m_TableCollectionName: GUID:26cfa7ca32ae7684fbebe1f6dd0c4c90
+      m_TableCollectionName: GUID:96e616682a1c3f74eb2fece5448bdd46
     m_TableEntryReference:
-      m_KeyId: 532805726208
+      m_KeyId: 2184653080514560
       m_Key: 
     m_FallbackState: 2
     m_WaitForCompletion: 0
