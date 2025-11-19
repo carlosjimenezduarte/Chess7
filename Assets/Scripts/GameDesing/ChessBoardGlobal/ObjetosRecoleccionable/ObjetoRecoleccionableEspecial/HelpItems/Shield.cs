@@ -368,7 +368,7 @@ public class Shield : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPiece
         {
             Debug.LogError($"💥 Error general en activación de Shield: {ex.Message}");
         }
-
+        SoundManager.Instance.PlaySound(24);
         Destroy(gameObject); // El escudo desaparece tras recogerse
     }
     

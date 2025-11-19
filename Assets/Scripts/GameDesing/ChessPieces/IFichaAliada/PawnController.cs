@@ -387,26 +387,47 @@ public class PawnController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         SoundManager.Instance.PlaySound(0);
 
         // Coronación opcional
-        if (posicionActual == new Vector2Int(7, 7))
+        // Coronación opcional
+    if (posicionActual == new Vector2Int(7, 7))
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno("♕ Peón coronado en H8. Bonificaciones aplicadas.");
+
+        // 👇 DESBLOQUEO DEL LOGRO (una sola vez + suma 1000 al _scoreTotal del slot)
+        AchievementsManager.ReportPawnCoronation();
+        BoardManagerGlobal.Instance?.NotifyAllyCoronated(BoardManagerGlobal.AllyKind.Pawn);
+
+        // 📈 Bonos al Rey
+        rey.puntosAccionActual     += 7;
+        rey.puntosMovimientoActual += 7;
+        rey.GanarVida(7);
+
+        // 🧠 Transferir selección al Rey y mostrar su nuevo rango
+        var gameManager = FindFirstObjectByType<ChessGameManager>();
+        if (gameManager != null)
         {
-            BoardManagerGlobal.Instance.AgregarMensajeInterno("♕ Peón coronado en H8. Bonificaciones aplicadas.");
-
-            // 👇 DESBLOQUEO DEL LOGRO (una sola vez + suma 1000 al _scoreTotal del slot)
-            AchievementsManager.ReportPawnCoronation();
-            
-            BoardManagerGlobal.Instance?.NotifyAllyCoronated(BoardManagerGlobal.AllyKind.Pawn);
-
-            rey.puntosAccionActual += 7;
-            rey.puntosMovimientoActual += 7;
-            rey.GanarVida(3);
-            FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
-            OcultarMovimientos();
-            SoundManager.Instance.PlaySound(2);
-            Destroy(gameObject);
+            gameManager.SeleccionarReyTrasCoronacion();
         }
+        else
+        {
+            // Plan B: al menos que el HUD quede coherente
+            FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
+        }
+
+        // Apagar el rango del Peón en el tablero antes de irse
+        OcultarMovimientos();
+        rey.MostrarMovimientoPosible();
+
+        SoundManager.Instance.PlaySound(2);
+
+        // 💨 El Peón abandona el plano de juego
+        Destroy(gameObject);
 
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
+
+        BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+    }
+
     public void RevisarObjetosEnCasilla()
     {
         foreach (var objeto in BoardManagerGlobal.Instance.ObtenerObjetosEn(posicionActual))

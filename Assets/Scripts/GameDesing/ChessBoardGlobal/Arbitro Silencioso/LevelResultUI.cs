@@ -104,82 +104,120 @@ public class LevelResultUI : MonoBehaviour
     }
 
     private void MostrarResultadosSegunNivel(int keysCollected, int diamondsCollected, int livesRemaining, int totalScore)
+{
+    const int OFFSET_NIVELES = 14;
+
+    string slotActivo = PlayerPrefs.GetString("slotActivo", "slot1");
+    int buildIndex = SceneManager.GetActiveScene().buildIndex;
+    int nivelLogico = buildIndex - OFFSET_NIVELES;
+
+    Debug.Log($"[LevelResultUI] Resultados para Nivel lógico {nivelLogico} (BuildIndex={buildIndex})");
+
+    // 🧠 Saber si hubo victoria real (vidas > 0)
+    bool gano = livesRemaining > 0;
+
+    // 🔍 Leer si antes ya estaba marcado como completado
+    string levelCompletedKey = $"{slotActivo}_level_{nivelLogico}_completed";
+    int prevCompleted = PlayerPrefs.GetInt(levelCompletedKey, 0);
+
+    // … 👇 se mantiene la lógica de pergamino, trofeo, etc.
+    if (LevelProgress.Instance != null && LevelProgress.Instance.esNivelPergamino)
     {
-        const int OFFSET_NIVELES = 14;
-
-        string slotActivo = PlayerPrefs.GetString("slotActivo", "slot1");
-        int buildIndex = SceneManager.GetActiveScene().buildIndex;
-        int nivelLogico = buildIndex - OFFSET_NIVELES;
-
-        Debug.Log($"[LevelResultUI] Resultados para Nivel lógico {nivelLogico} (BuildIndex={buildIndex})");
-
-        // … 👇 se mantiene la lógica de pergamino, trofeo, etc.
-        if (LevelProgress.Instance != null && LevelProgress.Instance.esNivelPergamino)
-        {
-            Debug.Log("📜 Cargando resultados de PERGAMINO...");
-            ShowParchmentResult(totalScore, livesRemaining, LevelProgress.Instance.hasParchment);
-            ProgressSaver.GuardarNivelPergamino(slotActivo, nivelLogico, totalScore, LevelProgress.Instance.hasParchment);
-        }
-        else if (LevelProgress.Instance != null && LevelProgress.Instance.esNivelTrofeo)
-        {
-            Debug.Log("🏆 Cargando resultados de TROFEO...");
-            ShowTrophyResult(totalScore, livesRemaining, LevelProgress.Instance.hasTrophy);
-            ProgressSaver.GuardarNivelTrofeo(slotActivo, nivelLogico, totalScore, LevelProgress.Instance.hasTrophy);
-        }
-        else if (LevelProgress.Instance != null && LevelProgress.Instance.esNivelMedalla)
-        {
-            Debug.Log("🎖 Cargando resultados de CONDECORACIÓN...");
-            ShowMedalResult(totalScore, livesRemaining, LevelProgress.Instance.hasMedal);
-            ProgressSaver.GuardarNivelMedalla(slotActivo, nivelLogico, totalScore, LevelProgress.Instance.hasMedal);
-        }
-        else if (LevelProgress.Instance != null && LevelProgress.Instance.esNivelMasterKey)
-        {
-            Debug.Log("🗝️ Cargando resultados de MASTER KEY...");
-            ShowMasterKeyResult(totalScore, livesRemaining, LevelProgress.Instance.hasMasterKey3);
-            ProgressSaver.GuardarNivelMasterKey(slotActivo, nivelLogico, totalScore, LevelProgress.Instance.hasMasterKey3);
-        }
-        else
-        {
-            Debug.Log("🔑 Cargando resultados de NIVEL NORMAL...");
-            int keys = keysCollected;
-            int diamonds = diamondsCollected;
-
-            MostrarResultadosInmediatos(keys, diamonds, livesRemaining, totalScore);
-            ProgressSaver.GuardarNivelNormal(slotActivo, nivelLogico, totalScore, keys, diamonds);
-        }
-
-        // 🔹 Recuperar configuración de este nivel desde PlayerPrefs
-        int maxKeys = PlayerPrefs.GetInt(slotActivo + "_level_" + nivelLogico + "_maxKeys", LevelProgress.Instance != null ? LevelProgress.Instance.maxKeys : 3);
-        int maxDiamonds = PlayerPrefs.GetInt(slotActivo + "_level_" + nivelLogico + "_maxDiamonds", LevelProgress.Instance != null ? LevelProgress.Instance.maxDiamonds : 1);
-
-        // ✅ Usar la misma validación que GameHomeManager
-        bool obtuvoObjetoClave = GameHomeManager.Instance.ValidarObjetoClave(
-            keysCollected,
-            diamondsCollected,
-            maxKeys,
-            maxDiamonds,
-            LevelProgress.Instance != null && LevelProgress.Instance.hasParchment,
-            LevelProgress.Instance != null && LevelProgress.Instance.hasTrophy,
-            LevelProgress.Instance != null && LevelProgress.Instance.hasMedal,
-            LevelProgress.Instance != null && LevelProgress.Instance.hasMasterKey3
-        );
-
-        // ✅ Persistir desbloqueo
-        int nivelMaxAntes = PlayerPrefs.GetInt(slotActivo + "_nivelMax", 1);
-        /*if (obtuvoObjetoClave)
-            PlayerPrefs.SetInt(slotActivo + "_level_" + nivelLogico + "_diamond", 1);*/
-        if (nivelLogico + 1 > nivelMaxAntes)
-            PlayerPrefs.SetInt(slotActivo + "_nivelMax", nivelLogico + 1);
-        PlayerPrefs.Save();
-
-        Debug.Log($"[LevelResultUI] Verificación -> Keys={keysCollected}, Diamonds={diamondsCollected}, ObtuvoObjetoClave={obtuvoObjetoClave}");
-
-        // ✅ Reflejar en GameHome si ya está cargado
-        if (GameHomeManager.Instance != null)
-        {
-            GameHomeManager.Instance.MarcarNivelCompletado(nivelLogico, obtuvoObjetoClave);
-        }
+        Debug.Log("📜 Cargando resultados de PERGAMINO...");
+        ShowParchmentResult(totalScore, livesRemaining, LevelProgress.Instance.hasParchment);
+        ProgressSaver.GuardarNivelPergamino(slotActivo, nivelLogico, totalScore, LevelProgress.Instance.hasParchment);
     }
+    else if (LevelProgress.Instance != null && LevelProgress.Instance.esNivelTrofeo)
+    {
+        Debug.Log("🏆 Cargando resultados de TROFEO...");
+        ShowTrophyResult(totalScore, livesRemaining, LevelProgress.Instance.hasTrophy);
+        ProgressSaver.GuardarNivelTrofeo(slotActivo, nivelLogico, totalScore, LevelProgress.Instance.hasTrophy);
+    }
+    else if (LevelProgress.Instance != null && LevelProgress.Instance.esNivelMedalla)
+    {
+        Debug.Log("🎖 Cargando resultados de CONDECORACIÓN...");
+        ShowMedalResult(totalScore, livesRemaining, LevelProgress.Instance.hasMedal);
+        ProgressSaver.GuardarNivelMedalla(slotActivo, nivelLogico, totalScore, LevelProgress.Instance.hasMedal);
+    }
+    else if (LevelProgress.Instance != null && LevelProgress.Instance.esNivelMasterKey)
+    {
+        Debug.Log("🗝️ Cargando resultados de MASTER KEY...");
+        ShowMasterKeyResult(totalScore, livesRemaining, LevelProgress.Instance.hasMasterKey3);
+        ProgressSaver.GuardarNivelMasterKey(slotActivo, nivelLogico, totalScore, LevelProgress.Instance.hasMasterKey3);
+    }
+    else
+    {
+        Debug.Log("🔑 Cargando resultados de NIVEL NORMAL...");
+        int keys = keysCollected;
+        int diamonds = diamondsCollected;
+
+        MostrarResultadosInmediatos(keys, diamonds, livesRemaining, totalScore);
+        ProgressSaver.GuardarNivelNormal(slotActivo, nivelLogico, totalScore, keys, diamonds);
+    }
+
+    // 🔹 Recuperar configuración de este nivel desde PlayerPrefs
+    int maxKeys = PlayerPrefs.GetInt(slotActivo + "_level_" + nivelLogico + "_maxKeys",
+                                     LevelProgress.Instance != null ? LevelProgress.Instance.maxKeys : 3);
+    int maxDiamonds = PlayerPrefs.GetInt(slotActivo + "_level_" + nivelLogico + "_maxDiamonds",
+                                         LevelProgress.Instance != null ? LevelProgress.Instance.maxDiamonds : 1);
+
+    // ✅ Usar la misma validación que GameHomeManager (para el DIAMANTICO del mapa)
+    bool obtuvoObjetoClave = GameHomeManager.Instance.ValidarObjetoClave(
+        keysCollected,
+        diamondsCollected,
+        maxKeys,
+        maxDiamonds,
+        LevelProgress.Instance != null && LevelProgress.Instance.hasParchment,
+        LevelProgress.Instance != null && LevelProgress.Instance.hasTrophy,
+        LevelProgress.Instance != null && LevelProgress.Instance.hasMedal,
+        LevelProgress.Instance != null && LevelProgress.Instance.hasMasterKey3
+    );
+
+    Debug.Log($"[LevelResultUI] Verificación -> Keys={keysCollected}, Diamonds={diamondsCollected}, ObtuvoObjetoClave={obtuvoObjetoClave}, Gano={gano}");
+
+    // 🎯 REGLA CENTRAL:
+    //   • Si ya estaba completado antes (prevCompleted == 1), nunca lo descompletes.
+    //   • Si antes NO estaba completado, solo marcarlo completado si hubo victoria.
+    if (prevCompleted == 1)
+    {
+        PlayerPrefs.SetInt(levelCompletedKey, 1);
+    }
+    else
+    {
+        PlayerPrefs.SetInt(levelCompletedKey, gano ? 1 : 0);
+    }
+
+    // 🧱 Si NO hubo victoria, NO se desbloquea el siguiente nivel
+    if (!gano)
+    {
+        PlayerPrefs.Save();
+        // En derrota solo se muestra la UI, pero no se toca nivelMax ni el mapa.
+        return;
+    }
+
+    // 🏁 A partir de aquí, sólo entra si hubo victoria (Rey vivo en 7,7)
+
+    int nivelMaxAntes = PlayerPrefs.GetInt(slotActivo + "_nivelMax", 1);
+    if (nivelLogico + 1 > nivelMaxAntes)
+        PlayerPrefs.SetInt(slotActivo + "_nivelMax", nivelLogico + 1);
+
+    // (Opcional) marcar “diamond” de perfección si quieres:
+    // if (obtuvoObjetoClave)
+    //     PlayerPrefs.SetInt(slotActivo + "_level_" + nivelLogico + "_diamond", 1);
+
+    PlayerPrefs.Save();
+
+    // ✅ Reflejar en GameHome (sólo cuando GANÓ)
+    if (GameHomeManager.Instance != null)
+    {
+        GameHomeManager.Instance.MarcarNivelCompletado(nivelLogico, obtuvoObjetoClave);
+    }
+}
+
+
+
+
+
     private void MostrarResultadosInmediatos(int keysCollected, int diamondsCollected, int livesRemaining, int totalScore)
     {
         float tiempoJugado = FindFirstObjectByType<ChessGameManager>().GetTiempoNivelAcumulado();

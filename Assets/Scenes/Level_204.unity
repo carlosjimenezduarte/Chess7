@@ -11046,12 +11046,12 @@ GameObject:
   - component: {fileID: 543114126}
   - component: {fileID: 543114125}
   m_Layer: 5
-  m_Name: SoundManager
+  m_Name: SoundManager7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &543114124
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11083,7 +11083,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -12076,7 +12076,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -12212,6 +12212,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 56d84320eb25acf4f9b60954c8f805b9, type: 3}
   - {fileID: 8300000, guid: 7dca03e2a6f5a374cbe6b75053ff5c09, type: 3}
   - {fileID: 8300000, guid: 7f80324a0fb0c874a85374fc390311b6, type: 3}
+  - {fileID: 8300000, guid: 7dca03e2a6f5a374cbe6b75053ff5c09, type: 3}
 --- !u!224 &570152517
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12228,7 +12229,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 540, y: 960}
+  m_AnchoredPosition: {x: 958, y: 697}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &580748029
@@ -13960,7 +13961,7 @@ MonoBehaviour:
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1080, y: 1920}
-  m_ScreenMatchMode: 0
+  m_ScreenMatchMode: 1
   m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
@@ -34775,7 +34776,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1715519323
 RectTransform:
   m_ObjectHideFlags: 0
@@ -37122,7 +37123,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 4761fb9c28e952d46bfc4096000a516b, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.8
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -37222,7 +37223,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 540, y: 960}
+  m_AnchoredPosition: {x: 959, y: 710}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1887469919
@@ -43201,8 +43202,8 @@ SceneRoots:
   - {fileID: 1651983874}
   - {fileID: 1875301744}
   - {fileID: 588668036}
-  - {fileID: 642637042}
   - {fileID: 570152517}
   - {fileID: 1884191914}
   - {fileID: 580748031}
   - {fileID: 1580720401}
+  - {fileID: 642637042}

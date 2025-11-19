@@ -53,7 +53,7 @@ public class TheCrownKeyofTheSoul : MonoBehaviour, ITileEffect, IObjetoRecolecci
 
         FindFirstObjectByType<CofreController>()?.SetTieneLlave(true);
         RankSystem.Instance?.ReportLegendKey(); 
-        SoundManager.Instance.PlaySound(0);
+        SoundManager.Instance.PlaySound(38);
         Destroy(gameObject);
     }
 

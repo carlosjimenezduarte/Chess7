@@ -241,6 +241,41 @@ public class ChessGameManager : MonoBehaviour
         }
     }
     
+public void SeleccionarReyTrasCoronacion()
+{
+    if (rey == null)
+    {
+        Debug.LogWarning("⚠️ No hay Rey asignado en ChessGameManager al intentar transferir selección.");
+        return;
+    }
+
+    // Ocultar rango de todas las aliadas excepto el Rey,
+    // por si alguna quedó mostrando cosas en el tablero
+    var aliadas = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+        .OfType<IFichaAliada>();
+
+    foreach (var aliada in aliadas)
+    {
+        if (aliada is MonoBehaviour mb && mb != rey)
+        {
+            aliada.OcultarRango();
+        }
+    }
+
+    // El Rey pasa a ser la ficha seleccionada
+    fichaSeleccionadaActual = rey;
+
+    rey.mostrandoMovimientos = true;
+    rey.MostrarMovimientoPosible();
+
+    ActualizarHUD();
+
+    BoardManagerGlobal.Instance.AgregarMensajeInterno(
+        "👑 El Rey asume la selección tras la coronación de una ficha aliada."
+    );
+
+    BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
+}
     
    
     

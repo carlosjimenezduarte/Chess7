@@ -110,6 +110,7 @@ public class KingFree : MonoBehaviour, IPointerClickHandler, IPieceWithPosition,
                 tile.Shield(true);
 
             tile.HighlightMoveForKing(puedeMover);
+            
         }
 
         // --- Ataque adyacente ---
@@ -139,6 +140,7 @@ public class KingFree : MonoBehaviour, IPointerClickHandler, IPieceWithPosition,
                     tile?.HighlightEnemyAttack(true);
                 }
             }
+            
         }
         SoundManager.Instance.PlaySound(0);
     }

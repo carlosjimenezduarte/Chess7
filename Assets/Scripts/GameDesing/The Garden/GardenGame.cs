@@ -49,6 +49,8 @@ public class GardenGame : MonoBehaviour
         //paText.text = "";
 
         ActualizarHUD();
+        SoundManager.Instance.PlaySound(39);
+        
     }
 
     private void Update()
@@ -62,6 +64,7 @@ public class GardenGame : MonoBehaviour
             if (tiempoRestante <= 0f)
             {
                 PasarTurno();
+                
             }
         }
     }

@@ -204,11 +204,22 @@ public class KnightController : MonoBehaviour, IPointerClickHandler, IPieceWithP
         BoardManagerGlobal.Instance?.NotifyAllyCoronated(BoardManagerGlobal.AllyKind.Knight);
         rey.puntosAccionActual += 7;
         rey.puntosMovimientoActual += 7;
-        rey.GanarVida(3);
+        rey.GanarVida(7);
+        var gameManager = FindFirstObjectByType<ChessGameManager>();
+        if (gameManager != null)
+        {
+            gameManager.SeleccionarReyTrasCoronacion();
+        }
+        else
+        {
+            FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
+        }
         FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
         OcultarMovimientos();
+        rey.MostrarMovimientoPosible();
         SoundManager.Instance.PlaySound(2);
         Destroy(gameObject);
+        
         }
     }
 

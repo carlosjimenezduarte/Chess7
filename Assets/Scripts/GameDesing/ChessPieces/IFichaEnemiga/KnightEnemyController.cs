@@ -267,6 +267,16 @@ public class KnightEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
 
     public void MostrarRangoDeAtaque()
     {
+        // 🛡 ESCUDO: sin rango de amenaza, no pintamos nada
+    if (rangoRangeZone <= 0)
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno(
+            "🛡♞ Caballo Rojo sin rango de amenaza por ESCUDO."
+        );
+        OcultarRangoDeAtaque();
+        return;
+    }
+    
         OcultarRangoDeAtaque();
 
         Tile tileCentral = BoardManagerGlobal.Instance.GetTileAt(posicionActual);
@@ -346,6 +356,16 @@ public class KnightEnemyController : MonoBehaviour, IPointerClickHandler, ITileE
     private IEnumerator ProcesarAmenazasDesdeArbitro()
     {
         yield return new WaitForSeconds(0.09f);
+
+        if (rangoKillZone <= 0)
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                "🛡♞ Caballo Rojo sin energía letal este turno (ESCUDO activo)."
+            );
+            BoardManagerGlobal.Instance.ReportarFinInspeccionCaballoRojo(false);
+            yield break;
+        }
+
 
         if (BoardManagerGlobal.Instance.caballoRojoAtaco)
         {

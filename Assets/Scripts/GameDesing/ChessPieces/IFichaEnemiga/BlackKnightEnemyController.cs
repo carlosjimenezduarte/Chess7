@@ -283,6 +283,14 @@ public class BlackKnightEnemyController : MonoBehaviour, IPointerClickHandler, I
 
     public void MostrarRangoDeAtaque()
     {
+         if (rangoRangeZone <= 0)
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno(
+            "🛡♞ Caballo Negro sin rango de amenaza por ESCUDO."
+        );
+        OcultarRangoDeAtaque();
+        return;
+    }
         OcultarRangoDeAtaque();
 
         Tile tileCentral = BoardManagerGlobal.Instance.GetTileAt(posicionActual);

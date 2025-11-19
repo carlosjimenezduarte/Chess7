@@ -149,7 +149,7 @@ public class LessUP : MonoBehaviour, ITileEffect, IObjetoRecoleccionable, IPiece
 
             if (metodo != null)
             {
-                metodo.Invoke(ficha, new object[] { -3 });
+                metodo.Invoke(ficha, new object[] { -1 });
             }
             else
             {
