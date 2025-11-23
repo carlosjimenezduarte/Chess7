@@ -12213,6 +12213,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 7dca03e2a6f5a374cbe6b75053ff5c09, type: 3}
   - {fileID: 8300000, guid: 7f80324a0fb0c874a85374fc390311b6, type: 3}
   - {fileID: 8300000, guid: 7dca03e2a6f5a374cbe6b75053ff5c09, type: 3}
+  - {fileID: 8300000, guid: 4761fb9c28e952d46bfc4096000a516b, type: 3}
 --- !u!224 &570152517
 RectTransform:
   m_ObjectHideFlags: 0
@@ -34776,7 +34777,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1715519323
 RectTransform:
   m_ObjectHideFlags: 0
@@ -37123,9 +37124,9 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 4761fb9c28e952d46bfc4096000a516b, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.5
+  m_Volume: 0.3
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -38756,8 +38757,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Are you sure you want to restart this level?
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
+  m_sharedMaterial: {fileID: 532615492540030504, guid: 4d08f75f6a2b53d4da179d4f740a8507, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

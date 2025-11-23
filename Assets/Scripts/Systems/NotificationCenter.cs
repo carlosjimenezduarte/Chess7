@@ -87,7 +87,7 @@ public class NotificationCenter : MonoBehaviour
         RefreshPanelsFromPrefs();
     }
 
-    /// <summary>Copiar referencias de otra instancia (cuando existe en varias escenas).</summary>
+    /*// <summary>Copiar referencias de otra instancia (cuando existe en varias escenas).</summary>
     public void AbsorbSceneRefsFrom(NotificationCenter other)
     {
         if (other == null) return;
@@ -108,7 +108,31 @@ public class NotificationCenter : MonoBehaviour
         WireCloseButtonsIfNeeded();
         RefreshPanelsFromPrefs();
         RefreshBadge();
+    }*/
+
+    public void AbsorbSceneRefsFrom(NotificationCenter other)
+{
+    if (other == null) return;
+
+    // Mezcla/actualiza bindings nuevos (👈 AHORA SIEMPRE REEMPLAZA)
+    foreach (var b in other.paneles)
+    {
+        if (b.panel == null) continue;
+        _map[b.id] = b;      // 👈 esta línea es la clave
     }
+
+    // (Opcional) mantener lista paneles coherente
+    paneles = other.paneles;
+
+    // Actualiza refs de UI
+    if (other.scrollContent != null) scrollContent = other.scrollContent;
+    if (other.badgeBubble != null)   badgeBubble   = other.badgeBubble;
+    if (other.badgeText != null)     badgeText     = other.badgeText;
+
+    WireCloseButtonsIfNeeded();
+    RefreshPanelsFromPrefs();
+    RefreshBadge();
+}
 
     private void BuildMap()
     {

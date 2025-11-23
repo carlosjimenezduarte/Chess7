@@ -43,6 +43,10 @@ public class Slot1Manager : MonoBehaviour
     {
         PlayerPrefs.SetString("slotActivo", SLOT_ID);
         PlayerPrefs.SetString(SLOT_STATE_KEY, "active");
+
+// 🧠 Recordar último slot usado por usuario registrado
+    PlayerPrefs.SetString("lastSlotUsed", SLOT_ID);
+
         PlayerPrefs.Save();
         SceneManager.LoadScene(4); // GameHome
     }
@@ -76,6 +80,8 @@ public class Slot1Manager : MonoBehaviour
         PlayerPrefs.Save();
         UpdateUI();
     }
+
+    
 
     // =========================================================
     // ===============  RESET / BORRADO OFICIAL  ===============
@@ -160,6 +166,10 @@ public class Slot1Manager : MonoBehaviour
         // 6) Notificaciones varias
         Del($"{slotId}_notif_queue"); // cola persistente si la usabas
 
+        // 7) Preferencia de notificaciones (para que este slot vuelva a preguntar)
+        Del($"{slotId}_notif_preference");
+
+
         PlayerPrefs.Save();
     }
 
@@ -167,6 +177,8 @@ public class Slot1Manager : MonoBehaviour
     {
         PlayerPrefs.DeleteKey(key);
     }
+
+
 
     
 }

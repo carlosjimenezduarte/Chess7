@@ -160,6 +160,7 @@ public class SlideshowController : MonoBehaviour
 
         // Iniciar slideshow
         StartCoroutine(ReproducirSlideshow());
+        MusicManager.Instance.StopMusic();
     }
 
     private System.Collections.IEnumerator ReproducirSlideshow()

@@ -49,7 +49,7 @@ public class GardenGame : MonoBehaviour
         //paText.text = "";
 
         ActualizarHUD();
-        SoundManager.Instance.PlaySound(39);
+        
         
     }
 
@@ -108,6 +108,8 @@ public class GardenGame : MonoBehaviour
 
         ActualizarHUD();
         NotificarEfectosTurno();
+       
+        MusicManager.Instance.PlayMusic();
        
     }
 

@@ -416,7 +416,18 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
 
         FindFirstObjectByType<ChessGameManager>()?.ActualizarHUD();
 
-        // 🚀 Llegó a la meta
+        // 🚀 Llegó a la meta (H8), pero la victoria se decide
+        // después de que las enemigas tengan oportunidad de atacarlo.
+        if (posicionActual == new Vector2Int(7, 7))
+        {
+            BoardManagerGlobal.Instance.AgregarMensajeInterno(
+                "🚀 El Rey llegó a la meta (H8). Esperando resolución de amenazas..."
+            );
+            StartCoroutine(VerificarEscapeTrasAmenazas());
+        }
+
+
+        /*/ 🚀 Llegó a la meta
         if (posicionActual == new Vector2Int(7, 7))
         {
             BoardManagerGlobal.Instance.AgregarMensajeInterno("🚀 El Rey llegó a la meta (H8). Calculando bonus.");
@@ -433,7 +444,7 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
                 PlayerScore.Instance.GetTotalScore()
             );
         }
-
+        */
 
 
         // 💀 Se quedó sin turnos
@@ -643,6 +654,66 @@ public class KingController : MonoBehaviour, IPointerClickHandler, IPieceWithPos
         BoardManagerGlobal.Instance.AgregarMensajeInterno($"♔ Rey teletransportado a {nuevaPos}.");
         BoardManagerGlobal.Instance.ReportarEstadoActualDelTablero();
     }
+
+    private IEnumerator VerificarEscapeTrasAmenazas()
+{
+    // La Reina Roja espera 0.06 s antes de procesar amenazas.
+    // Aquí damos un margen un poco mayor para que todas las corutinas
+    // de enemigas alcancen a ejecutar sus efectos (exilio, muerte, etc.).
+    yield return new WaitForSeconds(0.12f);
+
+    var gameManager = FindFirstObjectByType<ChessGameManager>();
+    if (gameManager == null)
+        yield break;
+
+    // Si el juego ya no está activo, asumimos que alguna enemiga
+    // detuvo el juego porque ejecutó al Rey.
+    if (!gameManager.IsJuegoActivo())
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno(
+            "❌ El Rey alcanzó H8 pero el juego ya fue detenido por una amenaza. No hay escape."
+        );
+        yield break;
+    }
+
+    // Si el Rey ya no está en H8, significa que fue empujado/exiliado/matado.
+    if (GetPosicionActual() != new Vector2Int(7, 7))
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno(
+            "❌ El Rey alcanzó H8 pero fue removido de la casilla antes de escapar."
+        );
+        yield break;
+    }
+
+    // Sin turnos no tiene sentido otorgar victoria.
+    if (turnosRestantes <= 0)
+    {
+        BoardManagerGlobal.Instance.AgregarMensajeInterno(
+            "❌ El Rey llegó a H8 sin vidas. No escapa."
+        );
+        yield break;
+    }
+
+    // Si seguimos aquí, nadie lo mató en la puerta → victoria real.
+    BoardManagerGlobal.Instance.AgregarMensajeInterno(
+        "✅ El Rey sigue vivo en H8 tras la ventana de amenazas. Se acredita victoria."
+    );
+
+    int bonus = turnosRestantes * 25;
+    PlayerScore.Instance.AgregarPuntaje(bonus, TipoObjetoScore.None);
+
+    SoundManager.Instance.PlaySound(3);
+
+    LevelResultUI.Instance.ShowResults(
+        LevelProgress.Instance.keysCollected,
+        LevelProgress.Instance.diamondsCollected,
+        turnosRestantes,
+        PlayerScore.Instance.GetTotalScore()
+    );
+
+    gameManager.DetenerJuego();
+}
+
     
  
 

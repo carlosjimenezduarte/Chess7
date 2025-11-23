@@ -142,7 +142,7 @@ public class KingFree : MonoBehaviour, IPointerClickHandler, IPieceWithPosition,
             }
             
         }
-        SoundManager.Instance.PlaySound(0);
+        //SoundManager.Instance.PlaySound(0);
     }
 
     public void OcultarMovimientos()
@@ -226,6 +226,7 @@ public class KingFree : MonoBehaviour, IPointerClickHandler, IPieceWithPosition,
         // Opcional: notificar tablero y HUD
         FindFirstObjectByType<GardenGame>()?.ActualizarHUD();
         Garden7.Instance.ReportarEstadoActualDelTablero();
+        SoundManager.Instance.PlaySound(0);
     }
 
 

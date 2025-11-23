@@ -69,7 +69,7 @@ public class UsernameCloudSave : MonoBehaviour
         currentAvatarId = avatarId;
     }
 
-    private async void CheckIfUserIsRegistered()
+    /*private async void CheckIfUserIsRegistered()
     {
         HideAllMessages();
         
@@ -99,7 +99,59 @@ public class UsernameCloudSave : MonoBehaviour
         {
             Debug.LogError("Error checking registration: " + e.Message);
         }
+    }*/
+
+    private async void CheckIfUserIsRegistered()
+{
+    HideAllMessages();
+        
+    if (!AuthenticationService.Instance.IsSignedIn)
+    {
+        ShowMessage(msgNotAuthenticated);
+        return;
     }
+
+    try
+    {
+        var keys = new HashSet<string> { "username", "avatarId", "joined_at" };
+        var playerData = await CloudSaveService.Instance.Data.Player.LoadAsync(keys);
+
+        if (playerData.ContainsKey("username"))
+        {
+            string savedUsername = playerData["username"].Value.GetAs<string>();
+            string savedAvatarId = playerData.ContainsKey("avatarId")
+                ? playerData["avatarId"].Value.GetAs<string>()
+                : "";
+
+            PlayerPrefs.SetString("username", savedUsername);
+            PlayerPrefs.SetString("avatarId", savedAvatarId);
+
+            if (playerData.ContainsKey("joined_at"))
+            {
+                string joinedAt = playerData["joined_at"].Value.GetAs<string>();
+                PlayerPrefs.SetString("joined_at", joinedAt);
+            }
+
+            PlayerPrefs.Save();
+
+            // 🌐 Traer progreso de los 3 slots desde la nube
+            await CloudSlotSync.PullAllSlotsAsync();
+
+            UnityEngine.SceneManagement.SceneManager.LoadScene(2); // Home
+        }
+        else
+        {
+            // No tiene username aún: se queda en esta escena para que se registre
+            Debug.Log("[UsernameCloudSave] Jugador sin username, debe registrarse.");
+        }
+    }
+    catch (System.Exception e)
+    {
+        Debug.LogError("Error checking registration: " + e.Message);
+    }
+}
+
+
 
     public async void OnConfirmClicked()
     {

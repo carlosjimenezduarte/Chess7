@@ -1,4 +1,5 @@
 using UnityEngine;
+using Unity.Services.Authentication; 
 
 public class ProgressSaver : MonoBehaviour
 {
@@ -25,7 +26,7 @@ public class ProgressSaver : MonoBehaviour
         // Previos
         int prevCompleted = PlayerPrefs.GetInt(levelCompletedKey, 0);
         int prevScoreBest = PlayerPrefs.GetInt(scoreKey, 0);
-        int prevKeys = PlayerPrefs.GetInt(keysKey, 0);
+        int prevKeys = PlayerPrefs.GetInt(keysKey,   0);
         int prevDiamonds = PlayerPrefs.GetInt(diamondsKey, 0);
         int prevBags = PlayerPrefs.GetInt(bagsKey, 0);
         int prevCrowns = PlayerPrefs.GetInt(crownsKey, 0);
@@ -164,6 +165,21 @@ public class ProgressSaver : MonoBehaviour
 
         PlayerPrefs.Save();
         Debug.Log($"✅ Guardado nivel {levelId}: Keys={finalKeys}, Diamonds={finalDiamonds}, BestScore={newBestScore}, PawnKillsBest={finalPawnKills}");
+
+                // 🌐 Sincronizar en la nube (solo si hay sesión Unity)
+        try
+        {
+            if (AuthenticationService.Instance != null &&
+                AuthenticationService.Instance.IsSignedIn)
+            {
+                CloudSlotSync.PushSlotSafe(slotId);
+            }
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("[ProgressSaver] Error al disparar sync en la nube: " + ex.Message);
+        }
+
     }
 
 

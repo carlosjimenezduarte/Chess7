@@ -53,5 +53,6 @@ public class EspejoManager : MonoBehaviour
     public void CerrarPanel(GameObject panel)
     {
         panel.SetActive(false);
+         SoundManager.Instance.PlaySound(39);
     }
 }

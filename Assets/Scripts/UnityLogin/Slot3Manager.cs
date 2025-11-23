@@ -151,6 +151,8 @@ public class Slot3Manager : MonoBehaviour
         // Cola de notificaciones persistentes (si la usas)
         PlayerPrefs.DeleteKey($"{slotId}_notif_queue");
 
+        PlayerPrefs.DeleteKey($"{slotId}_notif_preference");
+
         PlayerPrefs.Save();
     }
 }

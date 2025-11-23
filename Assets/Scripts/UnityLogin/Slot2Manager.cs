@@ -152,6 +152,9 @@ public class Slot2Manager : MonoBehaviour
         // Cola de notificaciones persistentes (si la usas)
         Del($"{slotId}_notif_queue");
 
+        // Preferencia de notificaciones para slot2
+        Del($"{slotId}_notif_preference");
+
         PlayerPrefs.Save();
     }
 
